@@ -1,13 +1,10 @@
-package newjeans.bunnies.imageserver.domain.Entity
+package newjeans.bunnies.newjeansbunnies.domain.image
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
-import jakarta.persistence.Lob
 import jakarta.persistence.Table
-import org.springframework.web.multipart.MultipartFile
 import java.time.LocalDateTime
-import java.util.UUID
 
 @Entity
 @Table(name = "post_image")

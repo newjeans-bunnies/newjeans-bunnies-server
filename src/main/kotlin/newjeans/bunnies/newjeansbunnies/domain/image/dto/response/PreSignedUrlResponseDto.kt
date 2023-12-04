@@ -1,5 +1,6 @@
-package newjeans.bunnies.imageserver.domain.controller.dto.response
+package newjeans.bunnies.newjeansbunnies.domain.image.dto.response
 
 data class PreSignedUrlResponseDto(
-    val preSignedURL: String
+    val preSignedURL: String,
+    val imageName: String
 )
