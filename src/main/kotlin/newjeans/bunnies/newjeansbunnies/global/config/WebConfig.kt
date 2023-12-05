@@ -10,18 +10,7 @@ class WebConfig : WebMvcConfigurer {
         super.addCorsMappings(registry)
         registry.addMapping("/**")
             .allowedOrigins("*")
-            .allowedMethods("GET")
-            .allowedHeaders(
-                "Content-Type",
-                "Connection",
-                "Accept-Encoding",
-                "Accept",
-                "Host",
-                "User-Agent",
-                "Authorization",
-                "Date",
-                "Server",
-                "Location"
-            )
+            .allowedMethods("GET","POST","PATCH")
+            .allowedHeaders("*")
     }
 }
