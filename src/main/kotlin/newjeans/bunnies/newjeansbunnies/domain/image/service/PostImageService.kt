@@ -6,54 +6,44 @@ import com.amazonaws.services.s3.Headers
 import com.amazonaws.services.s3.model.CannedAccessControlList
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest
 import newjeans.bunnies.newjeansbunnies.domain.image.PostImageEntity
-import newjeans.bunnies.newjeansbunnies.domain.image.UserImageEntity
-import newjeans.bunnies.newjeansbunnies.domain.image.dto.response.PreSignedUrlResponseDto
+import newjeans.bunnies.newjeansbunnies.domain.image.controller.dto.response.PostImagePreSignedUrlResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.image.repository.PostImageRepository
-import newjeans.bunnies.newjeansbunnies.domain.image.repository.UserImageRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Service
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.*
-
+import java.util.Date
 
 @Service
 @Configuration
-class AwsService(
+class PostImageService(
     @Value("\${cloud.aws.s3.bucket}")
     private val bucket: String,
     @Value("\${cloud.aws.region.static}")
     private val location: String,
     private val amazonS3: AmazonS3,
-    private val postImageRepository: PostImageRepository,
-    private val userImageRepository: UserImageRepository
+    private val postImageRepository: PostImageRepository
 ) {
-    fun getPreSignedUrl(fileName: String, imageType: String, id: String): PreSignedUrlResponseDto {
-        val uniqueFileName = generateFileName(fileName)
-        val generatePresignedUrlRequest: GeneratePresignedUrlRequest =
-            getGeneratePreSignedUrlRequest(bucket, imageType + getCurrentDateInFormat() + uniqueFileName)
+    fun getPreSignedUrl(fileName: String, id: String): PostImagePreSignedUrlResponseDto {
 
-        if (imageType == "post-image/")
-            postImageRepository.save(
-                PostImageEntity(
-                    id = UUID.randomUUID().toString(),
-                    createDate = LocalDateTime.now(),
-                    imageUrl = "https://${bucket}.s3.${location}.amazonaws.com/${uniqueFileName}",
-                    postUUID = id
-                )
+        val uniqueFileName = generateFileName(fileName)
+
+        val generatePresignedUrlRequest: GeneratePresignedUrlRequest =
+            getGeneratePreSignedUrlRequest(bucket, "post-image/" + getCurrentDateInFormat() + "/" + uniqueFileName)
+
+        postImageRepository.save(
+            PostImageEntity(
+                imageUrl = "https://${bucket}.s3.${location}.amazonaws.com/post-image/${getCurrentDateInFormat()}/${uniqueFileName}",
+                createDate = LocalDateTime.now().toString(),
+                postUUID = id
             )
-        else
-            userImageRepository.save(
-                UserImageEntity(
-                    id = id,
-                    imageUrl = "https://${bucket}.s3.${location}.amazonaws.com/${uniqueFileName}"
-                )
-            )
-        return PreSignedUrlResponseDto(
+        )
+
+        return PostImagePreSignedUrlResponseDto(
             amazonS3.generatePresignedUrl(generatePresignedUrlRequest).toString(),
-            generateFileName(fileName)
+            uniqueFileName
         )
     }
 
@@ -76,15 +66,14 @@ class AwsService(
     private fun getPreSignedUrlExpiration(): Date {
         val expiration = Date()
         var expTimeMillis: Long = expiration.time
-        expTimeMillis += (1000 * 10).toLong()
+        expTimeMillis += (1000 * 10 * 60).toLong()
         expiration.setTime(expTimeMillis)
         return expiration
     }
 
     private fun getCurrentDateInFormat(): String {
         val currentDateTime = LocalDateTime.now()
-        val formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd/")
+        val formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd")
         return currentDateTime.format(formatter)
     }
-
 }
