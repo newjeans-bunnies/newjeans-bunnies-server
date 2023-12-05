@@ -1,24 +1,26 @@
 package newjeans.bunnies.newjeansbunnies.global.error.exception
+
 import newjeans.bunnies.newjeansbunnies.global.error.custom.CustomException
 import newjeans.bunnies.newjeansbunnies.global.error.response.ErrorResponse
-import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
-import org.springframework.web.bind.annotation.ResponseStatus
-import org.springframework.web.multipart.MaxUploadSizeExceededException
+
 
 @ControllerAdvice
 class GlobalExceptionHandler {
-    private val log = LoggerFactory.getLogger(this.javaClass)!!
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MaxUploadSizeExceededException::class)
-    protected fun maxUploadSizeExceededException(e: MaxUploadSizeExceededException): ErrorResponse {
-        return ErrorResponse(
-            status = 500,
-            message = e.message.toString()
+    @ExceptionHandler(MethodArgumentNotValidException::class)
+    fun handleEmptyResultDataAccessException(ex: MethodArgumentNotValidException): ResponseEntity<ErrorResponse>{
+        val errorMessage: String? = ex.bindingResult
+            .allErrors[0]
+            .defaultMessage
+        return ResponseEntity(
+            ErrorResponse(
+                400,
+                errorMessage
+            ), HttpStatus.BAD_REQUEST
         )
     }
 
