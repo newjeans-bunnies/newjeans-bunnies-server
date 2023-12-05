@@ -7,7 +7,7 @@ enum class PostErrorCode(
     private val status: Int,
     private val message: String
 ) : CustomErrorProperty {
-
+    NOT_EXIST_USER(400, "Not Exist User"),
     ;
 
     override fun status(): Int = status
