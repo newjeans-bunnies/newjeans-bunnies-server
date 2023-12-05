@@ -8,6 +8,9 @@ plugins {
     kotlin("plugin.jpa") version "1.8.22"
 }
 
+val jjwtVersion = "0.11.5"
+
+
 group = "newjeans.bunnies"
 version = "0.0.1-SNAPSHOT"
 
@@ -20,14 +23,21 @@ repositories {
 }
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-data-jdbc:3.0.4")
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa:3.0.4")
-    implementation("org.springframework.boot:spring-boot-starter-security:3.0.4")
-    implementation("org.springframework.boot:spring-boot-starter-web:3.1.0")
+
+    implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+    developmentOnly("org.springframework.boot:spring-boot-devtools:3.0.4")
+
+    implementation("io.jsonwebtoken:jjwt-api:$jjwtVersion")
+    implementation("io.jsonwebtoken:jjwt-impl:$jjwtVersion")
+    implementation("io.jsonwebtoken:jjwt-jackson:$jjwtVersion")
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.2")
+
     implementation("org.jetbrains.kotlin:kotlin-reflect")
-    developmentOnly("org.springframework.boot:spring-boot-devtools:3.0.4")
 
     implementation("org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE")
 
