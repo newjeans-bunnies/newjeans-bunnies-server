@@ -1,7 +1,9 @@
 package newjeans.bunnies.newjeansbunnies.global.error.exception
 
+
 import newjeans.bunnies.newjeansbunnies.global.error.custom.CustomException
 import newjeans.bunnies.newjeansbunnies.global.error.response.ErrorResponse
+
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.MethodArgumentNotValidException
@@ -28,9 +30,10 @@ class GlobalExceptionHandler {
     @ExceptionHandler(CustomException::class)
     protected fun handleBindException(ex: CustomException): ResponseEntity<ErrorResponse> {
         val httpStatus = when (ex.errorProperty.status()) {
-            404 -> HttpStatus.NOT_FOUND
             400 -> HttpStatus.BAD_REQUEST
+            401 -> HttpStatus.UNAUTHORIZED
             403 -> HttpStatus.FORBIDDEN
+            404 -> HttpStatus.NOT_FOUND
             else -> HttpStatus.INTERNAL_SERVER_ERROR
         }
         return ResponseEntity(

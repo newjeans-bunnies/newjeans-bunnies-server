@@ -1,6 +1,8 @@
-package newjeans.bunnies.newjeansbunnies.global.security.error
+package newjeans.bunnies.newjeansbunnies.global.error
+
 
 import newjeans.bunnies.newjeansbunnies.global.error.custom.CustomErrorProperty
+
 
 enum class GlobalErrorCode(
     private val status: Int,
