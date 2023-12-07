@@ -5,11 +5,13 @@ import newjeans.bunnies.newjeansbunnies.domain.image.controller.dto.response.Pos
 import newjeans.bunnies.newjeansbunnies.domain.image.controller.dto.response.UserImagePreSignedUrlResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.image.service.PostImageService
 import newjeans.bunnies.newjeansbunnies.domain.image.service.UserImageService
+
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+
 
 @RestController
 @RequestMapping("/api/aws/image")
