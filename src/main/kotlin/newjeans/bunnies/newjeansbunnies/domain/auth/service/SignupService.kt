@@ -1,16 +1,18 @@
 package newjeans.bunnies.newjeansbunnies.domain.auth.service
 
+
 import newjeans.bunnies.newjeansbunnies.domain.auth.controller.dto.request.SignupRequestDto
 import newjeans.bunnies.newjeansbunnies.domain.auth.controller.dto.response.StatusResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.auth.error.exception.ExistIdException
 import newjeans.bunnies.newjeansbunnies.domain.auth.type.Authority
 import newjeans.bunnies.newjeansbunnies.domain.user.UserEntity
 import newjeans.bunnies.newjeansbunnies.domain.user.repository.UserRepository
-import newjeans.bunnies.newjeansbunnies.global.config.AwsS3Config
+
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+
 
 @Service
 @Configuration

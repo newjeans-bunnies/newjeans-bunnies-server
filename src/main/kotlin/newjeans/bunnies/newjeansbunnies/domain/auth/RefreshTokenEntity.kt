@@ -1,10 +1,10 @@
 package newjeans.bunnies.newjeansbunnies.domain.auth
 
+
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.Table
-import jakarta.validation.constraints.NotBlank
-import org.jetbrains.annotations.NotNull
+
 
 @Entity
 @Table(name = "refresh_token")
