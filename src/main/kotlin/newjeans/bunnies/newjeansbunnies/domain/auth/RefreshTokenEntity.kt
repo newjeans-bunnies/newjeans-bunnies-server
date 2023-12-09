@@ -10,8 +10,8 @@ import jakarta.persistence.Table
 @Table(name = "refresh_token")
 data class RefreshTokenEntity(
     @Id
-    val id: String,
+    val uuid: String,
     val token: String,
     val authority: String,
-    val expirationTime: Int
+    val expirationTime: Long
 )
