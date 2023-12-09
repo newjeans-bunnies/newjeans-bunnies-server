@@ -40,6 +40,6 @@ class WebConfig(
 
         registry.addMapping("/api/user/**")
             .allowedOriginPatterns(*allowedOrigins)
-            .allowedMethods("POST")
+            .allowedMethods("GET","PATCH")
     }
 }
