@@ -4,7 +4,7 @@ package newjeans.bunnies.newjeansbunnies.global.security.jwt
 import io.jsonwebtoken.*
 import io.jsonwebtoken.security.Keys
 
-import newjeans.bunnies.newjeansbunnies.global.security.exception.*
+import newjeans.bunnies.newjeansbunnies.global.error.exception.*
 import newjeans.bunnies.newjeansbunnies.global.security.principle.CustomManagerDetailsService
 import newjeans.bunnies.newjeansbunnies.global.security.principle.CustomUserDetailsService
 
@@ -37,7 +37,7 @@ class JwtParser(
         return UsernamePasswordAuthenticationToken(userDetails, "", userDetails.authorities)
     }
 
-    private fun getClaims(token: String): Jws<Claims> {
+    fun getClaims(token: String): Jws<Claims> {
         return try {
             val key: Key = Keys.hmacShaKeyFor(jwtProperties.key.toByteArray(StandardCharsets.UTF_8))
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token)
@@ -46,7 +46,10 @@ class JwtParser(
                 is InvalidClaimException -> throw InvalidTokenException
                 is ExpiredJwtException -> throw ExpiredTokenException
                 is JwtException -> throw UnexpectedTokenException
-                else -> throw InternalServerErrorException
+                else -> {
+                    println(e.message)
+                    throw InternalServerErrorException
+                }
             }
         }
     }
