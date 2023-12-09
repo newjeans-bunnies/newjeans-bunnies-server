@@ -14,19 +14,17 @@ import org.springframework.stereotype.Service
 class GetPostService(
     private val postRepository: PostRepository
 ) {
-    fun execute(date: String): List<GetPostResponseDto>{
-        val postListData = postRepository.findByCreateDateBefore(date).orElseThrow {
+    fun execute(uuid: String): GetPostResponseDto {
+        val postData = postRepository.findById(uuid).orElseThrow {
             throw PostNotFoundException
         }
 
-        return postListData.map {
-            GetPostResponseDto(
-                uuid = it.uuid,
-                id = it.id,
-                body = it.body,
-                good = it.good,
-                createDate = it.createDate
-            )
-        }
+        return GetPostResponseDto(
+            uuid = postData.uuid,
+            id = postData.id,
+            body = postData.body,
+            createDate = postData.createDate,
+            good = postData.good
+        )
     }
 }

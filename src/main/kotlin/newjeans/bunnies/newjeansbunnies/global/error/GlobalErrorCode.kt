@@ -9,12 +9,12 @@ enum class GlobalErrorCode(
     private val message: String
 ) : CustomErrorProperty {
 
-    INVALID_TOKEN(401,"Invalid Token"), //잘못된 토큰
-    EXPIRED_TOKEN(401, "Expired Token"), //만료
+    INVALID_TOKEN(401,"잘못된 토큰"), //잘못된 토큰
+    EXPIRED_TOKEN(401, "만료된 토큰"), //만료
     UNEXPECTED_TOKEN(401, "Unexpected Token"), //무단
-    INVALID_ROLE(401, "Invalid Role"), //권한 없음
-
-    INTERNAL_SERVER_ERROR(500, "Internal Server Error") //서버 애러
+    INVALID_ROLE(401, "권한 없음"), //권한 없음
+    REFRESH_TOKEN_NOT_FOUND_EXCEPTION(400, "RefreshToken이 존재하지 않음"),
+    INTERNAL_SERVER_ERROR(500, "서버 애러") //서버 애러
     ;
 
     override fun status(): Int = status

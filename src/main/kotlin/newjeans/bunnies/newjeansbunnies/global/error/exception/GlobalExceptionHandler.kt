@@ -34,6 +34,7 @@ class GlobalExceptionHandler {
             401 -> HttpStatus.UNAUTHORIZED
             403 -> HttpStatus.FORBIDDEN
             404 -> HttpStatus.NOT_FOUND
+            409 -> HttpStatus.CONFLICT
             else -> HttpStatus.INTERNAL_SERVER_ERROR
         }
         return ResponseEntity(

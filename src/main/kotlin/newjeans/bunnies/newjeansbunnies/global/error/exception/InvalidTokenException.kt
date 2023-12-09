@@ -1,4 +1,4 @@
-package newjeans.bunnies.newjeansbunnies.global.security.exception
+package newjeans.bunnies.newjeansbunnies.global.error.exception
 
 
 import newjeans.bunnies.newjeansbunnies.global.error.GlobalErrorCode

@@ -7,8 +7,8 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import newjeans.bunnies.newjeansbunnies.global.error.custom.CustomErrorProperty
 import newjeans.bunnies.newjeansbunnies.global.error.custom.CustomException
+import newjeans.bunnies.newjeansbunnies.global.error.exception.InternalServerErrorException
 import newjeans.bunnies.newjeansbunnies.global.error.response.ErrorResponse
-import newjeans.bunnies.newjeansbunnies.global.security.exception.InternalServerErrorException
 import org.springframework.http.MediaType
 import org.springframework.web.filter.OncePerRequestFilter
 
