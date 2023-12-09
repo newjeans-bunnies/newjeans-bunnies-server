@@ -35,6 +35,9 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt-impl:$jjwtVersion")
     implementation("io.jsonwebtoken:jjwt-jackson:$jjwtVersion")
 
+    implementation(platform("software.amazon.awssdk:bom:2.20.85"))
+    implementation("software.amazon.awssdk:dynamodb-enhanced")
+
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.2")
 
     implementation("org.jetbrains.kotlin:kotlin-reflect")
