@@ -14,6 +14,6 @@ data class ChildrenCommentEntity(
     val id: String,
     val createDate: String,
     val body: String,
-    val parent: String,
+    val parentCommentId: String,
     val good: Long,
 )

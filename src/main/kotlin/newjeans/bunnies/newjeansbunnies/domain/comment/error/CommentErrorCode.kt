@@ -8,8 +8,12 @@ enum class CommentErrorCode(
     private val status: Int,
     private val message: String
 ) : CustomErrorProperty {
-    USER_NOT_FOUND(400, "Not Found User"),
-    POST_NOT_FOUND(400, "Not Found Post")
+    COMMENT_ID_BLANK(400, "댓글아이디는 필수 입력 값입니다."),
+    POST_ID_BLANK(400, "게시글아이디는 필수 입력 값입니다."),
+    NOT_EXIST_PARENTS_COMMENT_ID(400, "존재하지 않는 댓글아이디 입니다."),
+    NOT_EXIST_CHILDREN_COMMENT_ID(400, "존재하지 않는 대댓글아이디 입니다."),
+    NOT_EXIST_POST_ID(400, "존재하지 않는 게시글아이디 입니다."),
+
     ;
 
     override fun status(): Int = status

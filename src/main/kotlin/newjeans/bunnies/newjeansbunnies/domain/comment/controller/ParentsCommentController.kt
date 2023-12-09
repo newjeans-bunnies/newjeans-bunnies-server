@@ -1,16 +1,16 @@
 package newjeans.bunnies.newjeansbunnies.domain.comment.controller
 
 
+import jakarta.validation.Valid
 import newjeans.bunnies.newjeansbunnies.domain.comment.controller.dto.request.ParentsCommentRequestDto
+import newjeans.bunnies.newjeansbunnies.domain.comment.controller.dto.response.ParentsCommentGetResponseDto
+import newjeans.bunnies.newjeansbunnies.domain.comment.controller.dto.response.ParentsCommentSendResponseDto
+import newjeans.bunnies.newjeansbunnies.domain.comment.controller.dto.response.StatusResponseDto
+import newjeans.bunnies.newjeansbunnies.domain.comment.error.exception.CommentIdBlankException
+import newjeans.bunnies.newjeansbunnies.domain.comment.error.exception.PostIdBlankException
 import newjeans.bunnies.newjeansbunnies.domain.comment.service.ParentsCommentService
-
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
 import org.springframework.context.annotation.Configuration
+import org.springframework.web.bind.annotation.*
 
 
 @RestController
@@ -19,17 +19,28 @@ import org.springframework.context.annotation.Configuration
 class ParentsCommentController(
     private val parentsCommentService: ParentsCommentService
 ) {
-    @PostMapping("")
+    @PostMapping
     fun sendComment(
-        @RequestBody parentsCommentRequestDto: ParentsCommentRequestDto
-    ) {
-        parentsCommentService.send(parentsCommentRequestDto)
+        @RequestBody @Valid parentsCommentRequestDto: ParentsCommentRequestDto
+    ): ParentsCommentSendResponseDto {
+        return parentsCommentService.send(parentsCommentRequestDto)
     }
 
-    @DeleteMapping("")
+    @GetMapping
+    fun getComment(
+        @RequestParam("postId") postId: String
+    ): List<ParentsCommentGetResponseDto>{
+        if(postId.isBlank())
+            throw PostIdBlankException
+        return parentsCommentService.get(postId)
+    }
+
+    @DeleteMapping
     fun deleteComment(
-        @RequestParam("uuid") id: String
-    ) {
-        parentsCommentService.delete(id)
+        @RequestParam("parentsCommentId") parentsCommentId: String
+    ): StatusResponseDto {
+        if(parentsCommentId.isBlank())
+            throw CommentIdBlankException
+        return parentsCommentService.delete(parentsCommentId)
     }
 }

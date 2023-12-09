@@ -5,6 +5,6 @@ import newjeans.bunnies.newjeansbunnies.domain.comment.error.CommentErrorCode
 import newjeans.bunnies.newjeansbunnies.global.error.custom.CustomException
 
 
-object PostNotFoundException : CustomException(
-    CommentErrorCode.NOT_EXIST_POST_ID
+object NotExistChildrenCommentIdException: CustomException(
+    CommentErrorCode.NOT_EXIST_CHILDREN_COMMENT_ID
 )
