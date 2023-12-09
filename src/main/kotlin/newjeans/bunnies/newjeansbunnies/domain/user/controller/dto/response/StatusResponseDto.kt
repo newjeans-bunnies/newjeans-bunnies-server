@@ -1,4 +1,4 @@
-package newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.response
+package newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.response
 
 
 data class StatusResponseDto(
