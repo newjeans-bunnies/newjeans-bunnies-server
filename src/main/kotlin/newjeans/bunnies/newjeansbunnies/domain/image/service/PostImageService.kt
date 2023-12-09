@@ -6,14 +6,17 @@ import com.amazonaws.services.s3.AmazonS3
 import com.amazonaws.services.s3.Headers
 import com.amazonaws.services.s3.model.CannedAccessControlList
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest
+
 import newjeans.bunnies.newjeansbunnies.domain.image.PostImageEntity
 import newjeans.bunnies.newjeansbunnies.domain.image.controller.dto.response.PostImagePreSignedUrlResponseDto
-import newjeans.bunnies.newjeansbunnies.domain.image.error.exception.PostNotForundException
 import newjeans.bunnies.newjeansbunnies.domain.image.repository.PostImageRepository
+import newjeans.bunnies.newjeansbunnies.domain.post.error.exception.PostNotFoundException
 import newjeans.bunnies.newjeansbunnies.domain.post.repository.PostRepository
+
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Service
+
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -34,7 +37,7 @@ class PostImageService(
     fun getPreSignedUrl(fileName: String, id: String): PostImagePreSignedUrlResponseDto {
 
         postRepository.findById(id).orElseThrow {
-            throw PostNotForundException
+            throw PostNotFoundException
         }
 
         val uniqueFileName = generateFileName(fileName)

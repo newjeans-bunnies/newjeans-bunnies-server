@@ -1,5 +1,6 @@
 package newjeans.bunnies.newjeansbunnies.domain.image.service
 
+
 import com.amazonaws.HttpMethod
 import com.amazonaws.services.s3.AmazonS3
 import com.amazonaws.services.s3.Headers
@@ -10,7 +11,7 @@ import newjeans.bunnies.newjeansbunnies.domain.image.error.exception.ImageExtens
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Service
-import java.util.Date
+import java.util.*
 
 @Service
 @Configuration
@@ -20,14 +21,14 @@ class UserImageService(
     private val amazonS3: AmazonS3,
 ) {
     fun getPreSignedUrl(imageName: String, id: String): UserImagePreSignedUrlResponseDto {
-        //파일 확장자 구하기
+
         val fileExtension = imageName.substringAfterLast('.', "")
 
         if (fileExtension.isBlank()) //파일 확장자 유무 확인
             throw ImageExtensionNotForundException
 
         val generatePresignedUrlRequest: GeneratePresignedUrlRequest =
-            getGeneratePreSignedUrlRequest(bucket, "user-image/$id.$fileExtension")
+            getGeneratePreSignedUrlRequest(bucket, "user-image/$id.webp")
 
         return UserImagePreSignedUrlResponseDto(
             amazonS3.generatePresignedUrl(generatePresignedUrlRequest).toString()
