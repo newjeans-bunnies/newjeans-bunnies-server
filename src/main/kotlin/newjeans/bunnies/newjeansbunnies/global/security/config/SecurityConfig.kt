@@ -17,6 +17,7 @@ import org.springframework.security.web.AuthenticationEntryPoint
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.access.AccessDeniedHandler
 
+
 @Configuration
 @EnableWebSecurity
 class SecurityConfig(
@@ -35,18 +36,28 @@ class SecurityConfig(
                 authorize.requestMatchers("/api/auth/**").permitAll()
 
                 //post
-                authorize.requestMatchers(HttpMethod.GET, "/api/post").permitAll()
-                authorize.requestMatchers(HttpMethod.POST, "/api/post").hasAuthority(Authority.USER.name)
+                authorize.requestMatchers(HttpMethod.POST, "/api/post/good").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
+                authorize.requestMatchers(HttpMethod.POST, "/api/post").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
+                authorize.requestMatchers(HttpMethod.GET, "/api/post/**").permitAll()
 
                 //comment
-                authorize.requestMatchers("/api/comment/**").hasAuthority(Authority.USER.name)
+                authorize.requestMatchers(HttpMethod.POST,"/api/comment/**").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
+                authorize.requestMatchers(HttpMethod.DELETE,"/api/comment/**").hasAuthority(Authority.MANAGER.name)
+                authorize.requestMatchers(HttpMethod.GET,"/api/comment/**").permitAll()
+
 
                 //image
+                authorize.requestMatchers("/api/aws/image/post").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
                 authorize.requestMatchers("/api/aws/image/user").permitAll()
-                authorize.requestMatchers("/api/aws/image/post").hasAuthority(Authority.USER.name)
 
                 //good
-                authorize.requestMatchers("/api/post/good").hasAuthority(Authority.USER.name)
+                authorize.requestMatchers("/api/post/good").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
+
+                //user
+                authorize.requestMatchers(HttpMethod.GET,"/api/user/get-detail/**").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
+                authorize.requestMatchers(HttpMethod.GET,"api/user/get-basic/**").permitAll()
+                authorize.requestMatchers(HttpMethod.PATCH,"/api/user/update").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
+
             }
             .exceptionHandling { exceptionHandling ->
                 exceptionHandling
