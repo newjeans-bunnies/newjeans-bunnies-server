@@ -1,14 +1,15 @@
 package newjeans.bunnies.newjeansbunnies.domain.post.service
 
 
+import newjeans.bunnies.newjeansbunnies.domain.auth.error.exception.NotExistIdException
 import newjeans.bunnies.newjeansbunnies.domain.post.PostEntity
 import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.request.PostRequestDto
 import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.response.PostResponseDto
-import newjeans.bunnies.newjeansbunnies.domain.post.error.exception.NotExistIdException
 import newjeans.bunnies.newjeansbunnies.domain.post.repository.PostRepository
 import newjeans.bunnies.newjeansbunnies.domain.user.repository.UserRepository
 import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Service
+
 import java.time.LocalDateTime
 import java.util.*
 
@@ -21,7 +22,7 @@ class CreatePostService(
 ) {
     fun execute(postData: PostRequestDto): PostResponseDto {
 
-        userRepository.findById(postData.id).orElseThrow {
+        userRepository.findByUserId(postData.id).orElseThrow {
             throw NotExistIdException
         }
 
@@ -35,7 +36,7 @@ class CreatePostService(
 
         postRepository.save(postEntity)
         return PostResponseDto(
-            uuid = postEntity.uuid,
+            postId = postEntity.uuid,
             createDate = postEntity.createDate
         )
     }

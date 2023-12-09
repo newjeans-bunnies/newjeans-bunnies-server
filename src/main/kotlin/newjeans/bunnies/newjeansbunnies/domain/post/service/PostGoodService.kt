@@ -1,14 +1,14 @@
 package newjeans.bunnies.newjeansbunnies.domain.post.service
 
 
-import newjeans.bunnies.newjeansbunnies.domain.post.PostGoodEntity
+import newjeans.bunnies.newjeansbunnies.domain.auth.error.exception.NotExistIdException
 import newjeans.bunnies.newjeansbunnies.domain.post.PostEntity
-import newjeans.bunnies.newjeansbunnies.domain.post.error.exception.NotExistIdException
+import newjeans.bunnies.newjeansbunnies.domain.post.PostGoodEntity
+import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.response.PostGoodResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.post.error.exception.PostNotFoundException
 import newjeans.bunnies.newjeansbunnies.domain.post.repository.PostGoodRepository
 import newjeans.bunnies.newjeansbunnies.domain.post.repository.PostRepository
 import newjeans.bunnies.newjeansbunnies.domain.user.repository.UserRepository
-
 import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -22,12 +22,12 @@ class PostGoodService(
     private val userRepository: UserRepository
 ) {
     @Transactional
-    fun execute(postId: String, userId: String) {
+    fun execute(postId: String, userId: String): PostGoodResponseDto{
         val postData = postRepository.findById(postId).orElseThrow {
             throw PostNotFoundException
         }
 
-        userRepository.findById(userId).orElseThrow {
+        userRepository.findByUserId(userId).orElseThrow {
             throw NotExistIdException
         }
 
@@ -47,6 +47,11 @@ class PostGoodService(
                 createDate = postData.createDate,
                 good = goodCount
             )
+        )
+
+        return PostGoodResponseDto(
+            postId = postData.uuid,
+            good = goodCount
         )
     }
 

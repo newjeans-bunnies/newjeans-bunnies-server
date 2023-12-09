@@ -8,8 +8,7 @@ enum class PostErrorCode(
     private val status: Int,
     private val message: String
 ) : CustomErrorProperty {
-    NOT_EXIST_USER(400, "Not Exist User"),
-    POST_NOT_FOUND(400, "Not Found Post"),
+    POST_NOT_FOUND(409, "게시글이 없습니다.")
     ;
 
     override fun status(): Int = status

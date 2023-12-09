@@ -1,7 +1,7 @@
 package newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.response
 
 
-data class PostResponseDto(
+data class PostGoodResponseDto(
     val postId: String,
-    val createDate: String,
+    val good: Long
 )
