@@ -3,10 +3,7 @@ package newjeans.bunnies.newjeansbunnies.domain.auth.service
 
 import newjeans.bunnies.newjeansbunnies.domain.auth.controller.dto.request.SignupRequestDto
 import newjeans.bunnies.newjeansbunnies.domain.auth.controller.dto.response.SignupResponseDto
-import newjeans.bunnies.newjeansbunnies.domain.auth.error.exception.CountryNotFoundException
-import newjeans.bunnies.newjeansbunnies.domain.auth.error.exception.ExistIdException
-import newjeans.bunnies.newjeansbunnies.domain.auth.error.exception.ExistPhoneNumberException
-import newjeans.bunnies.newjeansbunnies.domain.auth.error.exception.FormatNotSupportedException
+import newjeans.bunnies.newjeansbunnies.domain.auth.error.exception.*
 import newjeans.bunnies.newjeansbunnies.domain.image.service.UserImageService
 import newjeans.bunnies.newjeansbunnies.domain.user.UserEntity
 import newjeans.bunnies.newjeansbunnies.domain.user.repository.UserRepository
@@ -47,11 +44,17 @@ class SignupService(
         if (data.country !in countries)
             throw CountryNotFoundException //지원 하지 않거나 존재하지 않는 나라
 
+        if (data.language !in countries)
+            throw LanguageNotFoundException //지원 하지 않거나 존재하지 않는 나라
+
         if (!data.imageName.isNullOrBlank()) { //파일이름이 null이 아니라면
+
             val fileExtension = data.imageName.substringAfterLast('.', "")
             if (fileExtension !in fileFormats)
                 throw FormatNotSupportedException //지원하지 않거나 존재하지 않는 확장자
+
             val preSignedURL = userImageService.getPreSignedUrl(data.imageName, data.userId).preSignedURL
+
             val imageUrl = "https://${bucket}.s3.${location}.amazonaws.com/user-image/${data.userId}.$fileExtension"
 
             val userEntity = UserEntity(
@@ -60,7 +63,9 @@ class SignupService(
                 password = data.password,
                 phoneNumber = data.phoneNumber,
                 imageUrl = imageUrl,
-                country = data.country
+                country = data.country,
+                language = data.language,
+                birth = data.birth
             )
             userEntity.hashPassword(passwordEncoder)
             userRepository.save(userEntity)
@@ -79,7 +84,9 @@ class SignupService(
             password = data.password,
             phoneNumber = data.phoneNumber,
             imageUrl = null,
-            country = data.country
+            country = data.country,
+            language = data.language,
+            birth = data.birth
         )
         userEntity.hashPassword(passwordEncoder)
         userRepository.save(userEntity)

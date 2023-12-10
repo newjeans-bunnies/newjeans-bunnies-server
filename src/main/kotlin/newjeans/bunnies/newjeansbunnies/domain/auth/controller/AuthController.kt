@@ -2,6 +2,7 @@ package newjeans.bunnies.newjeansbunnies.domain.auth.controller
 
 
 import jakarta.validation.Valid
+
 import newjeans.bunnies.newjeansbunnies.domain.auth.controller.dto.TokenDto
 import newjeans.bunnies.newjeansbunnies.domain.auth.controller.dto.request.LoginRequestDto
 import newjeans.bunnies.newjeansbunnies.domain.auth.controller.dto.request.SignupRequestDto
@@ -10,6 +11,7 @@ import newjeans.bunnies.newjeansbunnies.domain.auth.service.LoginService
 import newjeans.bunnies.newjeansbunnies.domain.auth.service.ReissueTokenService
 import newjeans.bunnies.newjeansbunnies.domain.auth.service.SignupService
 import newjeans.bunnies.newjeansbunnies.global.error.exception.RefreshTokenNotForundException
+
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
