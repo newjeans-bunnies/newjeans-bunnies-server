@@ -58,6 +58,12 @@ class SecurityConfig(
                 authorize.requestMatchers(HttpMethod.GET,"api/user/get-basic/**").permitAll()
                 authorize.requestMatchers(HttpMethod.PATCH,"/api/user/update").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
 
+                //report
+                authorize.requestMatchers(HttpMethod.POST,"/api/report/post").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
+                authorize.requestMatchers(HttpMethod.POST,"/api/report/parents-comment").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
+                authorize.requestMatchers(HttpMethod.POST,"/api/report/children-comment").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
+
+
             }
             .exceptionHandling { exceptionHandling ->
                 exceptionHandling

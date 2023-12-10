@@ -18,28 +18,38 @@ class WebConfig(
     override fun addCorsMappings(registry: CorsRegistry) {
         super.addCorsMappings(registry)
 
+        //auth
         registry.addMapping("/api/auth/**")
             .allowedOriginPatterns(*allowedOrigins)
             .allowedMethods("POST","PATCH")
             .allowedHeaders("*")
 
+        //comment
         registry.addMapping("/api/comment/**")
             .allowedOriginPatterns(*allowedOrigins)
             .allowedMethods("POST","DELETE")
             .allowedHeaders("*")
 
+        //image
         registry.addMapping("/api/aws/image/**")
             .allowedOriginPatterns(*allowedOrigins)
             .allowedMethods("GET")
             .allowedHeaders("*")
 
+        //post
         registry.addMapping("/api/post/**")
             .allowedOriginPatterns(*allowedOrigins)
             .allowedMethods("GET","POST")
             .allowedHeaders("*")
 
+        //user
         registry.addMapping("/api/user/**")
             .allowedOriginPatterns(*allowedOrigins)
             .allowedMethods("GET","PATCH")
+
+        //report
+        registry.addMapping("/api/report/**")
+            .allowedOriginPatterns(*allowedOrigins)
+            .allowedMethods("POST")
     }
 }

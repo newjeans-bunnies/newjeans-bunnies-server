@@ -7,6 +7,7 @@ import newjeans.bunnies.newjeansbunnies.domain.report.controller.dto.request.Rep
 import newjeans.bunnies.newjeansbunnies.domain.report.service.ChildrenCommentReportService
 import newjeans.bunnies.newjeansbunnies.domain.report.service.ParentsCommentReportService
 import newjeans.bunnies.newjeansbunnies.domain.report.service.PostReportService
+
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
