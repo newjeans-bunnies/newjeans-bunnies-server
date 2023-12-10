@@ -6,5 +6,7 @@ data class UserUpdateResponseDto(
     val phoneNumber: String,
     val imageUrl: String?,
     val country: String,
-    val preSignedURL: String?
+    val preSignedURL: String?,
+    val language : String,
+    val birth: String
 )

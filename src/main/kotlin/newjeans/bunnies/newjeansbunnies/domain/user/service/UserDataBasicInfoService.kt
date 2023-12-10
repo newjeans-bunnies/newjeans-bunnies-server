@@ -1,7 +1,7 @@
 package newjeans.bunnies.newjeansbunnies.domain.user.service
 
 
-import newjeans.bunnies.newjeansbunnies.domain.auth.error.exception.NotExistIdException
+import newjeans.bunnies.newjeansbunnies.domain.auth.error.exception.NotExistUserIdException
 import newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.response.UserDataBasicInfoResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.user.repository.UserRepository
 
@@ -16,7 +16,7 @@ class UserDataBasicInfoService(
 ) {
     fun execute(id: String): UserDataBasicInfoResponseDto {
         val userData = userRepository.findByUserId(id).orElseThrow {
-            throw NotExistIdException
+            throw NotExistUserIdException
         }
 
         return UserDataBasicInfoResponseDto(

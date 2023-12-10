@@ -2,6 +2,7 @@ package newjeans.bunnies.newjeansbunnies.domain.user.controller
 
 
 import jakarta.validation.Valid
+
 import newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.request.UserUpdateRequestDto
 import newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.response.UserDataBasicInfoResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.response.UserDataDetailsResponseDto
@@ -9,6 +10,7 @@ import newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.response.User
 import newjeans.bunnies.newjeansbunnies.domain.user.service.UserDataBasicInfoService
 import newjeans.bunnies.newjeansbunnies.domain.user.service.UserDataDetailsService
 import newjeans.bunnies.newjeansbunnies.domain.user.service.UserUpdateService
+
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.bind.annotation.*
 

@@ -4,6 +4,7 @@ package newjeans.bunnies.newjeansbunnies.domain.user.service
 import jakarta.transaction.Transactional
 
 import newjeans.bunnies.newjeansbunnies.domain.auth.error.exception.*
+import newjeans.bunnies.newjeansbunnies.domain.image.error.exception.ImageDeleteException
 import newjeans.bunnies.newjeansbunnies.domain.image.service.UserImageService
 import newjeans.bunnies.newjeansbunnies.domain.user.UserEntity
 import newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.request.UserUpdateRequestDto
@@ -41,7 +42,7 @@ class UserUpdateService(
     fun execute(id: String, userUpdateRequestDto: UserUpdateRequestDto): UserUpdateResponseDto {
 
         val userData = userRepository.findByUserId(id).orElseThrow {
-            throw NotExistIdException
+            throw NotExistUserIdException
         }
 
         if (id != userUpdateRequestDto.userId && userRepository.findByUserId(userUpdateRequestDto.userId).isPresent)
@@ -54,20 +55,20 @@ class UserUpdateService(
         if (userUpdateRequestDto.country !in countries)
             throw CountryNotFoundException //지원 하지 않거나 존재하지 않는 나라
 
+        if (userUpdateRequestDto.language !in countries)
+            throw LanguageNotFoundException //지원 하지 않거나 존재하지 않는 나라
+
         //기존의 이미지가 널이 아닐경우
         if (userData.imageUrl != null) {
             try {
                 awsS3Config.amazonS3Client().deleteObject(bucket, "user-image/${userUpdateRequestDto.userId}.webp")
             } catch (e: Exception) {
-                println(e.message)
+                throw ImageDeleteException
             }
         }
 
 
-
-
-
-        if (userUpdateRequestDto.imageName != null) {
+        if (!userUpdateRequestDto.imageName.isNullOrBlank()) {
 
             val fileExtension = userUpdateRequestDto.imageName.substringAfterLast('.', "")
 
@@ -88,7 +89,9 @@ class UserUpdateService(
                 password = userData.password,
                 phoneNumber = userUpdateRequestDto.phoneNumber,
                 imageUrl = imageUrl,
-                country = userUpdateRequestDto.country
+                country = userUpdateRequestDto.country,
+                language = userUpdateRequestDto.language,
+                birth = userUpdateRequestDto.birth
             )
         )
         return UserUpdateResponseDto(
@@ -96,7 +99,9 @@ class UserUpdateService(
             phoneNumber = userUpdateRequestDto.phoneNumber,
             imageUrl = imageUrl,
             country = userUpdateRequestDto.country,
-            preSignedURL = preSignedURL
+            preSignedURL = preSignedURL,
+            language = userUpdateRequestDto.language,
+            birth = userUpdateRequestDto.birth
         )
     }
 }

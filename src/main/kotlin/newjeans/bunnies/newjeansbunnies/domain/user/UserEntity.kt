@@ -15,6 +15,8 @@ data class UserEntity(
     val userId: String,
     var password: String,
     val phoneNumber: String,
+    val language: String,
+    val birth: String,
     val imageUrl: String?,
     val country: String
 ){
