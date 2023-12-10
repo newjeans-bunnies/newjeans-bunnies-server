@@ -7,5 +7,5 @@ import java.util.*
 
 
 interface PostRepository: CrudRepository<PostEntity, String> {
-    fun findByCreateDateBefore(createDate: String): Optional<List<PostEntity>>
+    fun findTop10ByCreateDateBefore(createDate: String): Optional<List<PostEntity>>
 }

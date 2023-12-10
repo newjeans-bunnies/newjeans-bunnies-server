@@ -1,7 +1,7 @@
 package newjeans.bunnies.newjeansbunnies.domain.post.service
 
 
-import newjeans.bunnies.newjeansbunnies.domain.auth.error.exception.NotExistIdException
+import newjeans.bunnies.newjeansbunnies.domain.auth.error.exception.NotExistUserIdException
 import newjeans.bunnies.newjeansbunnies.domain.post.PostEntity
 import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.request.PostRequestDto
 import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.response.PostResponseDto
@@ -23,7 +23,7 @@ class CreatePostService(
     fun execute(postData: PostRequestDto): PostResponseDto {
 
         userRepository.findByUserId(postData.id).orElseThrow {
-            throw NotExistIdException
+            throw NotExistUserIdException
         }
 
         val postEntity = PostEntity(

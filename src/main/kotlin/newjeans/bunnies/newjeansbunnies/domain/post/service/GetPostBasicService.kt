@@ -1,24 +1,26 @@
 package newjeans.bunnies.newjeansbunnies.domain.post.service
 
 
-import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.response.GetPostResponseDto
-import newjeans.bunnies.newjeansbunnies.domain.post.error.exception.PostNotFoundException
+import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.response.GetPostBasicResponseDto
+import newjeans.bunnies.newjeansbunnies.domain.post.error.exception.NotExistPostIdException
 import newjeans.bunnies.newjeansbunnies.domain.post.repository.PostRepository
 
 import org.springframework.context.annotation.Configuration
 
 
 @Configuration
-class GetPostListService(
+class GetPostBasicService(
     private val postRepository: PostRepository
 ) {
-    fun execute(date: String): List<GetPostResponseDto>{
-        val postListData = postRepository.findByCreateDateBefore(date).orElseThrow {
-            throw PostNotFoundException
+    fun execute(date: String): List<GetPostBasicResponseDto> {
+
+        val postListData = postRepository.findTop10ByCreateDateBefore(date).orElseThrow {
+            throw NotExistPostIdException
         }
 
+
         return postListData.map {
-            GetPostResponseDto(
+            GetPostBasicResponseDto(
                 uuid = it.uuid,
                 id = it.id,
                 body = it.body,

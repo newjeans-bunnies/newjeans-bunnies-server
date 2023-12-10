@@ -1,7 +1,7 @@
 package newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.response
 
 
-data class GetPostResponseDto(
+data class GetPostBasicResponseDto(
     val uuid: String,
     val id: String,
     val body: String,
