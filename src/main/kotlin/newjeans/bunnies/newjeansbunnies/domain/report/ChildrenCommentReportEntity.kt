@@ -5,7 +5,7 @@ import jakarta.persistence.Id
 import jakarta.persistence.Table
 
 @Entity
-@Table(name = "post_report")
+@Table(name = "children_comment_report")
 data class ChildrenCommentReportEntity(
     @Id
     val uuid: String,

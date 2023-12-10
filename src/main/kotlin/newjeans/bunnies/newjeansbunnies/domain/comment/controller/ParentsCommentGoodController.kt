@@ -3,6 +3,7 @@ package newjeans.bunnies.newjeansbunnies.domain.comment.controller
 
 import newjeans.bunnies.newjeansbunnies.domain.comment.controller.dto.response.CommentGoodResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.comment.service.ParentsCommentGoodService
+
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping

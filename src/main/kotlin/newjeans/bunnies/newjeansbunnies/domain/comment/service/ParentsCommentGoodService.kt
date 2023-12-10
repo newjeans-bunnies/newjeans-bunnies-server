@@ -1,14 +1,15 @@
 package newjeans.bunnies.newjeansbunnies.domain.comment.service
 
 
-import newjeans.bunnies.newjeansbunnies.domain.auth.error.exception.NotExistIdException
+import newjeans.bunnies.newjeansbunnies.domain.auth.error.exception.NotExistUserIdException
 import newjeans.bunnies.newjeansbunnies.domain.comment.ParentsCommentEntity
 import newjeans.bunnies.newjeansbunnies.domain.comment.ParentsCommentGoodEntity
 import newjeans.bunnies.newjeansbunnies.domain.comment.controller.dto.response.CommentGoodResponseDto
-import newjeans.bunnies.newjeansbunnies.domain.comment.error.exception.PostNotFoundException
+import newjeans.bunnies.newjeansbunnies.domain.comment.error.exception.NotExistParentsCommentIdException
 import newjeans.bunnies.newjeansbunnies.domain.comment.repository.ParentsCommentGoodRepository
 import newjeans.bunnies.newjeansbunnies.domain.comment.repository.ParentsCommentRepository
 import newjeans.bunnies.newjeansbunnies.domain.user.repository.UserRepository
+
 import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -21,15 +22,16 @@ class ParentsCommentGoodService(
     private val parentsCommentRepository: ParentsCommentRepository,
     private val userRepository: UserRepository
 ) {
+
     @Transactional
     fun execute(commentId: String, userId: String): CommentGoodResponseDto {
 
         val commentData = parentsCommentRepository.findById(commentId).orElseThrow {
-            throw PostNotFoundException
+            throw NotExistParentsCommentIdException
         }
 
         userRepository.findByUserId(userId).orElseThrow {
-            throw NotExistIdException
+            throw NotExistUserIdException
         }
 
 
@@ -56,7 +58,8 @@ class ParentsCommentGoodService(
 
         return CommentGoodResponseDto(
             commentId = commentId,
-            good = goodCount
+            good = goodCount,
+            goodStatus = !goodStatus
         )
 
     }

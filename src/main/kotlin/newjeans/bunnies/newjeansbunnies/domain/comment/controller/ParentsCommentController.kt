@@ -2,13 +2,16 @@ package newjeans.bunnies.newjeansbunnies.domain.comment.controller
 
 
 import jakarta.validation.Valid
+
 import newjeans.bunnies.newjeansbunnies.domain.comment.controller.dto.request.ParentsCommentRequestDto
-import newjeans.bunnies.newjeansbunnies.domain.comment.controller.dto.response.ParentsCommentGetResponseDto
+import newjeans.bunnies.newjeansbunnies.domain.comment.controller.dto.response.ParentsCommentBasicInfoGetResponseDto
+import newjeans.bunnies.newjeansbunnies.domain.comment.controller.dto.response.ParentsCommentDetailGetResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.comment.controller.dto.response.ParentsCommentSendResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.comment.controller.dto.response.StatusResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.comment.error.exception.CommentIdBlankException
 import newjeans.bunnies.newjeansbunnies.domain.comment.error.exception.PostIdBlankException
 import newjeans.bunnies.newjeansbunnies.domain.comment.service.ParentsCommentService
+
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.bind.annotation.*
 
@@ -19,21 +22,32 @@ import org.springframework.web.bind.annotation.*
 class ParentsCommentController(
     private val parentsCommentService: ParentsCommentService
 ) {
-    @PostMapping
+    @PostMapping("/send")
     fun sendComment(
         @RequestBody @Valid parentsCommentRequestDto: ParentsCommentRequestDto
     ): ParentsCommentSendResponseDto {
         return parentsCommentService.send(parentsCommentRequestDto)
     }
 
-    @GetMapping
-    fun getComment(
+    @GetMapping("/basic-info")
+    fun getCommentBasicInfo(
         @RequestParam("postId") postId: String
-    ): List<ParentsCommentGetResponseDto>{
+    ): List<ParentsCommentBasicInfoGetResponseDto>{
         if(postId.isBlank())
             throw PostIdBlankException
-        return parentsCommentService.get(postId)
+        return parentsCommentService.getBasicInfo(postId)
     }
+
+    @GetMapping("/detail")
+    fun getCommentDetail(
+        @RequestParam userId: String,
+        @RequestParam("postId") postId: String,
+    ): List<ParentsCommentDetailGetResponseDto>{
+        if(postId.isBlank())
+            throw PostIdBlankException
+        return parentsCommentService.getDetail(postId, userId)
+    }
+
 
     @DeleteMapping
     fun deleteComment(

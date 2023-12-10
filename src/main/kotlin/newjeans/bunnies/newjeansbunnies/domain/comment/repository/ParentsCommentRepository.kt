@@ -8,4 +8,5 @@ import java.util.*
 
 interface ParentsCommentRepository : CrudRepository<ParentsCommentEntity, String> {
     fun findByPostId(postId: String): Optional<List<ParentsCommentEntity>>
+
 }

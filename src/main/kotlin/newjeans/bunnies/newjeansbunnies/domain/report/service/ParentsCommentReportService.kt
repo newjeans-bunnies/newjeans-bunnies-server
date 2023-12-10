@@ -3,7 +3,7 @@ package newjeans.bunnies.newjeansbunnies.domain.report.service
 
 import newjeans.bunnies.newjeansbunnies.domain.auth.error.exception.NotExitstIdAndPhoneNumberException
 import newjeans.bunnies.newjeansbunnies.domain.comment.error.exception.NotExistParentsCommentIdException
-import newjeans.bunnies.newjeansbunnies.domain.comment.repository.ChildrenCommentRepository
+import newjeans.bunnies.newjeansbunnies.domain.comment.repository.ParentsCommentRepository
 import newjeans.bunnies.newjeansbunnies.domain.report.ParentsCommentReportEntity
 import newjeans.bunnies.newjeansbunnies.domain.report.controller.dto.request.ReportParentsCommentRequestDto
 import newjeans.bunnies.newjeansbunnies.domain.report.repository.ParentsCommentReportRepository
@@ -17,7 +17,7 @@ import java.util.*
 @Configuration
 class ParentsCommentReportService(
     private val parentsCommentReportRepository: ParentsCommentReportRepository,
-    private val parentsCommentRepository: ChildrenCommentRepository,
+    private val parentsCommentRepository: ParentsCommentRepository,
     private val userRepository: UserRepository
 ) {
     fun execute(reportParentsCommentRequestDto: ReportParentsCommentRequestDto) {
@@ -26,7 +26,7 @@ class ParentsCommentReportService(
             throw NotExitstIdAndPhoneNumberException
         }
 
-        parentsCommentRepository.findById(reportParentsCommentRequestDto.userId).orElseThrow {
+        parentsCommentRepository.findById(reportParentsCommentRequestDto.parentsCommentId).orElseThrow {
             throw NotExistParentsCommentIdException
         }
 

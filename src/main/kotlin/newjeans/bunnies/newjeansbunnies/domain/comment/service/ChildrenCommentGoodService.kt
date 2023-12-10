@@ -1,7 +1,7 @@
 package newjeans.bunnies.newjeansbunnies.domain.comment.service
 
 
-import newjeans.bunnies.newjeansbunnies.domain.auth.error.exception.NotExistIdException
+import newjeans.bunnies.newjeansbunnies.domain.auth.error.exception.NotExistUserIdException
 import newjeans.bunnies.newjeansbunnies.domain.comment.ChildrenCommentEntity
 import newjeans.bunnies.newjeansbunnies.domain.comment.ChildrenCommentGoodEntity
 import newjeans.bunnies.newjeansbunnies.domain.comment.controller.dto.response.CommentGoodResponseDto
@@ -29,7 +29,7 @@ class ChildrenCommentGoodService(
         }
 
         userRepository.findByUserId(userId).orElseThrow {
-            throw NotExistIdException
+            throw NotExistUserIdException
         }
 
         val goodStatus = childrenCommentGoodRepository.existsByChildrenCommentIdAndUserId(commentId, userId)
@@ -60,7 +60,8 @@ class ChildrenCommentGoodService(
 
         return CommentGoodResponseDto(
             commentId = commentId,
-            good = goodCount
+            good = goodCount,
+            goodStatus = !goodStatus
         )
 
     }

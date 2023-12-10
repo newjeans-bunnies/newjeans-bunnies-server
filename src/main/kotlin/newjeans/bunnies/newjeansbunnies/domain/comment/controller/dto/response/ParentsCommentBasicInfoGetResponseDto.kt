@@ -1,11 +1,12 @@
 package newjeans.bunnies.newjeansbunnies.domain.comment.controller.dto.response
 
 
-data class ChildrenCommentGetResponseDto(
+
+data class ParentsCommentBasicInfoGetResponseDto(
     val uuid: String,
     val id: String,
     val body: String,
-    val good: Long,
-    val parentsCommentId: String,
-    val createDate: String
+    val postId: String,
+    val createDate: String,
+    val good: Long
 )
