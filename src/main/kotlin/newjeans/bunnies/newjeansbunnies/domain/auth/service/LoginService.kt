@@ -4,7 +4,7 @@ package newjeans.bunnies.newjeansbunnies.domain.auth.service
 import newjeans.bunnies.newjeansbunnies.domain.auth.controller.dto.TokenDto
 import newjeans.bunnies.newjeansbunnies.domain.auth.controller.dto.request.LoginRequestDto
 import newjeans.bunnies.newjeansbunnies.domain.auth.error.exception.InvalidPasswordException
-import newjeans.bunnies.newjeansbunnies.domain.auth.error.exception.NotExistIdException
+import newjeans.bunnies.newjeansbunnies.domain.auth.error.exception.NotExistUserIdException
 import newjeans.bunnies.newjeansbunnies.domain.user.repository.UserRepository
 import newjeans.bunnies.newjeansbunnies.global.security.jwt.JwtProvider
 
@@ -23,7 +23,7 @@ class LoginService(
     fun execute(data: LoginRequestDto): TokenDto {
 
         val userData = userRepository.findByUserId(data.userId).orElseThrow {
-            throw NotExistIdException
+            throw NotExistUserIdException
         }
 
         val password = userData.password
