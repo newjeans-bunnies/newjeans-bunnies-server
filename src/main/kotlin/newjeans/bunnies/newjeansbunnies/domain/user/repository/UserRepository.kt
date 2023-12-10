@@ -10,5 +10,7 @@ interface UserRepository: CrudRepository<UserEntity, String> {
 
     fun findByUserId(userId: String): Optional<UserEntity>
 
+    fun findByUserIdAndPhoneNumber(userId: String, phoneNumber: String): Optional<UserEntity>
+
     fun findByPhoneNumber(phoneNumber: String): Optional<UserEntity>
 }
