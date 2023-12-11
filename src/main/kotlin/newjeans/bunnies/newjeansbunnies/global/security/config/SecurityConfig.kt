@@ -41,7 +41,10 @@ class SecurityConfig(
                 authorize.requestMatchers(HttpMethod.POST, "/api/post/good").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
                 authorize.requestMatchers(HttpMethod.POST, "/api/post").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
                 authorize.requestMatchers(HttpMethod.GET, "/api/post/detail/**").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
+                authorize.requestMatchers(HttpMethod.GET, "/api/post/user/detail/**").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
                 authorize.requestMatchers(HttpMethod.GET, "/api/post/basic-info/**").permitAll()
+                authorize.requestMatchers(HttpMethod.GET, "/api/post/user/basic-info/**").permitAll()
+                authorize.requestMatchers(HttpMethod.DELETE, "/api/post").permitAll()
 
 
                 //parentsComment

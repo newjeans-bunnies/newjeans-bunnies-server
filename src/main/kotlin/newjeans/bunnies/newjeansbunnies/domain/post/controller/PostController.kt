@@ -34,14 +34,6 @@ class PostController(
         return createPostService.execute(postRequestDto)
     }
 
-    @GetMapping("/basic-info/{userId}")
-    fun getUserPostBasicInfoList(
-        @PathVariable userId: String,
-        @RequestParam createDate: String
-    ): List<GetPostBasicResponseDto> {
-        return getUserPostBasicInfoService.execute(userId, createDate)
-    }
-
     @GetMapping("/basic-info")
     fun getPostBasicInfoList(
         @RequestParam date: String
@@ -57,13 +49,22 @@ class PostController(
         return getPostDetailService.execute(date, userId)
     }
 
-    @GetMapping("/basic-info/{userId}")
+    @GetMapping("/user/detail/{userId}")
     fun getUserPostDetailList(
         @PathVariable userId: String,
         @RequestParam date: String
     ): List<GetPostDetailResponseDto> {
         return getUserPostDetailService.execute(date, userId)
     }
+
+    @GetMapping("/user/basic-info/{userId}")
+    fun getUserPostBasicInfoList(
+        @PathVariable userId: String,
+        @RequestParam date: String
+    ): List<GetPostBasicResponseDto> {
+        return getUserPostBasicInfoService.execute(userId, date)
+    }
+
 
     @GetMapping("/basic-info/{uuid}")
     fun getPostBasicInfo(
@@ -81,7 +82,7 @@ class PostController(
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping("/delete")
+    @DeleteMapping
     fun deletePost(
         @RequestParam postId: String
     ): StatusResponseDto {
