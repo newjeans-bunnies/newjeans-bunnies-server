@@ -14,5 +14,5 @@ data class PostImageEntity(
     @Column(name = "create_date")
     val createDate: String,
     @Column(name = "post_uuid")
-    val postUUID: String
+    val postId: String
 )

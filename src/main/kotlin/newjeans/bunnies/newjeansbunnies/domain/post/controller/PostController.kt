@@ -7,12 +7,11 @@ import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.request.PostR
 import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.response.GetPostBasicResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.response.GetPostDetailResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.response.PostResponseDto
-import newjeans.bunnies.newjeansbunnies.domain.post.service.CreatePostService
-import newjeans.bunnies.newjeansbunnies.domain.post.service.GetPostBasicService
-import newjeans.bunnies.newjeansbunnies.domain.post.service.GetPostDetailService
-import newjeans.bunnies.newjeansbunnies.domain.post.service.GetPostService
+import newjeans.bunnies.newjeansbunnies.domain.post.service.*
+import newjeans.bunnies.newjeansbunnies.global.response.StatusResponseDto
 
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 
 
@@ -23,7 +22,8 @@ class PostController(
     private val createPostService: CreatePostService,
     private val getPostBasicInfoService: GetPostBasicService,
     private val getPostDetailService: GetPostDetailService,
-    private val getPostService: GetPostService
+    private val getPostService: GetPostService,
+    private val deletePostService: DeletePostService
 ) {
     @PostMapping
     fun makePost(
@@ -43,9 +43,10 @@ class PostController(
     fun getPostDetailList(
         @RequestParam date: String,
         @RequestParam userId: String
-        ): List<GetPostDetailResponseDto>{
+    ): List<GetPostDetailResponseDto> {
         return getPostDetailService.execute(date, userId)
     }
+
     @GetMapping("/basic-info/{uuid}")
     fun getPostBasicInfo(
         @PathVariable("uuid") id: String
@@ -60,5 +61,11 @@ class PostController(
     ): GetPostDetailResponseDto {
         return getPostService.getPostDetail(id, userId)
     }
-
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/delete")
+    fun deletePost(
+        @RequestParam postId: String
+    ): StatusResponseDto {
+        return deletePostService.deletePostByPostId(postId)
+    }
 }

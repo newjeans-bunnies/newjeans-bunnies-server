@@ -28,7 +28,7 @@ class CreatePostService(
 
         val postEntity = PostEntity(
             uuid = UUID.randomUUID().toString(),
-            id = postData.id,
+            userId = postData.id,
             body = postData.body,
             createDate = LocalDateTime.now().toString(),
             good = 0

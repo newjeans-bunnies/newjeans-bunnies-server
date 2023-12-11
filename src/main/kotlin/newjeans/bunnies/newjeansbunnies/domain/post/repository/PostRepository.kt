@@ -8,4 +8,10 @@ import java.util.*
 
 interface PostRepository: CrudRepository<PostEntity, String> {
     fun findTop10ByCreateDateBefore(createDate: String): Optional<List<PostEntity>>
+
+    fun findByUserId(userId: String): Optional<List<PostEntity>>
+
+    fun existsByUuid(postId: String): Boolean
+
+    fun deleteByUserId(userId: String)
 }

@@ -42,7 +42,7 @@ class PostGoodService(
         postRepository.save(
             PostEntity(
                 uuid = postData.uuid,
-                id = postData.id,
+                userId = postData.userId,
                 body = postData.body,
                 createDate = postData.createDate,
                 good = goodCount

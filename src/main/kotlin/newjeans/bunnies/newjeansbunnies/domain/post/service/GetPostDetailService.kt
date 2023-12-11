@@ -30,7 +30,7 @@ class GetPostDetailService(
         return postListData.map {
             GetPostDetailResponseDto(
                 uuid = it.uuid,
-                id = it.id,
+                id = it.userId,
                 body = it.body,
                 good = it.good,
                 goodStatus = postGoodRepository.existsByUserIdAndPostId(userId, it.uuid),

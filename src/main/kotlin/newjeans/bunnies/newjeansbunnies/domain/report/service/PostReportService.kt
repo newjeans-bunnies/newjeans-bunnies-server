@@ -32,7 +32,7 @@ class PostReportService(
         postReportRepository.save(
             PostReportEntity(
                 uuid = UUID.randomUUID().toString(),
-                id = reportPostRequestDto.id,
+                userId = reportPostRequestDto.id,
                 phoneNumber = reportPostRequestDto.phoneNumber,
                 postId = reportPostRequestDto.postId
             )

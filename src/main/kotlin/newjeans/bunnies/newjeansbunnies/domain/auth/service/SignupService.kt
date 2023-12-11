@@ -65,7 +65,6 @@ class SignupService(
                 imageUrl = imageUrl,
                 country = data.country,
                 language = data.language,
-                birth = data.birth
             )
             userEntity.hashPassword(passwordEncoder)
             userRepository.save(userEntity)
@@ -86,7 +85,6 @@ class SignupService(
             imageUrl = null,
             country = data.country,
             language = data.language,
-            birth = data.birth
         )
         userEntity.hashPassword(passwordEncoder)
         userRepository.save(userEntity)

@@ -45,7 +45,7 @@ class WebConfig(
         //user
         registry.addMapping("/api/user/**")
             .allowedOriginPatterns(*allowedOrigins)
-            .allowedMethods("GET","PATCH")
+            .allowedMethods("GET","PATCH","DELETE")
 
         //report
         registry.addMapping("/api/report/**")

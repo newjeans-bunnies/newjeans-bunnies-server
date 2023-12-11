@@ -22,7 +22,7 @@ class GetPostBasicService(
         return postListData.map {
             GetPostBasicResponseDto(
                 uuid = it.uuid,
-                id = it.id,
+                id = it.userId,
                 body = it.body,
                 good = it.good,
                 createDate = it.createDate

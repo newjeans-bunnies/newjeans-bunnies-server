@@ -11,7 +11,7 @@ import jakarta.persistence.Table
 data class PostEntity(
     @Id
     val uuid: String,
-    val id: String,
+    val userId: String,
     val body: String,
     val createDate: String,
     val good: Long
