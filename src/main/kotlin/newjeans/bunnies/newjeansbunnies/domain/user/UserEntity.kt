@@ -4,6 +4,7 @@ package newjeans.bunnies.newjeansbunnies.domain.user
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.Table
+
 import org.springframework.security.crypto.password.PasswordEncoder
 
 
@@ -16,7 +17,6 @@ data class UserEntity(
     var password: String,
     val phoneNumber: String,
     val language: String,
-    val birth: String,
     val imageUrl: String?,
     val country: String
 ){

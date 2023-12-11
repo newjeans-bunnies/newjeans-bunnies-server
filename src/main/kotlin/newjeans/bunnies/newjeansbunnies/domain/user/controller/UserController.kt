@@ -2,16 +2,18 @@ package newjeans.bunnies.newjeansbunnies.domain.user.controller
 
 
 import jakarta.validation.Valid
-
 import newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.request.UserUpdateRequestDto
 import newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.response.UserDataBasicInfoResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.response.UserDataDetailsResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.response.UserUpdateResponseDto
+import newjeans.bunnies.newjeansbunnies.domain.user.error.exception.BlankUserIdException
+import newjeans.bunnies.newjeansbunnies.domain.user.service.DeleteUserService
 import newjeans.bunnies.newjeansbunnies.domain.user.service.UserDataBasicInfoService
 import newjeans.bunnies.newjeansbunnies.domain.user.service.UserDataDetailsService
 import newjeans.bunnies.newjeansbunnies.domain.user.service.UserUpdateService
-
+import newjeans.bunnies.newjeansbunnies.global.response.StatusResponseDto
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 
 
@@ -21,27 +23,42 @@ import org.springframework.web.bind.annotation.*
 class UserController(
     private val userDataDetailsService: UserDataDetailsService,
     private val userDataBasicInfoService: UserDataBasicInfoService,
-    private val userUpdateService: UserUpdateService
+    private val userUpdateService: UserUpdateService,
+    private val deleteUserService: DeleteUserService
 ) {
-    @GetMapping("/get-detail/{id}")
+    @GetMapping("/get-detail/{userId}")
     fun getUserDetails(
-        @PathVariable id: String,
+        @PathVariable userId: String,
         @RequestHeader("Authorization") token: String
     ): UserDataDetailsResponseDto {
-        return userDataDetailsService.execute(id, token)
+        return userDataDetailsService.execute(userId, token)
     }
-    @GetMapping("/get-basic/{id}")
+
+    @GetMapping("/get-basic/{userId}")
     fun getUserBasicInfo(
-        @PathVariable id: String,
+        @PathVariable userId: String,
     ): UserDataBasicInfoResponseDto {
-        return userDataBasicInfoService.execute(id)
+        return userDataBasicInfoService.execute(userId)
     }
 
     @PatchMapping("/update")
     fun updateUser(
         @RequestBody @Valid userUpdateRequestDto: UserUpdateRequestDto,
-        @RequestParam id: String
+        @RequestParam userId: String
     ): UserUpdateResponseDto {
-        return userUpdateService.execute(id, userUpdateRequestDto)
+        if(userId.isBlank())
+            throw BlankUserIdException
+        return userUpdateService.execute(userId, userUpdateRequestDto)
+    }
+
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/delete")
+    fun deleteUser(
+        @RequestParam userId: String
+    ): StatusResponseDto {
+        if(userId.isBlank())
+            throw BlankUserIdException
+        return deleteUserService.execute(userId)
     }
 }
