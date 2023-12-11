@@ -9,7 +9,7 @@ import jakarta.persistence.Table
 data class ParentsCommentReportEntity(
     @Id
     val uuid: String,
-    val id: String,
+    val userId: String,
     val phoneNumber: String,
     val parentsCommentId: String
 )

@@ -2,8 +2,8 @@ package newjeans.bunnies.newjeansbunnies.domain.report.service
 
 
 import newjeans.bunnies.newjeansbunnies.domain.auth.error.exception.NotExitstIdAndPhoneNumberException
-import newjeans.bunnies.newjeansbunnies.domain.comment.error.exception.NotExistChildrenCommentIdException
-import newjeans.bunnies.newjeansbunnies.domain.comment.repository.ChildrenCommentRepository
+import newjeans.bunnies.newjeansbunnies.domain.children_comment.error.exception.NotExistChildrenCommentIdException
+import newjeans.bunnies.newjeansbunnies.domain.children_comment.repository.ChildrenCommentRepository
 import newjeans.bunnies.newjeansbunnies.domain.report.ChildrenCommentReportEntity
 import newjeans.bunnies.newjeansbunnies.domain.report.controller.dto.request.ReportChildrenCommentRequestDto
 import newjeans.bunnies.newjeansbunnies.domain.report.repository.ChildrenCommentReportRepository
@@ -33,7 +33,7 @@ class ChildrenCommentReportService(
         childrenCommentReportRepository.save(
             ChildrenCommentReportEntity(
                 uuid = UUID.randomUUID().toString(),
-                id = reportChildrenCommentRequestDto.userId,
+                userId = reportChildrenCommentRequestDto.userId,
                 phoneNumber = reportChildrenCommentRequestDto.phoneNumber,
                 childrenCommentId = reportChildrenCommentRequestDto.childrenCommentId
             )
