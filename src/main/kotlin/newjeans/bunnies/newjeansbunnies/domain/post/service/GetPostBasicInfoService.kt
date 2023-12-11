@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration
 
 
 @Configuration
-class GetPostBasicService(
+class GetPostBasicInfoService(
     private val postRepository: PostRepository
 ) {
     fun execute(date: String): List<GetPostBasicResponseDto> {
@@ -22,7 +22,7 @@ class GetPostBasicService(
         return postListData.map {
             GetPostBasicResponseDto(
                 uuid = it.uuid,
-                id = it.userId,
+                userId = it.userId,
                 body = it.body,
                 good = it.good,
                 createDate = it.createDate

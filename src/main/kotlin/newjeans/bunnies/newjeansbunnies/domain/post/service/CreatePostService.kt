@@ -22,13 +22,13 @@ class CreatePostService(
 ) {
     fun execute(postData: PostRequestDto): PostResponseDto {
 
-        userRepository.findByUserId(postData.id).orElseThrow {
+        userRepository.findByUserId(postData.userId).orElseThrow {
             throw NotExistUserIdException
         }
 
         val postEntity = PostEntity(
             uuid = UUID.randomUUID().toString(),
-            userId = postData.id,
+            userId = postData.userId,
             body = postData.body,
             createDate = LocalDateTime.now().toString(),
             good = 0

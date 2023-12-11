@@ -24,7 +24,7 @@ class GetPostService(
 
         return GetPostBasicResponseDto(
             uuid = postData.uuid,
-            id = postData.userId,
+            userId = postData.userId,
             body = postData.body,
             createDate = postData.createDate,
             good = postData.good
@@ -38,7 +38,7 @@ class GetPostService(
 
         return GetPostDetailResponseDto(
             uuid = postData.uuid,
-            id = postData.userId,
+            userId = postData.userId,
             body = postData.body,
             createDate = postData.createDate,
             good = postData.good,

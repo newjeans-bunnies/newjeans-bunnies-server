@@ -19,8 +19,10 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/post")
 @Configuration
 class PostController(
+    private val getUserPostBasicInfoService: GetUserPostBasicInfoService,
+    private val getUserPostDetailService: GetUserPostDetailService,
     private val createPostService: CreatePostService,
-    private val getPostBasicInfoService: GetPostBasicService,
+    private val getPostBasicInfoService: GetPostBasicInfoService,
     private val getPostDetailService: GetPostDetailService,
     private val getPostService: GetPostService,
     private val deletePostService: DeletePostService
@@ -30,6 +32,14 @@ class PostController(
         @RequestBody @Valid postRequestDto: PostRequestDto
     ): PostResponseDto {
         return createPostService.execute(postRequestDto)
+    }
+
+    @GetMapping("/basic-info/{userId}")
+    fun getUserPostBasicInfoList(
+        @PathVariable userId: String,
+        @RequestParam createDate: String
+    ): List<GetPostBasicResponseDto> {
+        return getUserPostBasicInfoService.execute(userId, createDate)
     }
 
     @GetMapping("/basic-info")
@@ -47,6 +57,14 @@ class PostController(
         return getPostDetailService.execute(date, userId)
     }
 
+    @GetMapping("/basic-info/{userId}")
+    fun getUserPostDetailList(
+        @PathVariable userId: String,
+        @RequestParam date: String
+    ): List<GetPostDetailResponseDto> {
+        return getUserPostDetailService.execute(date, userId)
+    }
+
     @GetMapping("/basic-info/{uuid}")
     fun getPostBasicInfo(
         @PathVariable("uuid") id: String
@@ -61,6 +79,7 @@ class PostController(
     ): GetPostDetailResponseDto {
         return getPostService.getPostDetail(id, userId)
     }
+
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/delete")
     fun deletePost(

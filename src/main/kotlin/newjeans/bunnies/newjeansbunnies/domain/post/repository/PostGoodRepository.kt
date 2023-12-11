@@ -14,4 +14,6 @@ interface PostGoodRepository: CrudRepository<PostGoodEntity, Long> {
     fun deleteByUserIdAndPostId(userId: String, postId: String)
 
     fun deleteByPostId(postId: String)
+
+    
 }

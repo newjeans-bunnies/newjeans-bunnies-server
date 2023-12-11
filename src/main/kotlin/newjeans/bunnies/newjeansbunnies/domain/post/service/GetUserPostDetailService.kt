@@ -1,33 +1,23 @@
 package newjeans.bunnies.newjeansbunnies.domain.post.service
 
-
 import newjeans.bunnies.newjeansbunnies.domain.auth.error.exception.NotExistUserIdException
 import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.response.GetPostDetailResponseDto
-import newjeans.bunnies.newjeansbunnies.domain.post.error.exception.NotExistPostIdException
 import newjeans.bunnies.newjeansbunnies.domain.post.repository.PostGoodRepository
 import newjeans.bunnies.newjeansbunnies.domain.post.repository.PostRepository
-import newjeans.bunnies.newjeansbunnies.domain.user.repository.UserRepository
 import org.springframework.context.annotation.Configuration
+import org.springframework.stereotype.Service
 
-
+@Service
 @Configuration
-class GetPostDetailService(
+class GetUserPostDetailService(
     private val postRepository: PostRepository,
-    private val postGoodRepository: PostGoodRepository,
-    private val userRepository: UserRepository
+    private val postGoodRepository: PostGoodRepository
 ) {
-
     fun execute(date: String, userId: String): List<GetPostDetailResponseDto> {
-
-        userRepository.findByUserId(userId).orElseThrow{
+        val postDataList = postRepository.findTop10ByUserIdAndCreateDateBefore(userId, date).orElseThrow {
             throw NotExistUserIdException
         }
-
-        val postListData = postRepository.findTop10ByCreateDateBefore(date).orElseThrow {
-            throw NotExistPostIdException
-        }
-
-        return postListData.map {
+        return postDataList.map {
             GetPostDetailResponseDto(
                 uuid = it.uuid,
                 userId = it.userId,
