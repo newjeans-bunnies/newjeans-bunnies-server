@@ -44,7 +44,7 @@ class SecurityConfig(
                 authorize.requestMatchers(HttpMethod.GET, "/api/post/user/detail/**").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
                 authorize.requestMatchers(HttpMethod.GET, "/api/post/basic-info/**").permitAll()
                 authorize.requestMatchers(HttpMethod.GET, "/api/post/user/basic-info/**").permitAll()
-                authorize.requestMatchers(HttpMethod.DELETE, "/api/post").permitAll()
+                authorize.requestMatchers(HttpMethod.DELETE, "/api/post").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
 
 
                 //parentsComment
@@ -76,7 +76,7 @@ class SecurityConfig(
                 authorize.requestMatchers(HttpMethod.GET,"/api/user/get-detail/**").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
                 authorize.requestMatchers(HttpMethod.GET,"api/user/get-basic/**").permitAll()
                 authorize.requestMatchers(HttpMethod.PATCH,"/api/user/update").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
-                authorize.requestMatchers(HttpMethod.DELETE,"/api/user/delete").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
+                authorize.requestMatchers(HttpMethod.DELETE,"/api/user").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
 
 
                 //report

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import newjeans.bunnies.newjeansbunnies.global.filter.GlobalExceptionFilter
 import newjeans.bunnies.newjeansbunnies.global.filter.JwtFilter
 import newjeans.bunnies.newjeansbunnies.global.security.jwt.JwtParser
+
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.web.DefaultSecurityFilterChain
