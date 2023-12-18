@@ -45,7 +45,6 @@ class UserUpdateService(
         if (userId != userUpdateRequestDto.userId && userRepository.findByUserId(userUpdateRequestDto.userId).isPresent)
             throw ExistIdException //이미 존재하는 아이디
 
-
         if (userRepository.findByPhoneNumber(userUpdateRequestDto.phoneNumber).isPresent && userUpdateRequestDto.phoneNumber != userData.phoneNumber)
             throw ExistPhoneNumberException //이미 존재하는 전화번호
 
@@ -56,10 +55,8 @@ class UserUpdateService(
             throw LanguageNotFoundException //지원 하지 않거나 존재하지 않는 나라
 
         //기존의 이미지가 널이 아닐경우
-        if (userData.imageUrl != null) {
+        if (userData.imageUrl != null)
             userImageService.deleteUserImage(userData.imageUrl, userId)
-        }
-
 
         if (!userUpdateRequestDto.imageName.isNullOrBlank()) {
 
@@ -86,6 +83,7 @@ class UserUpdateService(
                 language = userUpdateRequestDto.language,
             )
         )
+
         return UserUpdateResponseDto(
             id = userUpdateRequestDto.userId,
             phoneNumber = userUpdateRequestDto.phoneNumber,

@@ -2,6 +2,7 @@ package newjeans.bunnies.newjeansbunnies.domain.user.controller
 
 
 import jakarta.validation.Valid
+
 import newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.request.UserUpdateRequestDto
 import newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.response.UserDataBasicInfoResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.response.UserDataDetailsResponseDto
@@ -12,6 +13,7 @@ import newjeans.bunnies.newjeansbunnies.domain.user.service.UserDataBasicInfoSer
 import newjeans.bunnies.newjeansbunnies.domain.user.service.UserDataDetailsService
 import newjeans.bunnies.newjeansbunnies.domain.user.service.UserUpdateService
 import newjeans.bunnies.newjeansbunnies.global.response.StatusResponseDto
+
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
@@ -53,7 +55,7 @@ class UserController(
 
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping("/delete")
+    @DeleteMapping
     fun deleteUser(
         @RequestParam userId: String
     ): StatusResponseDto {
