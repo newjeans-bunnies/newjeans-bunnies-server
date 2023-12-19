@@ -77,6 +77,7 @@ class SecurityConfig(
                 authorize.requestMatchers(HttpMethod.GET,"api/user/get-basic/**").permitAll()
                 authorize.requestMatchers(HttpMethod.PATCH,"/api/user/update").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
                 authorize.requestMatchers(HttpMethod.DELETE,"/api/user").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
+                authorize.requestMatchers(HttpMethod.GET,"/api/user").permitAll()
 
 
                 //report

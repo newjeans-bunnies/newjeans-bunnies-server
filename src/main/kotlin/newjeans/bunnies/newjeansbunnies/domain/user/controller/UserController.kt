@@ -8,10 +8,7 @@ import newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.response.User
 import newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.response.UserDataDetailsResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.response.UserUpdateResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.user.error.exception.BlankUserIdException
-import newjeans.bunnies.newjeansbunnies.domain.user.service.DeleteUserService
-import newjeans.bunnies.newjeansbunnies.domain.user.service.UserDataBasicInfoService
-import newjeans.bunnies.newjeansbunnies.domain.user.service.UserDataDetailsService
-import newjeans.bunnies.newjeansbunnies.domain.user.service.UserUpdateService
+import newjeans.bunnies.newjeansbunnies.domain.user.service.*
 import newjeans.bunnies.newjeansbunnies.global.response.StatusResponseDto
 
 import org.springframework.context.annotation.Configuration
@@ -26,7 +23,8 @@ class UserController(
     private val userDataDetailsService: UserDataDetailsService,
     private val userDataBasicInfoService: UserDataBasicInfoService,
     private val userUpdateService: UserUpdateService,
-    private val deleteUserService: DeleteUserService
+    private val deleteUserService: DeleteUserService,
+    private val userCheckService: UserCheckService
 ) {
     @GetMapping("/get-detail/{userId}")
     fun getUserDetails(
@@ -48,9 +46,16 @@ class UserController(
         @RequestBody @Valid userUpdateRequestDto: UserUpdateRequestDto,
         @RequestParam userId: String
     ): UserUpdateResponseDto {
-        if(userId.isBlank())
+        if (userId.isBlank())
             throw BlankUserIdException
         return userUpdateService.execute(userId, userUpdateRequestDto)
+    }
+
+    @GetMapping
+    fun checkUser(
+        @RequestParam userId: String
+    ): StatusResponseDto {
+        return userCheckService.execute(userId)
     }
 
 
@@ -59,7 +64,7 @@ class UserController(
     fun deleteUser(
         @RequestParam userId: String
     ): StatusResponseDto {
-        if(userId.isBlank())
+        if (userId.isBlank())
             throw BlankUserIdException
         return deleteUserService.execute(userId)
     }
