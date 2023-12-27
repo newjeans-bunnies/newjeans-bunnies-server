@@ -55,6 +55,8 @@ class UserController(
     fun checkUser(
         @RequestParam userId: String
     ): StatusResponseDto {
+        if(userId.isBlank())
+            throw BlankUserIdException
         return userCheckService.execute(userId)
     }
 
