@@ -6,5 +6,5 @@ import newjeans.bunnies.newjeansbunnies.global.error.custom.CustomException
 
 
 object ExistIdException: CustomException(
-    AuthErrorCode.EXIST_ID_EXCEPTION
+    AuthErrorCode.EXIST_USER_ID_EXCEPTION
 )
