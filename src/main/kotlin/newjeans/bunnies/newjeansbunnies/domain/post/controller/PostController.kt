@@ -1,18 +1,16 @@
 package newjeans.bunnies.newjeansbunnies.domain.post.controller
 
 
-import jakarta.validation.Valid
-
 import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.request.PostRequestDto
 import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.response.GetPostBasicResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.response.GetPostDetailResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.response.PostResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.post.service.*
 import newjeans.bunnies.newjeansbunnies.global.response.StatusResponseDto
-
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 
 
 @RestController
@@ -29,9 +27,11 @@ class PostController(
 ) {
     @PostMapping
     fun makePost(
-        @RequestBody @Valid postRequestDto: PostRequestDto
+        @RequestPart("uploadFiles") multipartFiles: List<MultipartFile>,
+        @ModelAttribute postRequestDto: PostRequestDto
     ): PostResponseDto {
-        return createPostService.execute(postRequestDto)
+//        val postRequestDto = PostRequestDto("HamTory","안녕하세요")
+        return createPostService.execute(postRequestDto, multipartFiles)
     }
 
     @GetMapping("/basic-info")
