@@ -27,12 +27,11 @@ class UserController(
     private val deleteUserService: DeleteUserService,
     private val userCheckService: UserCheckService
 ) {
-    @GetMapping("/get-detail/{userId}")
+    @GetMapping("/get-detail")
     fun getUserDetails(
-        @PathVariable userId: String,
         @RequestHeader("Authorization") token: String
     ): UserDataDetailsResponseDto {
-        return userDataDetailsService.execute(userId, token)
+        return userDataDetailsService.execute(token)
     }
 
     @GetMapping("/get-basic/{userId}")

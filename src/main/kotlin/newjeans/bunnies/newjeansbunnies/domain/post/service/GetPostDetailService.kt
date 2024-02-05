@@ -19,7 +19,7 @@ class GetPostDetailService(
 
     fun execute(date: String, userId: String): List<GetPostDetailResponseDto> {
 
-        userRepository.findByUserId(userId).orElseThrow{
+        userRepository.findByUserId(userId).orElseThrow {
             throw NotExistUserIdException
         }
 
