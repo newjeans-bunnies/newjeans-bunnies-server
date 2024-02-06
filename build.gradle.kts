@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("org.springframework.boot") version "3.1.5"
@@ -44,19 +43,11 @@ dependencies {
 
     implementation("org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE")
 
-    runtimeOnly("org.mariadb.jdbc:mariadb-java-client:3.1.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+
+
+    runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test:3.1.0")
     testImplementation("org.springframework.security:spring-security-test:6.0.2")
-}
-
-tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        freeCompilerArgs += "-Xjsr305=strict"
-        jvmTarget = "17"
-    }
-}
-
-tasks.withType<Test> {
-    useJUnitPlatform()
 }
