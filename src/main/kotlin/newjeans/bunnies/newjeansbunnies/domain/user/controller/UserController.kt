@@ -2,7 +2,6 @@ package newjeans.bunnies.newjeansbunnies.domain.user.controller
 
 
 import jakarta.validation.Valid
-
 import newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.request.UserUpdateRequestDto
 import newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.response.UserDataBasicInfoResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.response.UserDataDetailsResponseDto
@@ -11,10 +10,10 @@ import newjeans.bunnies.newjeansbunnies.domain.user.error.exception.BlankPhoneNu
 import newjeans.bunnies.newjeansbunnies.domain.user.error.exception.BlankUserIdException
 import newjeans.bunnies.newjeansbunnies.domain.user.service.*
 import newjeans.bunnies.newjeansbunnies.global.response.StatusResponseDto
-
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 
 
 @RestController
@@ -43,12 +42,13 @@ class UserController(
 
     @PatchMapping("/update")
     fun updateUser(
-        @RequestBody @Valid userUpdateRequestDto: UserUpdateRequestDto,
-        @RequestParam userId: String
+        @ModelAttribute @Valid userUpdateRequestDto: UserUpdateRequestDto,
+        @RequestParam userId: String,
+        @RequestPart("uploadFiles") multipartFiles: MultipartFile?,
     ): UserUpdateResponseDto {
         if (userId.isBlank())
             throw BlankUserIdException
-        return userUpdateService.execute(userId, userUpdateRequestDto)
+        return userUpdateService.execute(userId, userUpdateRequestDto, multipartFiles)
     }
 
     @GetMapping("/check/userid")
