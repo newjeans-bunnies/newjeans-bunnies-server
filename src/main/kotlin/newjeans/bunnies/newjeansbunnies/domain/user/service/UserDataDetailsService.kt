@@ -26,7 +26,7 @@ class UserDataDetailsService(
             val claims = jwtParser.getClaims(token.substring(PREFIX.length))
             try {
                 val id: String = claims.body["jti"].toString()
-                val userData = userRepository.findByUserId(id).orElseThrow {
+                val userData = userRepository.findByUuid(id).orElseThrow {
                     throw InvalidTokenException
                 }
                 return UserDataDetailsResponseDto(

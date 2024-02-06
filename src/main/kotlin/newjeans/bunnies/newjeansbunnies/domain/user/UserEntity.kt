@@ -19,8 +19,8 @@ data class UserEntity(
     val language: String,
     val imageUrl: String?,
     val country: String
-){
-    fun hashPassword(passwordEncoder: PasswordEncoder){
+) {
+    fun hashPassword(passwordEncoder: PasswordEncoder) {
         this.password = passwordEncoder.encode(this.password)
     }
 

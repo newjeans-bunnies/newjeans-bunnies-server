@@ -42,12 +42,13 @@ class UserController(
 
     @PatchMapping("/update")
     fun updateUser(
+        @RequestParam("userid") userId: String,
         @ModelAttribute @Valid userUpdateRequestDto: UserUpdateRequestDto,
-        @RequestParam userId: String,
         @RequestPart("uploadFiles") multipartFiles: MultipartFile?,
     ): UserUpdateResponseDto {
         if (userId.isBlank())
             throw BlankUserIdException
+        println(userId)
         return userUpdateService.execute(userId, userUpdateRequestDto, multipartFiles)
     }
 

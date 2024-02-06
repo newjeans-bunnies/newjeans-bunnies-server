@@ -16,7 +16,8 @@ import org.springframework.stereotype.Service
 class DeleteUserService(
     private val userRepository: UserRepository,
     private val deletePostService: DeletePostService,
-    private val refreshTokenRepository: RefreshTokenRepository
+    private val refreshTokenRepository: RefreshTokenRepository,
+    private val deleteUserImageService: DeleteUserImageService
 ) {
     @Transactional
     fun execute(userId: String): StatusResponseDto {
@@ -28,6 +29,8 @@ class DeleteUserService(
 
         //유저 지우기
         userRepository.deleteByUserId(userId)
+        //유저
+        deleteUserImageService.execute(userData.uuid)
 
         refreshTokenRepository.deleteById(userData.uuid)
 

@@ -9,7 +9,6 @@ import newjeans.bunnies.newjeansbunnies.domain.auth.error.exception.CountryNotFo
 import newjeans.bunnies.newjeansbunnies.domain.auth.error.exception.ExistIdException
 import newjeans.bunnies.newjeansbunnies.domain.auth.error.exception.LanguageNotFoundException
 import newjeans.bunnies.newjeansbunnies.domain.auth.error.exception.NotExistUserIdException
-import newjeans.bunnies.newjeansbunnies.domain.image.service.UserImageService
 import newjeans.bunnies.newjeansbunnies.domain.user.UserEntity
 import newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.request.UserUpdateRequestDto
 import newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.response.UserUpdateResponseDto
@@ -34,7 +33,6 @@ class UserUpdateService(
     private val awsS3Config: AwsS3Config,
     @Value("\${support.fileFormat}")
     private val fileFormat: String,
-    private val userImageService: UserImageService,
 ) {
     private val countries = countryList.split(",").toSet()
     private val fileFormats = fileFormat.split(",").toSet()
@@ -65,6 +63,7 @@ class UserUpdateService(
             CoroutineScope(Dispatchers.IO).launch {
                 uploadMultipleFiles(multipartFiles, userData.uuid)
             }
+            userImageURL = "https://${bucket}.s3.${location}.amazonaws.com/user-image/${userData.uuid}"
         }
 
         userRepository.save(
@@ -97,12 +96,11 @@ class UserUpdateService(
         async {
             val putObjectRequest = PutObjectRequest(
                 bucket,
-                id,
+                "user-image/$id",
                 multipartFile.inputStream,
                 objectMetadata,
             )
             awsS3Config.amazonS3Client().putObject(putObjectRequest)
-            userImageURL = "https://${bucket}.s3.${location}.amazonaws.com/user-image/" + putObjectRequest.key
         }
     }
 }
