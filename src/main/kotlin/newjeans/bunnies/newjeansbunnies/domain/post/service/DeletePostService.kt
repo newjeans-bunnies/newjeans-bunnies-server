@@ -3,11 +3,11 @@ package newjeans.bunnies.newjeansbunnies.domain.post.service
 
 import jakarta.transaction.Transactional
 import newjeans.bunnies.newjeansbunnies.domain.auth.error.exception.NotExistUserIdException
-import newjeans.bunnies.newjeansbunnies.domain.image.repository.PostImageRepository
 import newjeans.bunnies.newjeansbunnies.domain.image.service.DeletePostImageService
 import newjeans.bunnies.newjeansbunnies.domain.parents_comment.service.DeleteParentsCommentService
 import newjeans.bunnies.newjeansbunnies.domain.post.error.exception.NotExistPostIdException
 import newjeans.bunnies.newjeansbunnies.domain.post.repository.PostGoodRepository
+import newjeans.bunnies.newjeansbunnies.domain.post.repository.PostImageRepository
 import newjeans.bunnies.newjeansbunnies.domain.post.repository.PostRepository
 import newjeans.bunnies.newjeansbunnies.domain.user.repository.UserRepository
 import newjeans.bunnies.newjeansbunnies.global.response.StatusResponseDto
@@ -41,7 +41,7 @@ class DeletePostService(
         val postImageDataList = postImageRepository.findByPostId(postId).orElseThrow {
             throw NotExistPostIdException
         }
-        println(postId)
+
         for (postImageData in postImageDataList) {
             deletePostImageService.deletePostImage(postImageData.imageUrl)
         }

@@ -37,6 +37,9 @@ class CreatePostService(
     @Value("\${support.fileFormat}")
     private val fileFormat: String
 ) {
+
+    private val fileFormats = fileFormat.split(",").toSet()
+
     fun execute(postData: PostRequestDto, multipartFile: List<MultipartFile>): PostResponseDto {
 
         userRepository.findByUserId(postData.userId).orElseThrow {
@@ -45,6 +48,7 @@ class CreatePostService(
 
         if (multipartFile.size > 10)
             throw OverFlieException
+
         val postEntity = PostEntity(
             uuid = UUID.randomUUID().toString(),
             userId = postData.userId,
@@ -79,13 +83,13 @@ class CreatePostService(
             async {
                 val putObjectRequest = PutObjectRequest(
                     bucket,
-                    getCurrentDateInFormat()+"/"+UUID.randomUUID().toString(),
+                    "post-image/"+getCurrentDateInFormat()+"/"+UUID.randomUUID().toString(),
                     it.inputStream,
                     objectMetadata,
                 )
                 awsS3Config.amazonS3Client().putObject(putObjectRequest)
                 postImageRepository.save(PostImageEntity(
-                    imageUrl = "https://${bucket}.s3.${location}.amazonaws.com/post-image/"+putObjectRequest.key,
+                    imageUrl = "https://${bucket}.s3.${location}.amazonaws.com/"+putObjectRequest.key,
                     createDate = LocalDateTime.now().toString(),
                     postId = postId
                 ))

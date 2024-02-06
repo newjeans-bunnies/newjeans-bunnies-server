@@ -1,9 +1,11 @@
 package newjeans.bunnies.newjeansbunnies.domain.post.controller
 
 
+import jakarta.validation.Valid
 import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.request.PostRequestDto
 import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.response.GetPostBasicResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.response.GetPostDetailResponseDto
+import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.response.PostImageResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.response.PostResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.post.service.*
 import newjeans.bunnies.newjeansbunnies.global.response.StatusResponseDto
@@ -23,15 +25,22 @@ class PostController(
     private val getPostBasicInfoService: GetPostBasicInfoService,
     private val getPostDetailService: GetPostDetailService,
     private val getPostService: GetPostService,
-    private val deletePostService: DeletePostService
+    private val deletePostService: DeletePostService,
+    private val getPostImageService: GetPostImageService
 ) {
     @PostMapping
     fun makePost(
         @RequestPart("uploadFiles") multipartFiles: List<MultipartFile>,
-        @ModelAttribute postRequestDto: PostRequestDto
+        @ModelAttribute @Valid postRequestDto: PostRequestDto
     ): PostResponseDto {
-//        val postRequestDto = PostRequestDto("HamTory","안녕하세요")
         return createPostService.execute(postRequestDto, multipartFiles)
+    }
+
+    @GetMapping("/image")
+    fun getPostImage(
+        @RequestParam("postid") postId: String
+    ): List<PostImageResponseDto>{
+        return getPostImageService.execute(postId)
     }
 
     @GetMapping("/basic-info")
@@ -65,7 +74,6 @@ class PostController(
         return getUserPostBasicInfoService.execute(userId, date)
     }
 
-
     @GetMapping("/basic-info/{uuid}")
     fun getPostBasicInfo(
         @PathVariable("uuid") id: String
@@ -82,9 +90,9 @@ class PostController(
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping
+    @DeleteMapping("/delete")
     fun deletePost(
-        @RequestParam postId: String
+        @RequestParam("postid") postId: String
     ): StatusResponseDto {
         return deletePostService.deletePostByPostId(postId)
     }

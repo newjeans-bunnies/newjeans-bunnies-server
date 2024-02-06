@@ -40,7 +40,7 @@ class WebConfig(
         //post
         registry.addMapping("/api/post/**")
             .allowedOriginPatterns(*allowedOrigins)
-            .allowedMethods("GET","POST")
+            .allowedMethods("GET","POST","DELETE")
             .allowedHeaders("*")
 
         //user
