@@ -9,12 +9,13 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
+import org.springframework.web.multipart.MaxUploadSizeExceededException
 
 
 @ControllerAdvice
 class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException::class)
-    fun handleEmptyResultDataAccessException(ex: MethodArgumentNotValidException): ResponseEntity<ErrorResponse>{
+    fun handleEmptyResultDataAccessException(ex: MethodArgumentNotValidException): ResponseEntity<ErrorResponse> {
         val errorMessage: String? = ex.bindingResult
             .allErrors[0]
             .defaultMessage
@@ -22,6 +23,17 @@ class GlobalExceptionHandler {
             ErrorResponse(
                 400,
                 errorMessage
+            ), HttpStatus.BAD_REQUEST
+        )
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException::class)
+    fun handleMaxUploadSizeExceededException(ex: MaxUploadSizeExceededException): ResponseEntity<ErrorResponse> {
+        val errorMessage: String? = ex.message
+        return ResponseEntity(
+            ErrorResponse(
+                400,
+                errorMessage ?: ""
             ), HttpStatus.BAD_REQUEST
         )
     }

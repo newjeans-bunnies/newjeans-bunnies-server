@@ -14,6 +14,7 @@ import newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.request.UserU
 import newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.response.UserUpdateResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.user.repository.UserRepository
 import newjeans.bunnies.newjeansbunnies.global.config.AwsS3Config
+import newjeans.bunnies.newjeansbunnies.global.utils.CheckFileName
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Service
@@ -31,11 +32,9 @@ class UserUpdateService(
     @Value("\${support.country}")
     private val countryList: String,
     private val awsS3Config: AwsS3Config,
-    @Value("\${support.fileFormat}")
-    private val fileFormat: String,
+    private val checkFileName: CheckFileName
 ) {
     private val countries = countryList.split(",").toSet()
-    private val fileFormats = fileFormat.split(",").toSet()
 
     var userImageURL: String? = null
 
@@ -60,6 +59,9 @@ class UserUpdateService(
             throw LanguageNotFoundException //지원 하지 않거나 존재하지 않는 나라
 
         if (multipartFiles != null) {
+            val originalFilename = multipartFiles.originalFilename
+            checkFileName.execute(originalFilename)
+
             CoroutineScope(Dispatchers.IO).launch {
                 uploadMultipleFiles(multipartFiles, userData.uuid)
             }

@@ -14,6 +14,7 @@ import newjeans.bunnies.newjeansbunnies.domain.post.repository.PostImageReposito
 import newjeans.bunnies.newjeansbunnies.domain.post.repository.PostRepository
 import newjeans.bunnies.newjeansbunnies.domain.user.repository.UserRepository
 import newjeans.bunnies.newjeansbunnies.global.config.AwsS3Config
+import newjeans.bunnies.newjeansbunnies.global.utils.CheckFileName
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Service
@@ -29,6 +30,7 @@ class CreatePostService(
     private val postRepository: PostRepository,
     private val userRepository: UserRepository,
     private val postImageRepository: PostImageRepository,
+    private val checkFileName: CheckFileName,
     private val awsS3Config: AwsS3Config,
     @Value("\${cloud.aws.s3.bucket}")
     private val bucket: String,
@@ -56,6 +58,10 @@ class CreatePostService(
             createDate = LocalDateTime.now().toString(),
             good = 0
         )
+        multipartFile.map {
+            val originalFilename = it.originalFilename
+            checkFileName.execute(originalFilename)
+        }
 
         CoroutineScope(Dispatchers.IO).launch {
             uploadMultipleFiles(multipartFile, postEntity.uuid)
