@@ -23,7 +23,7 @@ class UserDataDetailsService(
     fun execute(token: String): UserDataDetailsResponseDto {
 
         if (token.startsWith(PREFIX)) {
-            val claims = jwtParser.getClaims(token.substring(PREFIX.length))
+            val claims = jwtParser.getClaims(token.removePrefix(PREFIX))
             try {
                 val id: String = claims.body["jti"].toString()
                 val userData = userRepository.findByUuid(id).orElseThrow {
@@ -38,7 +38,6 @@ class UserDataDetailsService(
             } catch (e: Exception) {
                 throw InvalidTokenException
             }
-
         }
         throw InvalidTokenException
     }
