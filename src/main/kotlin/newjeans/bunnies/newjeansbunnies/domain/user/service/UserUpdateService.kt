@@ -14,7 +14,7 @@ import newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.request.UserU
 import newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.response.UserUpdateResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.user.repository.UserRepository
 import newjeans.bunnies.newjeansbunnies.global.config.AwsS3Config
-import newjeans.bunnies.newjeansbunnies.global.utils.CheckFileName
+import newjeans.bunnies.newjeansbunnies.global.utils.CheckFileExtension
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Service
@@ -32,7 +32,7 @@ class UserUpdateService(
     @Value("\${support.country}")
     private val countryList: String,
     private val awsS3Config: AwsS3Config,
-    private val checkFileName: CheckFileName
+    private val checkFileExtension: CheckFileExtension
 ) {
     private val countries = countryList.split(",").toSet()
 
@@ -59,13 +59,11 @@ class UserUpdateService(
             throw LanguageNotFoundException //지원 하지 않거나 존재하지 않는 나라
 
         if (multipartFiles != null) {
-            val originalFilename = multipartFiles.originalFilename
-            checkFileName.execute(originalFilename)
-
             CoroutineScope(Dispatchers.IO).launch {
-                uploadMultipleFiles(multipartFiles, userData.uuid)
+                val originalFilename = multipartFiles.originalFilename
+                checkFileExtension.execute(originalFilename)
+                userImageURL = uploadMultipleFiles(multipartFiles, userData.uuid).await()
             }
-            userImageURL = "https://${bucket}.s3.${location}.amazonaws.com/user-image/${userData.uuid}"
         }
 
         userRepository.save(
@@ -103,6 +101,7 @@ class UserUpdateService(
                 objectMetadata,
             )
             awsS3Config.amazonS3Client().putObject(putObjectRequest)
+            "https://${bucket}.s3.${location}.amazonaws.com/user-image/$id"
         }
     }
 }

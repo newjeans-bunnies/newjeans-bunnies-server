@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-class CheckFileName(
+class CheckFileExtension(
     @Value("\${support.fileFormat}")
     private val fileFormat: String,
 ) {
