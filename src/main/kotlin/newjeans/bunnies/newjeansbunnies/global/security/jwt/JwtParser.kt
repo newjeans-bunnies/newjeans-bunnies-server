@@ -46,10 +46,7 @@ class JwtParser(
                 is InvalidClaimException -> throw InvalidTokenException
                 is ExpiredJwtException -> throw ExpiredTokenException
                 is JwtException -> throw UnexpectedTokenException
-                else -> {
-                    println(e.message)
-                    throw InternalServerErrorException
-                }
+                else -> throw InternalServerErrorException
             }
         }
     }

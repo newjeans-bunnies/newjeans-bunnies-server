@@ -44,11 +44,10 @@ class UserController(
     fun updateUser(
         @RequestParam("userid") userId: String,
         @ModelAttribute @Valid userUpdateRequestDto: UserUpdateRequestDto,
-        @RequestPart("uploadFiles") multipartFiles: MultipartFile?,
+        @RequestPart("uploadFile") multipartFiles: MultipartFile?,
     ): UserUpdateResponseDto {
         if (userId.isBlank())
             throw BlankUserIdException
-        println(userId)
         return userUpdateService.execute(userId, userUpdateRequestDto, multipartFiles)
     }
 

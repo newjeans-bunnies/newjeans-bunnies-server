@@ -38,7 +38,7 @@ class PostController(
 
     @GetMapping("/image")
     fun getPostImage(
-        @RequestParam("postid") postId: String
+        @RequestParam("post-id") postId: String
     ): List<PostImageResponseDto>{
         return getPostImageService.execute(postId)
     }
