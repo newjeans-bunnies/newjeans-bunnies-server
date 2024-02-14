@@ -22,9 +22,12 @@ class LoginService(
 ) {
     fun execute(data: LoginRequestDto): TokenDto {
 
+
         val userData = userRepository.findByUserId(data.userId).orElseThrow {
             throw NotExistUserIdException
         }
+        if(userData.userId != data.userId)
+            throw NotExistUserIdException
 
         val password = userData.password
 

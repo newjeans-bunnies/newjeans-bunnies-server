@@ -29,7 +29,7 @@ class SignupService(
 
     fun execute(data: SignupRequestDto): SignupResponseDto {
 
-        if (userRepository.findByUserId(data.userId).isPresent)
+        if (userRepository.findByUserId(data.userId).isPresent && data.userId == userRepository.findByUserId(data.userId).get().userId)
             throw ExistIdException //이미 존재하는 아이디
 
         if (userRepository.findByPhoneNumber(data.phoneNumber).isPresent)

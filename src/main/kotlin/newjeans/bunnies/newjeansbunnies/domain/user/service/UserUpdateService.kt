@@ -62,21 +62,41 @@ class UserUpdateService(
             CoroutineScope(Dispatchers.IO).launch {
                 val originalFilename = multipartFiles.originalFilename
                 checkFileExtension.execute(originalFilename)
-                userImageURL = uploadMultipleFiles(multipartFiles, userData.uuid).await()
+                async {
+                    userImageURL = uploadMultipleFiles(multipartFiles, userData.uuid).await()
+                    userRepository.save(
+                        UserEntity(
+                            uuid = userData.uuid,
+                            userId = userUpdateRequestDto.userId,
+                            password = userData.password,
+                            phoneNumber = userData.phoneNumber,
+                            imageUrl = userImageURL,
+                            country = userUpdateRequestDto.country,
+                            language = userUpdateRequestDto.language,
+                        )
+                    )
+                }.await()
             }
-        }
-
-        userRepository.save(
-            UserEntity(
-                uuid = userData.uuid,
-                userId = userUpdateRequestDto.userId,
-                password = userData.password,
-                phoneNumber = userData.phoneNumber,
-                imageUrl = userImageURL,
-                country = userUpdateRequestDto.country,
-                language = userUpdateRequestDto.language,
+        } else {
+            userRepository.save(
+                UserEntity(
+                    uuid = userData.uuid,
+                    userId = userUpdateRequestDto.userId,
+                    password = userData.password,
+                    phoneNumber = userData.phoneNumber,
+                    imageUrl = null,
+                    country = userUpdateRequestDto.country,
+                    language = userUpdateRequestDto.language,
+                )
             )
-        )
+
+            return UserUpdateResponseDto(
+                id = userUpdateRequestDto.userId,
+                imageUrl = null,
+                country = userUpdateRequestDto.country,
+                language = userUpdateRequestDto.language
+            )
+        }
 
         return UserUpdateResponseDto(
             id = userUpdateRequestDto.userId,
