@@ -92,7 +92,7 @@ class PostController(
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/delete")
     fun deletePost(
-        @RequestParam("postid") postId: String
+        @RequestParam("post-id") postId: String
     ): StatusResponseDto {
         return deletePostService.deletePostByPostId(postId)
     }

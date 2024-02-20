@@ -89,7 +89,7 @@ class CreatePostService(
             async {
                 val putObjectRequest = PutObjectRequest(
                     bucket,
-                    "post-image/"+getCurrentDateInFormat()+"/"+UUID.randomUUID().toString(),
+                    "post-image/"+getCurrentDateInFormat()+"/"+"$postId/"+UUID.randomUUID().toString(),
                     it.inputStream,
                     objectMetadata,
                 )
