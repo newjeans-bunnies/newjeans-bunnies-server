@@ -8,6 +8,8 @@ import newjeans.bunnies.newjeansbunnies.domain.post.repository.PostGoodRepositor
 import newjeans.bunnies.newjeansbunnies.domain.post.repository.PostRepository
 import newjeans.bunnies.newjeansbunnies.domain.user.repository.UserRepository
 import org.springframework.context.annotation.Configuration
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 
 
 @Configuration
@@ -23,9 +25,13 @@ class GetPostDetailService(
             throw NotExistUserIdException
         }
 
-        val postListData = postRepository.findTop10ByCreateDateBefore(date).orElseThrow {
+//        val postListData = postRepository.findTop10ByCreateDateBefore(date).orElseThrow {
+//            throw NotExistPostIdException
+//        }
+        val postListData = postRepository.findByCreateDateBeforeOrderByCreateDateDesc(date, PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "createDate"))).orElseThrow {
             throw NotExistPostIdException
         }
+
 
         return postListData.map {
             GetPostDetailResponseDto(

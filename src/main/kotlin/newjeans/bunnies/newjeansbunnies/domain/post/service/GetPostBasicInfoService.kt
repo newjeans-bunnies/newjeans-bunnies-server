@@ -6,6 +6,8 @@ import newjeans.bunnies.newjeansbunnies.domain.post.error.exception.NotExistPost
 import newjeans.bunnies.newjeansbunnies.domain.post.repository.PostRepository
 
 import org.springframework.context.annotation.Configuration
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 
 
 @Configuration
@@ -14,7 +16,8 @@ class GetPostBasicInfoService(
 ) {
     fun execute(date: String): List<GetPostBasicResponseDto> {
 
-        val postListData = postRepository.findTop10ByCreateDateBefore(date).orElseThrow {
+        val postListData = postRepository.findByCreateDateBeforeOrderByCreateDateDesc(date, PageRequest.of(0, 10, Sort.by(
+            Sort.Direction.DESC, "createDate"))).orElseThrow {
             throw NotExistPostIdException
         }
 
