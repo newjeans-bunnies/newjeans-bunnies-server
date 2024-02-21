@@ -39,11 +39,12 @@ class AuthController(
 
     @PatchMapping("/refresh")
     fun reissueToken(
-        @RequestHeader("refresh-token") refreshToken: String
+        @RequestHeader("refresh-token") refreshToken: String,
+        @RequestHeader("access-token") accessToken: String,
     ): TokenDto {
         if(refreshToken.isBlank())
             throw RefreshTokenNotForundException
-        return reissueTokenService.execute(refreshToken)
+        return reissueTokenService.execute(refreshToken, accessToken)
     }
 
 }
