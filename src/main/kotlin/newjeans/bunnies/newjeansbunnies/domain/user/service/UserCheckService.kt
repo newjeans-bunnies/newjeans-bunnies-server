@@ -18,7 +18,6 @@ class UserCheckService(
     fun userId(userId: String): StatusResponseDto {
         if (userRepository.findByUserId(userId).isPresent && userId == userRepository.findByUserId(userId).get().userId)
             throw ExistIdException
-        else
 
         return StatusResponseDto(
             status = 200,

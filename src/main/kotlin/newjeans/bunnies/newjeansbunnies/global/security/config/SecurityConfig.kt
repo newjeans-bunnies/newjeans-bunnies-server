@@ -80,6 +80,8 @@ class SecurityConfig(
                 authorize.requestMatchers(HttpMethod.DELETE,"/api/user").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
                 authorize.requestMatchers(HttpMethod.GET,"/api/user/check/userid").permitAll()
                 authorize.requestMatchers(HttpMethod.GET,"/api/user/check/phonenumber").permitAll()
+                authorize.requestMatchers(HttpMethod.GET,"/api/user/support").permitAll()
+
 
 
                 //report

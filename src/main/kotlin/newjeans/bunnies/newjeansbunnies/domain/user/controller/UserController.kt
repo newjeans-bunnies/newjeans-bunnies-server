@@ -5,6 +5,7 @@ import jakarta.validation.Valid
 import newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.request.UserUpdateRequestDto
 import newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.response.UserDataBasicInfoResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.response.UserDataDetailsResponseDto
+import newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.response.UserSupportResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.response.UserUpdateResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.user.error.exception.BlankPhoneNumberException
 import newjeans.bunnies.newjeansbunnies.domain.user.error.exception.BlankUserIdException
@@ -24,7 +25,8 @@ class UserController(
     private val userDataBasicInfoService: UserDataBasicInfoService,
     private val userUpdateService: UserUpdateService,
     private val deleteUserService: DeleteUserService,
-    private val userCheckService: UserCheckService
+    private val userCheckService: UserCheckService,
+    private val userSupportService: UserSupportService
 ) {
     @GetMapping("/get-detail")
     fun getUserDetails(
@@ -55,7 +57,7 @@ class UserController(
     fun checkUserId(
         @RequestParam userId: String
     ): StatusResponseDto {
-        if(userId.isBlank())
+        if (userId.isBlank())
             throw BlankUserIdException
         return userCheckService.userId(userId)
     }
@@ -64,11 +66,16 @@ class UserController(
     fun checkPhoneNumber(
         @RequestParam phonenumber: String
     ): StatusResponseDto {
-        if(phonenumber.isBlank())
+        if (phonenumber.isBlank())
             throw BlankPhoneNumberException
         return userCheckService.phoneNumber(phonenumber)
     }
 
+
+    @GetMapping("/support")
+    fun checkSupport(): UserSupportResponseDto {
+        return userSupportService.execute()
+    }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping
