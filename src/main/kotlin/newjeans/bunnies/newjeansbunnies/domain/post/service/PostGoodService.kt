@@ -22,22 +22,31 @@ class PostGoodService(
     private val userRepository: UserRepository
 ) {
     @Transactional
-    fun execute(postId: String, userId: String): PostGoodResponseDto{
+    fun execute(postId: String, userId: String): PostGoodResponseDto {
+
         val postData = postRepository.findById(postId).orElseThrow {
             throw NotExistPostIdException
         }
 
-        userRepository.findByUserId(userId).orElseThrow {
+        val userData = userRepository.findByUserId(userId).orElseThrow {
             throw NotExistUserIdException
         }
 
+        if (userData.userId != userId)
+            throw NotExistUserIdException
+
         val goodStatus = postGoodRepository.existsByUserIdAndPostId(userId, postId)
+
+        var goodCount = postData.good
+
         if (goodStatus) {
+            goodCount--
             postGoodRepository.deleteByUserIdAndPostId(postId = postId, userId = userId)
         } else {
+            goodCount++
             postGoodRepository.save(PostGoodEntity(postId = postId, userId = userId))
         }
-        val goodCount = postGoodRepository.countByPostId(postId)
+
 
         postRepository.save(
             PostEntity(
