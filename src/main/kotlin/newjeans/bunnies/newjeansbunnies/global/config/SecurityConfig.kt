@@ -1,12 +1,9 @@
-package newjeans.bunnies.newjeansbunnies.global.security.config
+package newjeans.bunnies.newjeansbunnies.global.config
 
 
 import com.fasterxml.jackson.databind.ObjectMapper
-
 import newjeans.bunnies.newjeansbunnies.domain.auth.type.Authority
-import newjeans.bunnies.newjeansbunnies.global.config.FilterConfig
 import newjeans.bunnies.newjeansbunnies.global.security.jwt.JwtParser
-
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
@@ -81,6 +78,7 @@ class SecurityConfig(
                 authorize.requestMatchers(HttpMethod.GET,"/api/user/check/userid").permitAll()
                 authorize.requestMatchers(HttpMethod.GET,"/api/user/check/phonenumber").permitAll()
                 authorize.requestMatchers(HttpMethod.GET,"/api/user/support").permitAll()
+
 
 
 

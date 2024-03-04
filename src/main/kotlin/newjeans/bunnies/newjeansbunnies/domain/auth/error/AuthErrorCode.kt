@@ -17,7 +17,8 @@ enum class AuthErrorCode(
     LANGUAGE_NOT_FOUND_EXCEPTION(400, "지원하지 않거나 존재하지 않는 나라입니다."),
     FORMAT_NOT_SUPPORTED(400, "지원하지 않거나 존재하지 않는 파일 확장자입니다"),
     NOT_EXIST_PHONE_NUMBER(409, "존재하지 않는 전화번호입니다."),
-    NOT_EXIST_ID_AND_PHONE_NUMBER(409, "존재하지 않는 아이디와 전화번호입니다")
+    NOT_EXIST_ID_AND_PHONE_NUMBER(409, "존재하지 않는 아이디와 전화번호입니다"),
+    FAILED_AUTHENTICATION(409, "인증 실패")
     ;
 
     override fun status(): Int = status
