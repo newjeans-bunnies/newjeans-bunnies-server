@@ -2,6 +2,7 @@
 plugins {
     id("org.springframework.boot") version "3.1.5"
     id("io.spring.dependency-management") version "1.1.3"
+
     kotlin("jvm") version "1.8.22"
     kotlin("plugin.spring") version "1.8.22"
     kotlin("plugin.jpa") version "1.8.22"
@@ -28,7 +29,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-validation")
-    developmentOnly("org.springframework.boot:spring-boot-devtools:3.0.4")
+    developmentOnly("org.springframework.boot:spring-boot-devtools:3.2.2")
 
     implementation("io.jsonwebtoken:jjwt-api:$jjwtVersion")
     implementation("io.jsonwebtoken:jjwt-impl:$jjwtVersion")
@@ -45,8 +46,10 @@ dependencies {
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
+    implementation("net.nurigo:sdk:4.3.0")
 
     runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test:3.1.0")
     testImplementation("org.springframework.security:spring-security-test:6.0.2")
