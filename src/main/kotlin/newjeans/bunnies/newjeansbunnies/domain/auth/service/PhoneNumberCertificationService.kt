@@ -15,11 +15,14 @@ import kotlin.random.nextInt
 @Configuration
 class PhoneNumberCertificationService(
     private val smsUtil: SmsUtil,
-    private val redisConfig: RedisConfig
+    private val redisConfig: RedisConfig,
+    private val userRepository: UserRepository
 ) {
     fun verify(certificationVerifyRequestDto: CertificationVerifyRequestDto): CertificationVerifyResponseDto {
-        if(getValues(certificationVerifyRequestDto.phoneNumber) != certificationVerifyRequestDto.certificationNumber)
+        if (getValues(certificationVerifyRequestDto.phoneNumber) != certificationVerifyRequestDto.certificationNumber)
             throw FailedAuthenticationException
+        else
+            deleteValues(certificationVerifyRequestDto.phoneNumber)
         return CertificationVerifyResponseDto(200, "success")
     }
 
@@ -34,13 +37,17 @@ class PhoneNumberCertificationService(
         return CertificationVerifyResponseDto(200, "success")
     }
 
-    private fun setValues(phoneNumber: String, randomNumber: String){
+    private fun setValues(phoneNumber: String, randomNumber: String) {
         val values = redisConfig.redisTemplate().opsForValue()
-        values.set(phoneNumber, randomNumber, Duration.ofMinutes(1))
+        values.set(phoneNumber, randomNumber, Duration.ofMinutes(5))
     }
 
     private fun getValues(phoneNumber: String): String? {
         val value = redisConfig.redisTemplate().opsForValue()
         return value.get(phoneNumber)
+    }
+
+    private fun deleteValues(phoneNumber: String) {
+        redisConfig.redisTemplate().opsForValue().operations.delete(phoneNumber)
     }
 }
