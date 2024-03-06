@@ -9,7 +9,8 @@ enum class UserErrorCode(
     private val message: String
 ) : CustomErrorProperty {
     BLANK_USER_ID(400, "사용자 아이디를 적어주세요."),
-    BLANK_PHONENUMBER(400,"전화번호를 적어주세요.")
+    BLANK_PHONENUMBER(400,"전화번호를 적어주세요."),
+    RULE_VIOLATION_USER_ID(400, "사용자 아이디는 대소문자 숫자 최대 12글자 입니다.")
     ;
 
     override fun status(): Int = status
