@@ -17,6 +17,9 @@ version = "0.0.1-SNAPSHOT"
 java {
     sourceCompatibility = JavaVersion.VERSION_17
 }
+tasks.getByName<Jar>("jar"){
+    enabled=false
+}
 
 repositories {
     mavenCentral()
