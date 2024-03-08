@@ -22,10 +22,10 @@ class LoginService(
 ) {
     fun execute(data: LoginRequestDto): TokenDto {
 
-
         val userData = userRepository.findByUserId(data.userId).orElseThrow {
             throw NotExistUserIdException
         }
+
         if(userData.userId != data.userId)
             throw NotExistUserIdException
 
@@ -33,6 +33,6 @@ class LoginService(
 
         if (!passwordEncoder.matches(data.password, password)) throw InvalidPasswordException
 
-        return jwtProvider.receiveToken(userData.uuid, "USER")
+        return jwtProvider.receiveToken(userData.uuid, userData.authority)
     }
 }

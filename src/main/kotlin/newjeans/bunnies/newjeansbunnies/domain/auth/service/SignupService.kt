@@ -49,6 +49,7 @@ class SignupService(
             imageUrl = null,
             country = data.country,
             language = data.language,
+            authority = data.authority
         )
         userEntity.hashPassword(passwordEncoder)
         userRepository.save(userEntity)

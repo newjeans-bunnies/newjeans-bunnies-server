@@ -17,5 +17,8 @@ data class SignupRequestDto(
     @field:NotBlank(message = "나라는 필수 입력 값입니다.")
     val country: String,
     @field:NotBlank(message = "언어는 필수 입력 값입니다.")
-    val language: String
+    val language: String,
+    @field:NotBlank(message = "유저 권한을 적어주세요")
+    @field:Pattern(regexp = "^[USER, ADMIN]", message = "USER, ADMIN를 적어주세요")
+    val authority: String
 )

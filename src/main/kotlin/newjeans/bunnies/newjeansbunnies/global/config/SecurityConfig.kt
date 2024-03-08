@@ -29,10 +29,12 @@ class SecurityConfig(
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http.csrf { csrf -> csrf.disable() }
             .authorizeHttpRequests { authorize ->
-
                 //auth
-                authorize.requestMatchers("/api/auth/**").permitAll()
-
+                authorize.requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+                authorize.requestMatchers(HttpMethod.POST, "/api/auth/signup").permitAll()
+                authorize.requestMatchers(HttpMethod.PATCH, "/api/auth/refresh").permitAll()
+                authorize.requestMatchers(HttpMethod.POST, "/api/auth/phonenumber/verify").permitAll()
+                authorize.requestMatchers(HttpMethod.POST, "/api/auth/phonenumber").permitAll()
 
                 //post
                 authorize.requestMatchers(HttpMethod.POST, "/api/post/good").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
@@ -78,6 +80,7 @@ class SecurityConfig(
                 authorize.requestMatchers(HttpMethod.GET,"/api/user/check/userid").permitAll()
                 authorize.requestMatchers(HttpMethod.GET,"/api/user/check/phonenumber").permitAll()
                 authorize.requestMatchers(HttpMethod.GET,"/api/user/support").permitAll()
+                authorize.requestMatchers(HttpMethod.GET,"/api/user/image/*").permitAll()
 
 
 

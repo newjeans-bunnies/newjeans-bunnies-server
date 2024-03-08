@@ -73,6 +73,7 @@ class UserUpdateService(
                             imageUrl = userImageURL,
                             country = userUpdateRequestDto.country,
                             language = userUpdateRequestDto.language,
+                            authority = userData.authority
                         )
                     )
                 }.await()
@@ -87,6 +88,7 @@ class UserUpdateService(
                     imageUrl = null,
                     country = userUpdateRequestDto.country,
                     language = userUpdateRequestDto.language,
+                    authority = userData.authority
                 )
             )
 

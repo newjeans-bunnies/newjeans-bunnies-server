@@ -26,7 +26,9 @@ data class UserEntity(
     @Column(unique = true, nullable = true)
     val imageUrl: String?,
     @Column(nullable = false)
-    val country: String
+    val country: String,
+    @Column(nullable = false)
+    val authority: String
 ) {
     fun hashPassword(passwordEncoder: PasswordEncoder) {
         this.password = passwordEncoder.encode(this.password)
