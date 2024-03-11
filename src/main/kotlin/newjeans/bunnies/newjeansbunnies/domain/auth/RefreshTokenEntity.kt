@@ -1,10 +1,8 @@
 package newjeans.bunnies.newjeansbunnies.domain.auth
 
 
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.Id
-import jakarta.persistence.Table
+import jakarta.persistence.*
+import newjeans.bunnies.newjeansbunnies.domain.auth.type.Authority
 
 
 @Entity
@@ -15,7 +13,8 @@ data class RefreshTokenEntity(
     @Column(nullable = false, unique = true)
     val token: String,
     @Column(nullable = false)
-    val authority: String,
+    @Enumerated(value = EnumType.STRING)
+    val authority: Authority,
     @Column(nullable = false)
     val expirationTime: Long
 )

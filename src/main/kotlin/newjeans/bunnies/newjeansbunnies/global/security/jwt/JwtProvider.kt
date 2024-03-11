@@ -9,6 +9,7 @@ import io.jsonwebtoken.security.Keys
 import newjeans.bunnies.newjeansbunnies.domain.auth.RefreshTokenEntity
 import newjeans.bunnies.newjeansbunnies.domain.auth.controller.dto.TokenDto
 import newjeans.bunnies.newjeansbunnies.domain.auth.repository.RefreshTokenRepository
+import newjeans.bunnies.newjeansbunnies.domain.auth.type.Authority
 
 import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Component
@@ -33,11 +34,11 @@ class JwtProvider(
 
     private val key: Key = Keys.hmacShaKeyFor(jwtProperties.key.toByteArray(StandardCharsets.UTF_8))
 
-    fun receiveToken(uuid: String, authority: String) = TokenDto(
-        accessToken = generateJwtAccessToken(uuid, authority),
+    fun receiveToken(uuid: String, authority: Authority) = TokenDto(
+        accessToken = generateJwtAccessToken(uuid, authority.name),
         expiredAt = LocalDateTime.now().plusSeconds(jwtProperties.accessExp),
         refreshToken = generateJwtRefreshToken(uuid, authority),
-        authority = authority
+        authority = authority.name
     )
 
     private fun generateJwtAccessToken(uuid: String, authority: String): String {
@@ -51,7 +52,7 @@ class JwtProvider(
             .compact()
     }
 
-    private fun generateJwtRefreshToken(uuid: String, authority: String): String {
+    private fun generateJwtRefreshToken(uuid: String, authority: Authority): String {
 
         val token = Jwts.builder()
             .signWith(key, SignatureAlgorithm.HS256)

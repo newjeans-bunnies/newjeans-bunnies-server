@@ -1,10 +1,8 @@
 package newjeans.bunnies.newjeansbunnies.domain.user
 
 
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.Id
-import jakarta.persistence.Table
+import jakarta.persistence.*
+import newjeans.bunnies.newjeansbunnies.domain.auth.type.Authority
 
 import org.springframework.security.crypto.password.PasswordEncoder
 
@@ -27,8 +25,9 @@ data class UserEntity(
     val imageUrl: String?,
     @Column(nullable = false)
     val country: String,
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    val authority: String
+    val authority: Authority
 ) {
     fun hashPassword(passwordEncoder: PasswordEncoder) {
         this.password = passwordEncoder.encode(this.password)
