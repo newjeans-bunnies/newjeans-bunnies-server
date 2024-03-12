@@ -6,7 +6,7 @@ import newjeans.bunnies.newjeansbunnies.domain.auth.controller.dto.response.Sign
 import newjeans.bunnies.newjeansbunnies.domain.auth.error.exception.CountryNotFoundException
 import newjeans.bunnies.newjeansbunnies.domain.auth.error.exception.ExistIdException
 import newjeans.bunnies.newjeansbunnies.domain.auth.error.exception.ExistPhoneNumberException
-import newjeans.bunnies.newjeansbunnies.domain.auth.error.exception.LanguageNotFoundException
+import newjeans.bunnies.newjeansbunnies.domain.auth.type.Authority
 import newjeans.bunnies.newjeansbunnies.domain.user.UserEntity
 import newjeans.bunnies.newjeansbunnies.domain.user.repository.UserRepository
 import org.springframework.beans.factory.annotation.Value
@@ -38,9 +38,6 @@ class SignupService(
         if (data.country !in countries)
             throw CountryNotFoundException //지원 하지 않거나 존재하지 않는 나라
 
-        if (data.language !in countries)
-            throw LanguageNotFoundException //지원 하지 않거나 존재하지 않는 언어
-
         val userEntity = UserEntity(
             uuid = UUID.randomUUID().toString(),
             userId = data.userId,
@@ -48,8 +45,9 @@ class SignupService(
             phoneNumber = data.phoneNumber,
             imageUrl = null,
             country = data.country,
-            language = data.language,
-            authority = data.authority
+            language = data.country,
+            authority = Authority.USER,
+            birth = data.birth
         )
         userEntity.hashPassword(passwordEncoder)
         userRepository.save(userEntity)

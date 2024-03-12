@@ -27,7 +27,9 @@ data class UserEntity(
     val country: String,
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    val authority: Authority
+    val authority: Authority,
+    @Column(nullable = false)
+    val birth: String
 ) {
     fun hashPassword(passwordEncoder: PasswordEncoder) {
         this.password = passwordEncoder.encode(this.password)
