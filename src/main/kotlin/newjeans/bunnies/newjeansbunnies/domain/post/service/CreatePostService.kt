@@ -14,10 +14,12 @@ import newjeans.bunnies.newjeansbunnies.domain.post.repository.PostImageReposito
 import newjeans.bunnies.newjeansbunnies.domain.post.repository.PostRepository
 import newjeans.bunnies.newjeansbunnies.domain.user.repository.UserRepository
 import newjeans.bunnies.newjeansbunnies.global.config.AwsS3Config
+import newjeans.bunnies.newjeansbunnies.global.error.exception.BlankFileNameException
 import newjeans.bunnies.newjeansbunnies.global.utils.CheckFileExtension
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Service
+import org.springframework.util.StringUtils
 import org.springframework.web.multipart.MultipartFile
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -42,25 +44,26 @@ class CreatePostService(
 
     private val fileFormats = fileFormat.split(",").toSet()
 
-    fun execute(postData: PostRequestDto, multipartFile: List<MultipartFile>): PostResponseDto {
+    suspend fun execute(postData: PostRequestDto, multipartFile: List<MultipartFile>): PostResponseDto {
 
-        userRepository.findByUserId(postData.userId).orElseThrow {
-            throw NotExistUserIdException
-        }
+        checkValidUserId(postData.userId)
 
         if (multipartFile.size > 10)
             throw OverFlieException
 
+        val postUUID = UUID.randomUUID().toString()
+
         val postEntity = PostEntity(
-            uuid = UUID.randomUUID().toString(),
+            uuid = postUUID,
             userId = postData.userId,
             body = postData.body,
             createDate = LocalDateTime.now().toString(),
             good = 0
         )
+
         multipartFile.map {
-            val originalFilename = it.originalFilename
-            checkFileExtension.execute(originalFilename)
+            val extension: String = StringUtils.getFilenameExtension(it.originalFilename) ?: throw BlankFileNameException
+            checkFileExtension.execute(extension)
         }
 
         CoroutineScope(Dispatchers.IO).launch {
@@ -68,12 +71,13 @@ class CreatePostService(
         }
 
         postRepository.save(postEntity)
+
         return PostResponseDto(
             postId = postEntity.uuid,
             createDate = postEntity.createDate
         )
     }
-    private fun getCurrentDateInFormat(): String {
+    private suspend fun getCurrentDateInFormat(): String {
         val currentDateTime = LocalDateTime.now()
         val formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd")
         return currentDateTime.format(formatter)
@@ -102,5 +106,11 @@ class CreatePostService(
             }
         }
         uploadJobs.awaitAll()
+    }
+
+    private suspend fun checkValidUserId(userId: String){
+        userRepository.findByUserId(userId).orElseThrow {
+            throw NotExistUserIdException
+        }
     }
 }

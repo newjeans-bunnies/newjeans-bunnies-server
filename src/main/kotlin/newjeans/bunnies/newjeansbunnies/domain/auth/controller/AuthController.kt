@@ -30,20 +30,19 @@ class AuthController(
     private val reissueTokenService: ReissueTokenService,
     private val phoneNumberCertificationService: PhoneNumberCertificationService
 ) {
-
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/signup")
-    fun signup(@RequestBody @Valid signupRequestDto: SignupRequestDto): SignupResponseDto {
+    suspend fun signup(@RequestBody @Valid signupRequestDto: SignupRequestDto): SignupResponseDto {
         return signupService.execute(signupRequestDto)
     }
 
     @PostMapping("/login")
-    fun login(@RequestBody @Valid loginRequestDto: LoginRequestDto): TokenDto {
+    suspend fun login(@RequestBody @Valid loginRequestDto: LoginRequestDto): TokenDto {
         return loginService.execute(loginRequestDto)
     }
 
     @PatchMapping("/refresh")
-    fun reissueToken(
+    suspend fun reissueToken(
         @RequestHeader("refresh-token") refreshToken: String,
         @RequestHeader("access-token") accessToken: String,
     ): TokenDto {
@@ -54,12 +53,12 @@ class AuthController(
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/phonenumber/verify")
-    fun verify(@RequestBody @Valid certificationVerifyRequestDto: CertificationVerifyRequestDto): CertificationVerifyResponseDto {
+    suspend fun verify(@RequestBody @Valid certificationVerifyRequestDto: CertificationVerifyRequestDto): CertificationVerifyResponseDto {
         return phoneNumberCertificationService.verify(certificationVerifyRequestDto)
     }
 
     @PostMapping("/phonenumber")
-    fun certification(
+    suspend fun certification(
         @RequestParam("phonenumber") @Pattern(
             regexp = "^(010)([0-9]{4})([0-9]{4})$",
             message = "전화번호를 적어주세요 ex) 010-1234-5678"

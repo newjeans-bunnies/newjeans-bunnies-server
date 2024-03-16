@@ -1,6 +1,7 @@
 package newjeans.bunnies.newjeansbunnies.domain.post.service
 
 
+import newjeans.bunnies.newjeansbunnies.domain.post.PostEntity
 import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.response.GetPostBasicResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.response.GetPostDetailResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.post.error.exception.NotExistPostIdException
@@ -17,10 +18,8 @@ class GetPostService(
     private val postRepository: PostRepository,
     private val postGoodRepository: PostGoodRepository
 ) {
-    fun getPostBasicInfo(uuid: String): GetPostBasicResponseDto {
-        val postData = postRepository.findById(uuid).orElseThrow {
-            throw NotExistPostIdException
-        }
+    suspend fun getPostBasicInfo(uuid: String): GetPostBasicResponseDto {
+        val postData = getUserData(uuid)
 
         return GetPostBasicResponseDto(
             uuid = postData.uuid,
@@ -31,10 +30,8 @@ class GetPostService(
         )
     }
 
-    fun getPostDetail(uuid: String, userId: String): GetPostDetailResponseDto {
-        val postData = postRepository.findById(uuid).orElseThrow {
-            throw NotExistPostIdException
-        }
+    suspend fun getPostDetail(uuid: String, userId: String): GetPostDetailResponseDto {
+        val postData = getUserData(uuid)
 
         return GetPostDetailResponseDto(
             uuid = postData.uuid,
@@ -44,5 +41,11 @@ class GetPostService(
             good = postData.good,
             goodStatus = postGoodRepository.existsByUserIdAndPostId(userId, uuid)
         )
+    }
+
+    suspend fun getUserData(uuid: String): PostEntity {
+        return postRepository.findByUuid(uuid).orElseThrow {
+            throw NotExistPostIdException
+        }
     }
 }

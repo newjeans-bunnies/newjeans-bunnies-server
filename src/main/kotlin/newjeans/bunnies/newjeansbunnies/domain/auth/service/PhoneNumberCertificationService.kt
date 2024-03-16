@@ -24,40 +24,58 @@ class PhoneNumberCertificationService(
 ) {
     private val log: Logger = LoggerFactory.getLogger(PhoneNumberCertificationService::class.java)
 
-    fun verify(certificationVerifyRequestDto: CertificationVerifyRequestDto): CertificationVerifyResponseDto {
-        if (getValues(certificationVerifyRequestDto.phoneNumber) != certificationVerifyRequestDto.certificationNumber)
-            throw FailedAuthenticationException
-        else
-            deleteValues(certificationVerifyRequestDto.phoneNumber)
+    suspend fun verify(certificationVerifyRequestDto: CertificationVerifyRequestDto): CertificationVerifyResponseDto {
+        checkValidCertificationNumber(certificationVerifyRequestDto)
+
+        deleteValues(certificationVerifyRequestDto.phoneNumber)
+
         return CertificationVerifyResponseDto(200, "success")
     }
 
-    fun certification(phoneNumber: String): CertificationVerifyResponseDto {
-        if(userRepository.findByPhoneNumber(phoneNumber).isPresent)
-            throw ExistPhoneNumberException
+    suspend fun certification(phoneNumber: String): CertificationVerifyResponseDto {
 
+        checkValidPhoneNumber(phoneNumber)
+
+        val randomNumber = createRandomNumber()
+
+        setValues(phoneNumber, randomNumber)
+
+        log.info("[인증번호: $randomNumber] NewJeans-Bunnies 인증번호입니다.")
+//        smsUtil.sendOne(phoneNumber, "[인증번호: $randomNumber] NewJeans-Bunnies 인증번호입니다.")
+
+        return CertificationVerifyResponseDto(200, "success")
+    }
+
+    private suspend fun checkValidPhoneNumber(phoneNumber: String){
+        if (userRepository.findByPhoneNumber(phoneNumber).isPresent)
+            throw ExistPhoneNumberException
+    }
+
+    private fun createRandomNumber(): String{
         val random = Random.Default
         var randomNumber = ""
         for (i in 0..5) {
             randomNumber += random.nextInt(0..9).toString()
         }
-        setValues(phoneNumber, randomNumber)
-        log.info("[인증번호: $randomNumber] NewJeans-Bunnies 인증번호입니다.")
-//        smsUtil.sendOne(phoneNumber, "[인증번호: $randomNumber] NewJeans-Bunnies 인증번호입니다.")
-        return CertificationVerifyResponseDto(200, "success")
+        return randomNumber
     }
 
-    private fun setValues(phoneNumber: String, randomNumber: String) {
+    private suspend fun checkValidCertificationNumber(certificationVerifyRequestDto: CertificationVerifyRequestDto) {
+        if (getValues(certificationVerifyRequestDto.phoneNumber) != certificationVerifyRequestDto.certificationNumber)
+            throw FailedAuthenticationException
+    }
+
+    private suspend fun setValues(phoneNumber: String, randomNumber: String) {
         val values = redisConfig.redisTemplate().opsForValue()
         values.set(phoneNumber, randomNumber, Duration.ofMinutes(5))
     }
 
-    private fun getValues(phoneNumber: String): String? {
+    private suspend fun getValues(phoneNumber: String): String? {
         val value = redisConfig.redisTemplate().opsForValue()
         return value.get(phoneNumber)
     }
 
-    private fun deleteValues(phoneNumber: String) {
+    private suspend fun deleteValues(phoneNumber: String) {
         redisConfig.redisTemplate().opsForValue().operations.delete(phoneNumber)
     }
 }

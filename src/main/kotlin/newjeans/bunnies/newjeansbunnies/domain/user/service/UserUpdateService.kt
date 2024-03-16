@@ -14,10 +14,12 @@ import newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.request.UserU
 import newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.response.UserUpdateResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.user.repository.UserRepository
 import newjeans.bunnies.newjeansbunnies.global.config.AwsS3Config
+import newjeans.bunnies.newjeansbunnies.global.error.exception.BlankFileNameException
 import newjeans.bunnies.newjeansbunnies.global.utils.CheckFileExtension
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Service
+import org.springframework.util.StringUtils
 import org.springframework.web.multipart.MultipartFile
 
 
@@ -39,7 +41,7 @@ class UserUpdateService(
     var userImageURL: String? = null
 
     @Transactional
-    fun execute(
+    suspend fun execute(
         userId: String,
         userUpdateRequestDto: UserUpdateRequestDto,
         multipartFiles: MultipartFile?
@@ -60,8 +62,8 @@ class UserUpdateService(
 
         if (multipartFiles != null) {
             CoroutineScope(Dispatchers.IO).launch {
-                val originalFilename = multipartFiles.originalFilename
-                checkFileExtension.execute(originalFilename)
+                val extension: String = StringUtils.getFilenameExtension(multipartFiles.originalFilename) ?: throw BlankFileNameException
+                checkFileExtension.execute(extension)
                 async {
                     userImageURL = uploadMultipleFiles(multipartFiles, userData.uuid).await()
                     userRepository.save(

@@ -20,7 +20,7 @@ class DeleteUserService(
     private val deleteUserImageService: DeleteUserImageService
 ) {
     @Transactional
-    fun execute(userId: String): StatusResponseDto {
+    suspend fun execute(userId: String): StatusResponseDto {
         val userData = userRepository.findByUserId(userId).orElseThrow {
             throw NotExistUserIdException
         }

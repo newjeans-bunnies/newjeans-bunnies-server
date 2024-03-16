@@ -25,28 +25,28 @@ class UserController(
     private val userDataService: UserDataService
 ) {
     @GetMapping("/get-detail")
-    fun getUserDetails(
+    suspend fun getUserDetails(
         @RequestHeader("Authorization") token: String
     ): UserDataDetailsResponseDto {
         return userDataDetailsService.execute(token)
     }
 
     @GetMapping("/get-basic/{userId}")
-    fun getUserBasicInfo(
+    suspend fun getUserBasicInfo(
         @PathVariable userId: String,
     ): UserDataBasicInfoResponseDto {
         return userDataBasicInfoService.execute(userId)
     }
 
     @GetMapping("/image/{userId}")
-    fun getUserImage(
+    suspend fun getUserImage(
         @PathVariable userId: String
     ): UserImageResponseDto {
         return userDataService.getUserImage(userId)
     }
 
     @PatchMapping("/update")
-    fun updateUser(
+    suspend fun updateUser(
         @RequestParam("userid") userId: String,
         @ModelAttribute @Valid userUpdateRequestDto: UserUpdateRequestDto,
         @RequestPart("uploadFile") multipartFiles: MultipartFile?,
@@ -57,7 +57,7 @@ class UserController(
     }
 
     @GetMapping("/check/userid")
-    fun checkUserId(
+    suspend fun checkUserId(
         @RequestParam userId: String
     ): StatusResponseDto {
         if (userId.isBlank())
@@ -66,7 +66,7 @@ class UserController(
     }
 
     @GetMapping("/check/phonenumber")
-    fun checkPhoneNumber(
+    suspend fun checkPhoneNumber(
         @RequestParam phonenumber: String
     ): StatusResponseDto {
         if (phonenumber.isBlank())
@@ -76,13 +76,13 @@ class UserController(
 
 
     @GetMapping("/support")
-    fun checkSupport(): UserSupportResponseDto {
+    suspend fun checkSupport(): UserSupportResponseDto {
         return userSupportService.execute()
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping
-    fun deleteUser(
+    suspend fun deleteUser(
         @RequestParam userId: String
     ): StatusResponseDto {
         if (userId.isBlank())

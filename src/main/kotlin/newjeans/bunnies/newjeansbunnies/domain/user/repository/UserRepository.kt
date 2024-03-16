@@ -3,9 +3,11 @@ package newjeans.bunnies.newjeansbunnies.domain.user.repository
 
 import newjeans.bunnies.newjeansbunnies.domain.user.UserEntity
 import org.springframework.data.repository.CrudRepository
+import org.springframework.stereotype.Repository
 import java.util.*
 
 
+@Repository
 interface UserRepository: CrudRepository<UserEntity, String> {
 
     fun findByUuid(uuid: String): Optional<UserEntity>

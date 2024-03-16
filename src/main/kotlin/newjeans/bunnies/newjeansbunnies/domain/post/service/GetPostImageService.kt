@@ -1,6 +1,7 @@
 package newjeans.bunnies.newjeansbunnies.domain.post.service
 
 
+import newjeans.bunnies.newjeansbunnies.domain.post.PostImageEntity
 import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.response.PostImageResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.post.error.exception.NotExistPostIdException
 import newjeans.bunnies.newjeansbunnies.domain.post.error.exception.NotExistPostImageException
@@ -17,14 +18,11 @@ class GetPostImageService(
     private val postRepository: PostRepository,
     private val postImageRepository: PostImageRepository
 ) {
-    fun execute(postId: String): List<PostImageResponseDto> {
-        postRepository.findById(postId).orElseThrow {
-            throw NotExistPostIdException
-        }
+    suspend fun execute(postId: String): List<PostImageResponseDto> {
 
-        val imageData = postImageRepository.findByPostId(postId).orElseThrow {
-            throw NotExistPostImageException
-        }
+        checkValidPostId(postId)
+
+        val imageData = getPostImage(postId)
 
         return imageData.map {
             PostImageResponseDto(
@@ -32,4 +30,18 @@ class GetPostImageService(
             )
         }
     }
+
+    private suspend fun checkValidPostId(postId: String){
+        postRepository.findByUuid(postId).orElseThrow {
+            throw NotExistPostIdException
+        }
+    }
+
+
+    private suspend fun getPostImage(postId: String): List<PostImageEntity>{
+        return postImageRepository.findByPostId(postId).orElseThrow {
+            throw NotExistPostImageException
+        }
+    }
+
 }

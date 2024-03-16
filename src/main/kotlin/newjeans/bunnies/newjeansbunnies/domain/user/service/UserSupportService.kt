@@ -16,7 +16,7 @@ class UserSupportService(
     private val countries = country.split(",").toList()
     private val fileFormats = fileFormat.split(",").toList()
 
-    fun execute(): UserSupportResponseDto {
+    suspend fun execute(): UserSupportResponseDto {
         return UserSupportResponseDto(
             countries,
             fileFormats

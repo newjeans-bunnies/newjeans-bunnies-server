@@ -8,6 +8,7 @@ import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.response.Post
 import newjeans.bunnies.newjeansbunnies.domain.post.error.exception.NotExistPostIdException
 import newjeans.bunnies.newjeansbunnies.domain.post.repository.PostGoodRepository
 import newjeans.bunnies.newjeansbunnies.domain.post.repository.PostRepository
+import newjeans.bunnies.newjeansbunnies.domain.user.UserEntity
 import newjeans.bunnies.newjeansbunnies.domain.user.repository.UserRepository
 import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Service
@@ -22,21 +23,14 @@ class PostGoodService(
     private val userRepository: UserRepository
 ) {
     @Transactional
-    fun execute(postId: String, userId: String): PostGoodResponseDto {
+    suspend fun execute(postId: String, userId: String): PostGoodResponseDto {
 
-        val postData = postRepository.findById(postId).orElseThrow {
-            throw NotExistPostIdException
-        }
+        val postData = getValidPost(postId)
+        val userData = getValidUserId(userId)
 
-        val userData = userRepository.findByUserId(userId).orElseThrow {
-            throw NotExistUserIdException
-        }
-
-        if (userData.userId != userId)
-            throw NotExistUserIdException
+        checkExistUserId(userData.userId, userId)
 
         val goodStatus = postGoodRepository.existsByUserIdAndPostId(userId, postId)
-
         var goodCount = postData.good
 
         if (goodStatus) {
@@ -63,6 +57,23 @@ class PostGoodService(
             good = goodCount,
             goodStatus = !goodStatus
         )
+    }
+
+    private suspend fun getValidPost(postId: String): PostEntity{
+        return postRepository.findByUuid(postId).orElseThrow {
+            throw NotExistPostIdException
+        }
+    }
+
+    private suspend fun getValidUserId(userId: String): UserEntity{
+        return userRepository.findByUserId(userId).orElseThrow {
+            throw NotExistUserIdException
+        }
+    }
+
+    private suspend fun checkExistUserId(userId: String, spareUserId: String){
+        if (userId != spareUserId)
+            throw NotExistUserIdException
     }
 
 }

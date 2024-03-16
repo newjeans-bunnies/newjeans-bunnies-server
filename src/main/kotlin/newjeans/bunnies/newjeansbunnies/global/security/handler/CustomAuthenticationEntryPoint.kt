@@ -15,7 +15,7 @@ import java.time.OffsetDateTime
 @Component
 class CustomAuthenticationEntryPoint(
     private val objectMapper: ObjectMapper
-): AuthenticationEntryPoint {
+) : AuthenticationEntryPoint {
     override fun commence(
         request: HttpServletRequest,
         response: HttpServletResponse,

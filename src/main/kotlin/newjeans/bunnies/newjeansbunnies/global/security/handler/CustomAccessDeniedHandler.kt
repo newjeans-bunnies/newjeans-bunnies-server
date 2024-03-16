@@ -15,7 +15,7 @@ import java.time.OffsetDateTime
 @Component
 class CustomAccessDeniedHandler(
     private val objectMapper: ObjectMapper
-): AccessDeniedHandler{
+) : AccessDeniedHandler {
     override fun handle(
         request: HttpServletRequest,
         response: HttpServletResponse,

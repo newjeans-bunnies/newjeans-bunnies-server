@@ -1,6 +1,7 @@
 package newjeans.bunnies.newjeansbunnies.domain.post.service
 
 import newjeans.bunnies.newjeansbunnies.domain.auth.error.exception.NotExistUserIdException
+import newjeans.bunnies.newjeansbunnies.domain.post.PostEntity
 import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.response.GetPostDetailResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.post.repository.PostGoodRepository
 import newjeans.bunnies.newjeansbunnies.domain.post.repository.PostRepository
@@ -13,11 +14,9 @@ class GetUserPostDetailService(
     private val postRepository: PostRepository,
     private val postGoodRepository: PostGoodRepository
 ) {
-    fun execute(date: String, userId: String): List<GetPostDetailResponseDto> {
-        val postDataList = postRepository.findTop10ByUserIdAndCreateDateBefore(userId, date).orElseThrow {
-            throw NotExistUserIdException
-        }
-        return postDataList.map {
+    suspend fun execute(date: String, userId: String): List<GetPostDetailResponseDto> {
+
+        return getPostDataList(date, userId).map {
             GetPostDetailResponseDto(
                 uuid = it.uuid,
                 userId = it.userId,
@@ -26,6 +25,12 @@ class GetUserPostDetailService(
                 goodStatus = postGoodRepository.existsByUserIdAndPostId(userId, it.uuid),
                 createDate = it.createDate
             )
+        }
+    }
+
+    private suspend fun getPostDataList(date: String, userId: String): List<PostEntity>{
+        return postRepository.findTop10ByUserIdAndCreateDateBefore(userId, date).orElseThrow {
+            throw NotExistUserIdException
         }
     }
 }

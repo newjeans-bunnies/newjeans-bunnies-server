@@ -3,8 +3,9 @@ package newjeans.bunnies.newjeansbunnies.domain.post.repository
 
 import newjeans.bunnies.newjeansbunnies.domain.post.PostGoodEntity
 import org.springframework.data.repository.CrudRepository
+import org.springframework.stereotype.Repository
 
-
+@Repository
 interface PostGoodRepository: CrudRepository<PostGoodEntity, Long> {
 
     fun existsByUserIdAndPostId(userId: String, postId: String): Boolean

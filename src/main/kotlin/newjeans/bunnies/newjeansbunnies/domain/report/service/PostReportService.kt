@@ -25,7 +25,7 @@ class PostReportService(
             throw NotExitstIdAndPhoneNumberException
         }
 
-        postRepository.findById(reportPostRequestDto.postId).orElseThrow {
+        postRepository.findByUuid(reportPostRequestDto.postId).orElseThrow {
             throw NotExistPostIdException
         }
 
