@@ -3,6 +3,8 @@ package newjeans.bunnies.newjeansbunnies.domain.auth.controller
 
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Pattern
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import newjeans.bunnies.newjeansbunnies.domain.auth.controller.dto.TokenDto
 import newjeans.bunnies.newjeansbunnies.domain.auth.controller.dto.request.CertificationVerifyRequestDto
 import newjeans.bunnies.newjeansbunnies.domain.auth.controller.dto.request.LoginRequestDto
@@ -32,39 +34,37 @@ class AuthController(
 ) {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/signup")
-    suspend fun signup(@RequestBody @Valid signupRequestDto: SignupRequestDto): SignupResponseDto {
-        return signupService.execute(signupRequestDto)
+    fun signup(@RequestBody @Valid signupRequestDto: SignupRequestDto): SignupResponseDto {
+        return runBlocking(Dispatchers.IO) { signupService.execute(signupRequestDto) }
     }
 
     @PostMapping("/login")
-    suspend fun login(@RequestBody @Valid loginRequestDto: LoginRequestDto): TokenDto {
-        return loginService.execute(loginRequestDto)
+    fun login(@RequestBody @Valid loginRequestDto: LoginRequestDto): TokenDto {
+        return runBlocking(Dispatchers.IO) { loginService.execute(loginRequestDto) }
     }
 
     @PatchMapping("/refresh")
-    suspend fun reissueToken(
+    fun reissueToken(
         @RequestHeader("refresh-token") refreshToken: String,
         @RequestHeader("access-token") accessToken: String,
     ): TokenDto {
-        if (refreshToken.isBlank())
-            throw RefreshTokenNotForundException
-        return reissueTokenService.execute(refreshToken, accessToken)
+        if (refreshToken.isBlank()) throw RefreshTokenNotForundException
+        return runBlocking(Dispatchers.IO) { reissueTokenService.execute(refreshToken, accessToken) }
     }
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/phonenumber/verify")
-    suspend fun verify(@RequestBody @Valid certificationVerifyRequestDto: CertificationVerifyRequestDto): CertificationVerifyResponseDto {
-        return phoneNumberCertificationService.verify(certificationVerifyRequestDto)
+    fun verify(@RequestBody @Valid certificationVerifyRequestDto: CertificationVerifyRequestDto): CertificationVerifyResponseDto {
+        return runBlocking(Dispatchers.IO) { phoneNumberCertificationService.verify(certificationVerifyRequestDto) }
     }
 
     @PostMapping("/phonenumber")
-    suspend fun certification(
+    fun certification(
         @RequestParam("phonenumber") @Pattern(
-            regexp = "^(010)([0-9]{4})([0-9]{4})$",
-            message = "전화번호를 적어주세요 ex) 010-1234-5678"
+            regexp = "^(010)([0-9]{4})([0-9]{4})$", message = "전화번호를 적어주세요 ex) 010-1234-5678"
         ) phoneNumber: String
     ): CertificationVerifyResponseDto {
-        return phoneNumberCertificationService.certification(phoneNumber)
+        return runBlocking(Dispatchers.IO) { phoneNumberCertificationService.certification(phoneNumber) }
     }
 
 }

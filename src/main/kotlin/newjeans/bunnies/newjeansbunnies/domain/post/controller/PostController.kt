@@ -2,6 +2,8 @@ package newjeans.bunnies.newjeansbunnies.domain.post.controller
 
 
 import jakarta.validation.Valid
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.request.PostRequestDto
 import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.response.*
 import newjeans.bunnies.newjeansbunnies.domain.post.service.*
@@ -27,79 +29,74 @@ class PostController(
     private val postGoodService: PostGoodService
 ) {
     @PostMapping
-    suspend fun makePost(
+    fun makePost(
         @RequestPart("uploadFiles") multipartFiles: List<MultipartFile>,
         @ModelAttribute @Valid postRequestDto: PostRequestDto
     ): PostResponseDto {
-        return createPostService.execute(postRequestDto, multipartFiles)
+        return runBlocking(Dispatchers.IO) { createPostService.execute(postRequestDto, multipartFiles) }
     }
 
     @GetMapping("/image")
-    suspend fun getPostImage(
+    fun getPostImage(
         @RequestParam("post-id") postId: String
     ): List<PostImageResponseDto> {
-        return getPostImageService.execute(postId)
+        return runBlocking(Dispatchers.IO) { getPostImageService.execute(postId) }
     }
 
     @GetMapping("/basic-info")
-    suspend fun getPostBasicInfoList(
+    fun getPostBasicInfoList(
         @RequestParam date: String
     ): List<GetPostBasicResponseDto> {
-        return getPostBasicInfoService.execute(date)
+        return runBlocking(Dispatchers.IO) { getPostBasicInfoService.execute(date) }
     }
 
     @GetMapping("/detail")
-    suspend fun getPostDetailList(
-        @RequestParam date: String,
-        @RequestParam userId: String
+    fun getPostDetailList(
+        @RequestParam date: String, @RequestParam userId: String
     ): List<GetPostDetailResponseDto> {
-        return getPostDetailService.execute(date, userId)
+        return runBlocking(Dispatchers.IO) { getPostDetailService.execute(date, userId) }
     }
 
     @GetMapping("/user/detail/{userId}")
-    suspend fun getUserPostDetailList(
-        @PathVariable userId: String,
-        @RequestParam date: String
+    fun getUserPostDetailList(
+        @PathVariable userId: String, @RequestParam date: String
     ): List<GetPostDetailResponseDto> {
-        return getUserPostDetailService.execute(date, userId)
+        return runBlocking(Dispatchers.IO) { getUserPostDetailService.execute(date, userId) }
     }
 
     @GetMapping("/user/basic-info/{userId}")
-    suspend fun getUserPostBasicInfoList(
-        @PathVariable userId: String,
-        @RequestParam date: String
+    fun getUserPostBasicInfoList(
+        @PathVariable userId: String, @RequestParam date: String
     ): List<GetPostBasicResponseDto> {
-        return getUserPostBasicInfoService.execute(userId, date)
+        return runBlocking(Dispatchers.IO) { getUserPostBasicInfoService.execute(userId, date) }
     }
 
     @GetMapping("/basic-info/{uuid}")
-    suspend fun getPostBasicInfo(
+    fun getPostBasicInfo(
         @PathVariable("uuid") id: String
     ): GetPostBasicResponseDto {
-        return getPostService.getPostBasicInfo(id)
+        return runBlocking(Dispatchers.IO) { getPostService.getPostBasicInfo(id) }
     }
 
     @GetMapping("/detail/{uuid}")
-    suspend fun getPostDetail(
-        @PathVariable("uuid") id: String,
-        @RequestParam userId: String
+    fun getPostDetail(
+        @PathVariable("uuid") id: String, @RequestParam userId: String
     ): GetPostDetailResponseDto {
-        return getPostService.getPostDetail(id, userId)
+        return runBlocking(Dispatchers.IO) { getPostService.getPostDetail(id, userId) }
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/delete")
-    suspend fun deletePost(
+    fun deletePost(
         @RequestParam("post-id") postId: String
     ): StatusResponseDto {
-        return deletePostService.deletePost(postId)
+        return runBlocking(Dispatchers.IO) { deletePostService.deletePost(postId) }
     }
 
     @PostMapping("/good")
-    suspend fun goodPost(
-        @RequestParam("post-id") postId: String,
-        @RequestParam("user-id") userId: String
+    fun goodPost(
+        @RequestParam("post-id") postId: String, @RequestParam("user-id") userId: String
     ): PostGoodResponseDto {
-        return postGoodService.execute(postId, userId)
+        return runBlocking(Dispatchers.IO) { postGoodService.execute(postId, userId) }
     }
 }

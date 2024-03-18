@@ -2,12 +2,16 @@ package newjeans.bunnies.newjeansbunnies.domain.user.controller
 
 
 import jakarta.validation.Valid
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.request.UserUpdateRequestDto
 import newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.response.*
 import newjeans.bunnies.newjeansbunnies.domain.user.error.exception.BlankPhoneNumberException
 import newjeans.bunnies.newjeansbunnies.domain.user.error.exception.BlankUserIdException
 import newjeans.bunnies.newjeansbunnies.domain.user.service.*
 import newjeans.bunnies.newjeansbunnies.global.response.StatusResponseDto
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
@@ -24,69 +28,89 @@ class UserController(
     private val userSupportService: UserSupportService,
     private val userDataService: UserDataService
 ) {
+    private val log: Logger = LoggerFactory.getLogger(UserController::class.java)
+
     @GetMapping("/get-detail")
-    suspend fun getUserDetails(
+    fun getUserDetails(
         @RequestHeader("Authorization") token: String
     ): UserDataDetailsResponseDto {
-        return userDataDetailsService.execute(token)
+        log.info(token)
+        return runBlocking(Dispatchers.IO) {
+            userDataDetailsService.execute(token)
+        }
+
     }
 
     @GetMapping("/get-basic/{userId}")
-    suspend fun getUserBasicInfo(
+    fun getUserBasicInfo(
         @PathVariable userId: String,
     ): UserDataBasicInfoResponseDto {
-        return userDataBasicInfoService.execute(userId)
+        return runBlocking(Dispatchers.IO) {
+            userDataBasicInfoService.execute(userId)
+        }
     }
 
     @GetMapping("/image/{userId}")
-    suspend fun getUserImage(
+    fun getUserImage(
         @PathVariable userId: String
     ): UserImageResponseDto {
-        return userDataService.getUserImage(userId)
+        return runBlocking(Dispatchers.IO) {
+            userDataService.getUserImage(userId)
+        }
     }
 
     @PatchMapping("/update")
-    suspend fun updateUser(
+    fun updateUser(
         @RequestParam("userid") userId: String,
         @ModelAttribute @Valid userUpdateRequestDto: UserUpdateRequestDto,
         @RequestPart("uploadFile") multipartFiles: MultipartFile?,
     ): UserUpdateResponseDto {
         if (userId.isBlank())
             throw BlankUserIdException
-        return userUpdateService.execute(userId, userUpdateRequestDto, multipartFiles)
+        return runBlocking(Dispatchers.IO) {
+            userUpdateService.execute(userId, userUpdateRequestDto, multipartFiles)
+        }
     }
 
     @GetMapping("/check/userid")
-    suspend fun checkUserId(
+    fun checkUserId(
         @RequestParam userId: String
     ): StatusResponseDto {
         if (userId.isBlank())
             throw BlankUserIdException
-        return userCheckService.userId(userId)
+        return runBlocking(Dispatchers.IO) {
+            userCheckService.userId(userId)
+        }
     }
 
     @GetMapping("/check/phonenumber")
-    suspend fun checkPhoneNumber(
+    fun checkPhoneNumber(
         @RequestParam phonenumber: String
     ): StatusResponseDto {
         if (phonenumber.isBlank())
             throw BlankPhoneNumberException
-        return userCheckService.phoneNumber(phonenumber)
+        return runBlocking(Dispatchers.IO) {
+            userCheckService.phoneNumber(phonenumber)
+        }
     }
 
 
     @GetMapping("/support")
-    suspend fun checkSupport(): UserSupportResponseDto {
-        return userSupportService.execute()
+    fun checkSupport(): UserSupportResponseDto {
+        return runBlocking(Dispatchers.IO) {
+            userSupportService.execute()
+        }
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping
-    suspend fun deleteUser(
+    fun deleteUser(
         @RequestParam userId: String
     ): StatusResponseDto {
         if (userId.isBlank())
             throw BlankUserIdException
-        return deleteUserService.execute(userId)
+        return runBlocking(Dispatchers.IO) {
+            deleteUserService.execute(userId)
+        }
     }
 }

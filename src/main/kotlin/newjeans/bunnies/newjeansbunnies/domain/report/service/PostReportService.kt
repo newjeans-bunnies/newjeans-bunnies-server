@@ -20,7 +20,7 @@ class PostReportService(
     private val postRepository: PostRepository,
     private val userRepository: UserRepository
 ) {
-    fun execute(reportPostRequestDto: ReportPostRequestDto) {
+    suspend fun execute(reportPostRequestDto: ReportPostRequestDto) {
         userRepository.findByUserIdAndPhoneNumber(reportPostRequestDto.id, reportPostRequestDto.phoneNumber).orElseThrow {
             throw NotExitstIdAndPhoneNumberException
         }

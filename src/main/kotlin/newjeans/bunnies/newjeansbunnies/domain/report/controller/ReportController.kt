@@ -1,6 +1,8 @@
 package newjeans.bunnies.newjeansbunnies.domain.report.controller
 
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import newjeans.bunnies.newjeansbunnies.domain.report.controller.dto.request.ReportPostRequestDto
 import newjeans.bunnies.newjeansbunnies.domain.report.service.PostReportService
 
@@ -21,6 +23,6 @@ class ReportController(
     fun reportPost(
         @RequestBody reportPostRequestDto: ReportPostRequestDto
     ) {
-        postReportService.execute(reportPostRequestDto)
+        runBlocking(Dispatchers.IO) { postReportService.execute(reportPostRequestDto)}
     }
 }
