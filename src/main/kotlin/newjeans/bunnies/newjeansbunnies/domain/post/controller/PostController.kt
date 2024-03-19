@@ -5,7 +5,10 @@ import jakarta.validation.Valid
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.request.PostRequestDto
-import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.response.*
+import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.response.GetPostBasicResponseDto
+import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.response.GetPostDetailResponseDto
+import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.response.PostGoodResponseDto
+import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.response.PostResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.post.service.*
 import newjeans.bunnies.newjeansbunnies.global.response.StatusResponseDto
 import org.springframework.context.annotation.Configuration
@@ -25,7 +28,6 @@ class PostController(
     private val getPostDetailService: GetPostDetailService,
     private val getPostService: GetPostService,
     private val deletePostService: DeletePostService,
-    private val getPostImageService: GetPostImageService,
     private val postGoodService: PostGoodService
 ) {
     @PostMapping
@@ -36,12 +38,8 @@ class PostController(
         return runBlocking(Dispatchers.IO) { createPostService.execute(postRequestDto, multipartFiles) }
     }
 
-    @GetMapping("/image")
-    fun getPostImage(
-        @RequestParam("post-id") postId: String
-    ): List<PostImageResponseDto> {
-        return runBlocking(Dispatchers.IO) { getPostImageService.execute(postId) }
-    }
+
+
 
     @GetMapping("/basic-info")
     fun getPostBasicInfoList(
@@ -84,6 +82,10 @@ class PostController(
     ): GetPostDetailResponseDto {
         return runBlocking(Dispatchers.IO) { getPostService.getPostDetail(id, userId) }
     }
+
+
+
+
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/delete")
