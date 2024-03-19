@@ -46,6 +46,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
 
     implementation("org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE")
+    implementation("javax.xml.bind:jaxb-api:2.4.0-b180830.0359")
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
