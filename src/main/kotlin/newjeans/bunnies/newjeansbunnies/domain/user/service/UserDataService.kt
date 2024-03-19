@@ -14,7 +14,7 @@ class UserDataService(
     fun getUserImage(userId: String): UserImageResponseDto {
         val imageURL = userRepository.findByUserId(userId).orElseThrow {
             throw NotExistUserIdException
-        }.imageUrl?:"https://newjeans-bunnies-image.s3.ap-northeast-2.amazonaws.com/user-image/UserImage.jpg"
+        }.imageUrl
 
         return UserImageResponseDto(imageURL)
     }

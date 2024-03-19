@@ -4,7 +4,9 @@ package newjeans.bunnies.newjeansbunnies.domain.user.service
 import com.amazonaws.services.s3.model.ObjectMetadata
 import com.amazonaws.services.s3.model.PutObjectRequest
 import jakarta.transaction.Transactional
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.withContext
 import newjeans.bunnies.newjeansbunnies.domain.auth.error.exception.CountryNotFoundException
 import newjeans.bunnies.newjeansbunnies.domain.auth.error.exception.ExistIdException
 import newjeans.bunnies.newjeansbunnies.domain.auth.error.exception.LanguageNotFoundException
@@ -38,7 +40,7 @@ class UserUpdateService(
 ) {
     private val countries = countryList.split(",").toSet()
 
-    var userImageURL: String? = null
+    private var userImageURL: String = ""
 
     @Transactional
     suspend fun execute(
@@ -61,46 +63,37 @@ class UserUpdateService(
             throw LanguageNotFoundException //지원 하지 않거나 존재하지 않는 나라
 
         if (multipartFiles != null) {
-            CoroutineScope(Dispatchers.IO).launch {
-                val extension: String = StringUtils.getFilenameExtension(multipartFiles.originalFilename) ?: throw BlankFileNameException
-                checkFileExtension.execute(extension)
-                async {
-                    userImageURL = uploadMultipleFiles(multipartFiles, userData.uuid).await()
-                    userRepository.save(
-                        UserEntity(
-                            uuid = userData.uuid,
-                            userId = userUpdateRequestDto.userId,
-                            password = userData.password,
-                            phoneNumber = userData.phoneNumber,
-                            imageUrl = userImageURL,
-                            country = userUpdateRequestDto.country,
-                            language = userUpdateRequestDto.language,
-                            authority = userData.authority,
-                            birth = userUpdateRequestDto.birth
-                        )
-                    )
-                }.await()
-            }
-        } else {
+            val extension: String =
+                StringUtils.getFilenameExtension(multipartFiles.originalFilename) ?: throw BlankFileNameException
+            checkFileExtension.execute(extension)
+            userImageURL = uploadMultipleFiles(multipartFiles, userData.uuid).await()
             userRepository.save(
                 UserEntity(
                     uuid = userData.uuid,
                     userId = userUpdateRequestDto.userId,
                     password = userData.password,
                     phoneNumber = userData.phoneNumber,
-                    imageUrl = null,
+                    imageUrl = userImageURL,
                     country = userUpdateRequestDto.country,
                     language = userUpdateRequestDto.language,
                     authority = userData.authority,
                     birth = userUpdateRequestDto.birth
                 )
             )
-
-            return UserUpdateResponseDto(
-                id = userUpdateRequestDto.userId,
-                imageUrl = null,
-                country = userUpdateRequestDto.country,
-                language = userUpdateRequestDto.language
+        } else {
+            userImageURL = "https://newjeans-bunnies-image.s3.ap-northeast-2.amazonaws.com/user-image/UserImage.jpg"
+            userRepository.save(
+                UserEntity(
+                    uuid = userData.uuid,
+                    userId = userUpdateRequestDto.userId,
+                    password = userData.password,
+                    phoneNumber = userData.phoneNumber,
+                    imageUrl = userImageURL,
+                    country = userUpdateRequestDto.country,
+                    language = userUpdateRequestDto.language,
+                    authority = userData.authority,
+                    birth = userUpdateRequestDto.birth
+                )
             )
         }
 
@@ -108,7 +101,8 @@ class UserUpdateService(
             id = userUpdateRequestDto.userId,
             imageUrl = userImageURL,
             country = userUpdateRequestDto.country,
-            language = userUpdateRequestDto.language
+            language = userUpdateRequestDto.language,
+            birth = userUpdateRequestDto.birth
         )
     }
 
