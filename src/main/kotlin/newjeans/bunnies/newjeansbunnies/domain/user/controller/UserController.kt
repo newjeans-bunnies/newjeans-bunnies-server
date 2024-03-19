@@ -105,7 +105,7 @@ class UserController(
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping
     fun deleteUser(
-        @RequestParam userId: String
+        @RequestParam("userid") userId: String
     ): StatusResponseDto {
         if (userId.isBlank())
             throw BlankUserIdException

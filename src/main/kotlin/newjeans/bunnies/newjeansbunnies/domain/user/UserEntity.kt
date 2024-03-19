@@ -21,8 +21,8 @@ data class UserEntity(
     val phoneNumber: String,
     @Column(nullable = false)
     val language: String,
-    @Column(unique = true, nullable = true)
-    val imageUrl: String?,
+    @Column(unique = false, nullable = false)
+    val imageUrl: String,
     @Column(nullable = false)
     val country: String,
     @Enumerated(EnumType.STRING)
