@@ -41,7 +41,7 @@ class JwtProvider(
         authority = authority.name
     )
 
-    private fun generateJwtAccessToken(uuid: String, authority: String): String {
+    private suspend fun generateJwtAccessToken(uuid: String, authority: String): String {
         return Jwts.builder()
             .signWith(key, SignatureAlgorithm.HS256)
             .setHeaderParam(Header.JWT_TYPE, ACCESS)

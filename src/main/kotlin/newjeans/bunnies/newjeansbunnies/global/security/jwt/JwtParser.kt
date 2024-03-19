@@ -29,9 +29,7 @@ class JwtParser(
     fun getAuthentication(token: String): Authentication {
         val claims = getClaims(token)
 
-        if (claims.header[Header.JWT_TYPE] != JwtProvider.ACCESS) {
-            throw InvalidTokenException
-        }
+        if (claims.header[Header.JWT_TYPE] != JwtProvider.ACCESS) throw InvalidTokenException
         val userDetails = getDetails(claims.body)
 
         return UsernamePasswordAuthenticationToken(userDetails, "", userDetails.authorities)

@@ -42,7 +42,7 @@ class SignupService(
             userId = data.userId,
             password = data.password,
             phoneNumber = data.phoneNumber,
-            imageUrl = null,
+            imageUrl = "https://newjeans-bunnies-image.s3.ap-northeast-2.amazonaws.com/user-image/UserImage.jpg",
             country = data.country,
             language = data.country,
             authority = Authority.USER,

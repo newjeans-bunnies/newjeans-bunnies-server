@@ -37,16 +37,15 @@ class ReissueTokenService(
         return jwtProvider.receiveToken(data.uuid, data.authority)
     }
 
-    private suspend fun checkValidAccessToken(accessToken: String, refreshTokenClaims: Jws<Claims>){
-        if(refreshTokenClaims.header[Header.JWT_TYPE] != JwtProvider.REFRESH || getClaims(accessToken))
+    private suspend fun checkValidAccessToken(accessToken: String, refreshTokenClaims: Jws<Claims>) {
+        if (refreshTokenClaims.header[Header.JWT_TYPE] != JwtProvider.REFRESH || getClaims(accessToken))
             throw InvalidTokenException
     }
 
-    private suspend fun checkValidRefreshToken(refreshToken: String): RefreshTokenEntity{
-        val data = refreshTokenRepository.findByToken(refreshToken).orElseThrow {
+    private suspend fun checkValidRefreshToken(refreshToken: String): RefreshTokenEntity {
+        return refreshTokenRepository.findByToken(refreshToken).orElseThrow {
             throw UnexpectedTokenException
         }
-        return data
     }
 
     private suspend fun getClaims(token: String): Boolean {
