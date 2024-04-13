@@ -4,7 +4,6 @@ package newjeans.bunnies.newjeansbunnies.domain.user.service
 import jakarta.transaction.Transactional
 import newjeans.bunnies.newjeansbunnies.domain.auth.error.exception.NotExistUserIdException
 import newjeans.bunnies.newjeansbunnies.domain.auth.repository.RefreshTokenRepository
-import newjeans.bunnies.newjeansbunnies.domain.post.service.DeletePostService
 import newjeans.bunnies.newjeansbunnies.domain.user.repository.UserRepository
 import newjeans.bunnies.newjeansbunnies.global.response.StatusResponseDto
 import org.springframework.context.annotation.Configuration
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Service
 @Configuration
 class DeleteUserService(
     private val userRepository: UserRepository,
-    private val deletePostService: DeletePostService,
     private val refreshTokenRepository: RefreshTokenRepository,
     private val deleteUserImageService: DeleteUserImageService
 ) {
@@ -25,7 +23,7 @@ class DeleteUserService(
             throw NotExistUserIdException
         }
         //게시물 지우기
-        deletePostService.deletePostByUserId(userId)
+//        deletePostService.deletePostByUserId(userId)
 
         //유저 지우기
         userRepository.deleteByUserId(userId)
