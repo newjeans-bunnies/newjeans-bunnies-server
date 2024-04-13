@@ -6,7 +6,7 @@ import newjeans.bunnies.newjeansbunnies.domain.image.controller.dto.request.Fini
 import newjeans.bunnies.newjeansbunnies.domain.image.controller.dto.request.PreSignedUploadInitiateRequest
 import newjeans.bunnies.newjeansbunnies.domain.image.controller.dto.request.PreSignedUrlAbortRequest
 import newjeans.bunnies.newjeansbunnies.domain.image.controller.dto.request.PreSignedUrlCreateRequest
-import newjeans.bunnies.newjeansbunnies.domain.image.controller.dto.response.CreatePresignedUrlResponse
+import newjeans.bunnies.newjeansbunnies.domain.image.controller.dto.response.CreatePreSignedUrlResponse
 import newjeans.bunnies.newjeansbunnies.domain.image.controller.dto.response.ImageResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.image.service.AwsUploadService
 import newjeans.bunnies.newjeansbunnies.domain.image.service.ImageService
@@ -42,7 +42,7 @@ class ImageController(
     @PostMapping("/presigned-url")
     fun initiateUpload(
         @RequestBody request: PreSignedUrlCreateRequest,
-    ): CreatePresignedUrlResponse {
+    ): CreatePreSignedUrlResponse {
         return awsUploadService.createPreSignedUrl(request)
     }
 
