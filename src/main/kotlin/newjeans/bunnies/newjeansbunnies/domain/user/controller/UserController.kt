@@ -35,9 +35,7 @@ class UserController(
         @RequestHeader("Authorization") token: String
     ): UserDataDetailsResponseDto {
         log.info(token)
-        return runBlocking(Dispatchers.IO) {
-            userDataDetailsService.execute(token)
-        }
+        return userDataDetailsService.execute(token)
 
     }
 

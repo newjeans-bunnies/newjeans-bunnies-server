@@ -2,8 +2,10 @@ package newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.response
 
 
 data class UserDataDetailsResponseDto(
-    val id: String,
+    val userId: String,
     val phoneNumber: String,
     val country: String,
-    val imageUrl: String?
+    val language: String,
+    val imageUrl: String,
+    val birth: String
 )
