@@ -20,5 +20,7 @@ data class PostEntity(
     @Column(nullable = false)
     val createDate: String,
     @Column(nullable = false)
-    val good: Long
+    val good: Long,
+    @Column(nullable = false)
+    val state: Boolean
 )
