@@ -6,7 +6,7 @@ import newjeans.bunnies.newjeansbunnies.domain.image.controller.dto.request.Fini
 import newjeans.bunnies.newjeansbunnies.domain.image.controller.dto.request.PreSignedUploadInitiateRequest
 import newjeans.bunnies.newjeansbunnies.domain.image.controller.dto.request.PreSignedUrlAbortRequest
 import newjeans.bunnies.newjeansbunnies.domain.image.controller.dto.request.PreSignedUrlCreateRequest
-import newjeans.bunnies.newjeansbunnies.domain.image.controller.dto.response.CreatePresignedUrlResponse
+import newjeans.bunnies.newjeansbunnies.domain.image.controller.dto.response.CreatePreSignedUrlResponse
 import newjeans.bunnies.newjeansbunnies.global.config.AwsS3Config
 import newjeans.bunnies.newjeansbunnies.global.response.StatusResponseDto
 import newjeans.bunnies.newjeansbunnies.global.utils.CheckFileExtension
@@ -40,7 +40,7 @@ class AwsUploadService(
     }
 
     // PreSignedUrl 생성
-    fun createPreSignedUrl(request: PreSignedUrlCreateRequest): CreatePresignedUrlResponse {
+    fun createPreSignedUrl(request: PreSignedUrlCreateRequest): CreatePreSignedUrlResponse {
         // preSigned url 만료 시간
         val expirationTime = Date.from(
             LocalDateTime.now().plusMinutes(3).atZone(ZoneId.systemDefault()).toInstant()
@@ -51,7 +51,7 @@ class AwsUploadService(
         generatePresignedUrlRequest.addRequestParameter("uploadId", request.uploadId)
         generatePresignedUrlRequest.addRequestParameter("partNumber", request.partNumber.toString())
 
-        return CreatePresignedUrlResponse(
+        return CreatePreSignedUrlResponse(
             awsS3Config.amazonS3Client().generatePresignedUrl(generatePresignedUrlRequest)
         )
     }
