@@ -13,5 +13,7 @@ data class ImageEntity(
     @Column(nullable = false)
     val createDate: String,
     @Column(nullable = false, unique = true)
-    val imageURL: String
+    val imageURL: String,
+    @Column(nullable = false)
+    val postId: String
 )
