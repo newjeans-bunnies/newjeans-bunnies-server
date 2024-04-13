@@ -47,7 +47,7 @@ class SecurityConfig(
                 authorize.requestMatchers(HttpMethod.DELETE, "/api/post/delete").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
 
 
-                //parentsComment
+/*                //parentsComment
                 authorize.requestMatchers(HttpMethod.POST,"/api/comment/parents/send").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
                 authorize.requestMatchers(HttpMethod.GET,"/api/comment/parents/detail").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
                 authorize.requestMatchers(HttpMethod.GET,"/api/comment/parents/basic-info").permitAll()
@@ -58,7 +58,7 @@ class SecurityConfig(
                 authorize.requestMatchers(HttpMethod.POST,"/api/comment/children/send").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
                 authorize.requestMatchers(HttpMethod.GET,"/api/comment/children/detail").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
                 authorize.requestMatchers(HttpMethod.GET,"/api/comment/children/basic-info").permitAll()
-                authorize.requestMatchers(HttpMethod.DELETE,"/api/comment/children").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
+                authorize.requestMatchers(HttpMethod.DELETE,"/api/comment/children").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)*/
 
 
                 //image
@@ -73,7 +73,7 @@ class SecurityConfig(
 
 
                 //user
-                authorize.requestMatchers(HttpMethod.GET,"/api/user/get-detail/**").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
+                authorize.requestMatchers(HttpMethod.GET,"/api/user/get-detail").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
                 authorize.requestMatchers(HttpMethod.GET,"api/user/get-basic/**").permitAll()
                 authorize.requestMatchers(HttpMethod.PATCH,"/api/user/update").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
                 authorize.requestMatchers(HttpMethod.DELETE,"/api/user").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
@@ -81,6 +81,10 @@ class SecurityConfig(
                 authorize.requestMatchers(HttpMethod.GET,"/api/user/check/phonenumber").permitAll()
                 authorize.requestMatchers(HttpMethod.GET,"/api/user/support").permitAll()
                 authorize.requestMatchers(HttpMethod.GET,"/api/user/image/*").permitAll()
+
+
+                //image
+                authorize.requestMatchers(HttpMethod.POST, "api/image/**").permitAll()
 
 
 
