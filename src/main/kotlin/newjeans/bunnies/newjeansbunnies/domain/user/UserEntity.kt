@@ -3,7 +3,6 @@ package newjeans.bunnies.newjeansbunnies.domain.user
 
 import jakarta.persistence.*
 import newjeans.bunnies.newjeansbunnies.domain.auth.type.Authority
-
 import org.springframework.security.crypto.password.PasswordEncoder
 
 
@@ -29,7 +28,9 @@ data class UserEntity(
     @Column(nullable = false)
     val authority: Authority,
     @Column(nullable = false)
-    val birth: String
+    val birth: String,
+    @Column(nullable = false)
+    val state: Boolean = true
 ) {
     fun hashPassword(passwordEncoder: PasswordEncoder) {
         this.password = passwordEncoder.encode(this.password)
