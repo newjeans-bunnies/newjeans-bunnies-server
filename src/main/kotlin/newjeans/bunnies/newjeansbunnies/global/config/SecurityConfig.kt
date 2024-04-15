@@ -33,6 +33,7 @@ class SecurityConfig(
                 authorize.requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                 authorize.requestMatchers(HttpMethod.POST, "/api/auth/signup").permitAll()
                 authorize.requestMatchers(HttpMethod.PATCH, "/api/auth/refresh").permitAll()
+                authorize.requestMatchers(HttpMethod.DELETE,"/api/auth").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
                 authorize.requestMatchers(HttpMethod.POST, "/api/auth/phonenumber/verify").permitAll()
                 authorize.requestMatchers(HttpMethod.POST, "/api/auth/phonenumber").permitAll()
 
@@ -44,8 +45,7 @@ class SecurityConfig(
                 authorize.requestMatchers(HttpMethod.GET, "/api/post/user/detail/**").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
                 authorize.requestMatchers(HttpMethod.GET, "/api/post/basic-info/**").permitAll()
                 authorize.requestMatchers(HttpMethod.GET, "/api/post/user/basic-info/**").permitAll()
-                authorize.requestMatchers(HttpMethod.DELETE, "/api/post/delete").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
-
+                authorize.requestMatchers(HttpMethod.DELETE, "/api/post").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
 
 /*                //parentsComment
                 authorize.requestMatchers(HttpMethod.POST,"/api/comment/parents/send").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
@@ -60,34 +60,26 @@ class SecurityConfig(
                 authorize.requestMatchers(HttpMethod.GET,"/api/comment/children/basic-info").permitAll()
                 authorize.requestMatchers(HttpMethod.DELETE,"/api/comment/children").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)*/
 
-
                 //image
                 authorize.requestMatchers("/api/aws/image/post").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
                 authorize.requestMatchers("/api/aws/image/user").permitAll()
-
 
                 //good
                 authorize.requestMatchers("/api/post/good").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
                 authorize.requestMatchers("/api/comment/children/good").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
                 authorize.requestMatchers("/api/comment/parents/good").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
 
-
                 //user
                 authorize.requestMatchers(HttpMethod.GET,"/api/user/get-detail").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
                 authorize.requestMatchers(HttpMethod.GET,"api/user/get-basic/**").permitAll()
                 authorize.requestMatchers(HttpMethod.PATCH,"/api/user/update").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
-                authorize.requestMatchers(HttpMethod.DELETE,"/api/user").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
                 authorize.requestMatchers(HttpMethod.GET,"/api/user/check/userid").permitAll()
                 authorize.requestMatchers(HttpMethod.GET,"/api/user/check/phonenumber").permitAll()
                 authorize.requestMatchers(HttpMethod.GET,"/api/user/support").permitAll()
                 authorize.requestMatchers(HttpMethod.GET,"/api/user/image/*").permitAll()
 
-
                 //image
-                authorize.requestMatchers(HttpMethod.POST, "api/image/**").permitAll()
-
-
-
+                authorize.requestMatchers(HttpMethod.POST, "api/image/**").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
 
                 //report
                 authorize.requestMatchers(HttpMethod.POST,"/api/report/**").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
