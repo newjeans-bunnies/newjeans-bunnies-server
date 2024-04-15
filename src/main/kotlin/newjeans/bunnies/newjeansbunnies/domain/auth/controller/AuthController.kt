@@ -11,11 +11,10 @@ import newjeans.bunnies.newjeansbunnies.domain.auth.controller.dto.request.Login
 import newjeans.bunnies.newjeansbunnies.domain.auth.controller.dto.request.SignupRequestDto
 import newjeans.bunnies.newjeansbunnies.domain.auth.controller.dto.response.CertificationVerifyResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.auth.controller.dto.response.SignupResponseDto
-import newjeans.bunnies.newjeansbunnies.domain.auth.service.LoginService
-import newjeans.bunnies.newjeansbunnies.domain.auth.service.PhoneNumberCertificationService
-import newjeans.bunnies.newjeansbunnies.domain.auth.service.ReissueTokenService
-import newjeans.bunnies.newjeansbunnies.domain.auth.service.SignupService
+import newjeans.bunnies.newjeansbunnies.domain.auth.service.*
+import newjeans.bunnies.newjeansbunnies.domain.user.error.exception.BlankUserIdException
 import newjeans.bunnies.newjeansbunnies.global.error.exception.RefreshTokenNotForundException
+import newjeans.bunnies.newjeansbunnies.global.response.StatusResponseDto
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpStatus
 import org.springframework.validation.annotation.Validated
@@ -30,7 +29,8 @@ class AuthController(
     private val loginService: LoginService,
     private val signupService: SignupService,
     private val reissueTokenService: ReissueTokenService,
-    private val phoneNumberCertificationService: PhoneNumberCertificationService
+    private val phoneNumberCertificationService: PhoneNumberCertificationService,
+    private val authService: AuthService
 ) {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/signup")
@@ -65,6 +65,18 @@ class AuthController(
         ) phoneNumber: String
     ): CertificationVerifyResponseDto {
         return runBlocking(Dispatchers.IO) { phoneNumberCertificationService.certification(phoneNumber) }
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping
+    fun deleteUser(
+        @RequestParam("userid") userId: String
+    ): StatusResponseDto {
+
+        if (userId.isBlank())
+            throw BlankUserIdException
+
+        return authService.userDelete(userId)
     }
 
 }

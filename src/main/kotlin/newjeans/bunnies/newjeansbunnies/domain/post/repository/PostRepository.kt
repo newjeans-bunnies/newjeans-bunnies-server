@@ -11,6 +11,7 @@ import java.util.*
 interface PostRepository: CrudRepository<PostEntity, String> {
 
     fun findByUuid(uuid: String): Optional<PostEntity>
+
     fun findByCreateDateBeforeOrderByCreateDateDesc(createDate: String, pageable: Pageable): Optional<List<PostEntity>>
 
     fun findTop10ByUserIdAndCreateDateBefore(userId: String, createDate: String): Optional<List<PostEntity>>
@@ -20,4 +21,5 @@ interface PostRepository: CrudRepository<PostEntity, String> {
     fun existsByUuid(postId: String): Boolean
 
     fun deleteByUserId(userId: String)
+
 }

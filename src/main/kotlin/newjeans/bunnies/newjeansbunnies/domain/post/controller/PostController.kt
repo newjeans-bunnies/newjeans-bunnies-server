@@ -45,7 +45,7 @@ class PostController(
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping()
+    @DeleteMapping
     fun deletePost(
         @RequestParam("post-id") postId: String
     ): StatusResponseDto {
