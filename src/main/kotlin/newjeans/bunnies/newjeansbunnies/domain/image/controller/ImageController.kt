@@ -23,11 +23,20 @@ class ImageController(
 ) {
 
     //사진 리스트로 가져오기
-    @PostMapping("/list")
+    @GetMapping
     fun getListImage(
         @RequestParam date: String
     ): List<ImageResponseDto> {
         return imageService.getListImage(date)
+    }
+
+    // 사진 삭제
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping
+    fun deleteImage(
+        @RequestParam imageId: String
+    ): StatusResponseDto {
+        return imageService.deleteImage(imageId)
     }
 
     //Multipart 업로드 시작
@@ -48,7 +57,7 @@ class ImageController(
 
     // Multipart 업로드 완료
     @PostMapping("/complete-upload")
-    fun initiateUpload3(
+    fun completeUpload(
         @RequestBody finishUploadRequest: FinishUploadRequest,
     ): CompleteMultipartUploadResult {
         return awsUploadService.completeUpload(finishUploadRequest)
@@ -57,8 +66,8 @@ class ImageController(
     //Multipart 업로드 취소
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping("/abort-upload")
-    fun initiateUpload3(
-        @RequestBody request: PreSignedUrlAbortRequest,
+    fun abortUpload(
+        @RequestBody request: PreSignedUrlAbortRequest
     ): StatusResponseDto {
         return awsUploadService.abortMultipartUpload(request)
     }

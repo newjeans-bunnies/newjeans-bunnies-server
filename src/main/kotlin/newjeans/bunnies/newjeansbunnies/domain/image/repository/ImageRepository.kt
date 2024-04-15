@@ -9,7 +9,6 @@ import java.util.*
 @Repository
 interface ImageRepository : CrudRepository<ImageEntity, String> {
 
-    fun deleteByUuid(uuid: String)
     fun findByPostId(postId: String): Optional<List<ImageEntity>>
     fun findByCreateDateBeforeOrderByCreateDateDesc(createDate: String, pageable: Pageable): Optional<List<ImageEntity>>
 
