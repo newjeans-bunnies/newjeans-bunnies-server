@@ -1,7 +1,7 @@
 package newjeans.bunnies.newjeansbunnies.domain.image.controller.dto.response
 
-import java.net.URL
-
 data class CreatePreSignedUrlResponse(
-    val preSignedUrl: URL,
+    val preSignedUrl: String,
+    val fileName: String,
+    val postId: String
 )

@@ -1,10 +1,5 @@
 package newjeans.bunnies.newjeansbunnies.domain.image.controller
 
-import com.amazonaws.services.s3.model.CompleteMultipartUploadResult
-import com.amazonaws.services.s3.model.InitiateMultipartUploadResult
-import newjeans.bunnies.newjeansbunnies.domain.image.controller.dto.request.FinishUploadRequest
-import newjeans.bunnies.newjeansbunnies.domain.image.controller.dto.request.PreSignedUploadInitiateRequest
-import newjeans.bunnies.newjeansbunnies.domain.image.controller.dto.request.PreSignedUrlAbortRequest
 import newjeans.bunnies.newjeansbunnies.domain.image.controller.dto.request.PreSignedUrlCreateRequest
 import newjeans.bunnies.newjeansbunnies.domain.image.controller.dto.response.CreatePreSignedUrlResponse
 import newjeans.bunnies.newjeansbunnies.domain.image.controller.dto.response.ImageResponseDto
@@ -36,40 +31,41 @@ class ImageController(
     fun deleteImage(
         @RequestParam imageId: String
     ): StatusResponseDto {
-        return imageService.deleteImage(imageId)
+        return imageService.disabledImage(imageId)
     }
 
     //Multipart 업로드 시작
-    @PostMapping("/initiate-upload")
-    fun initiateUpload(
-        @RequestBody request: PreSignedUploadInitiateRequest
-    ): InitiateMultipartUploadResult {
-        return awsUploadService.initiateUpload(request)
-    }
+//    @PostMapping("/initiate-upload")
+//    fun initiateUpload(
+//        @RequestBody request: PreSignedUploadInitiateRequest
+//    ): InitiateMultipartUploadResult {
+//        return awsUploadService.initiateUpload(request)
+//    }
 
     // PreSignedURL 발급
     @PostMapping("/presigned-url")
-    fun initiateUpload(
-        @RequestBody request: PreSignedUrlCreateRequest,
-    ): CreatePreSignedUrlResponse {
-        return awsUploadService.createPreSignedUrl(request)
+    fun issuePreSignedUrl(
+        @RequestBody request: List<PreSignedUrlCreateRequest>,
+        @RequestParam("post-id") postId: String
+    ): List<CreatePreSignedUrlResponse> {
+        return awsUploadService.createPreSignedUrl(request, postId)
     }
 
     // Multipart 업로드 완료
     @PostMapping("/complete-upload")
     fun completeUpload(
-        @RequestBody finishUploadRequest: FinishUploadRequest,
-    ): CompleteMultipartUploadResult {
-        return awsUploadService.completeUpload(finishUploadRequest)
+        @RequestParam("image-id") imageId: String
+    ): StatusResponseDto {
+        return awsUploadService.completeUpload(imageId)
     }
 
-    //Multipart 업로드 취소
+    // S3에 업로드된 사진 삭제
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping("/abort-upload")
     fun abortUpload(
-        @RequestBody request: PreSignedUrlAbortRequest
+        @RequestParam("image-id") imageId: String
     ): StatusResponseDto {
-        return awsUploadService.abortMultipartUpload(request)
+        return awsUploadService.deleteMultipartUpload(imageId)
     }
 
 }
