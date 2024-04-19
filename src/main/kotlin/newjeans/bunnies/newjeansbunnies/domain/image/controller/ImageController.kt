@@ -24,7 +24,7 @@ class ImageController(
 
     //사진 리스트로 가져오기
     @GetMapping
-    fun getListImage(
+    fun getImages(
         @RequestParam date: String
     ): List<ImageResponseDto> {
         return imageService.getListImage(date)

@@ -80,6 +80,7 @@ class SecurityConfig(
 
                 //image
                 authorize.requestMatchers(HttpMethod.POST, "api/image/**").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
+                authorize.requestMatchers(HttpMethod.GET, "api/image/**").permitAll()
 
                 //report
                 authorize.requestMatchers(HttpMethod.POST,"/api/report/**").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)

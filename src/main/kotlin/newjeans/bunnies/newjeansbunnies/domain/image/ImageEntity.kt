@@ -10,12 +10,12 @@ import jakarta.persistence.Table
 data class ImageEntity(
     @Id
     val imageId: String,
-    @Column(nullable = false)
-    val createDate: String,
-    @Column(nullable = false, unique = true)
-    val imageURL: String,
+    @Column(nullable = true)
+    val createDate: String? = null,
+    @Column(nullable = true, unique = true)
+    val imageURL: String? = null,
     @Column(nullable = false)
     val postId: String,
     @Column(nullable = false)
-    var state: Boolean = true
+    var state: Boolean = false
 )
