@@ -88,7 +88,7 @@ class PostService(
 
         // 게시글 안에 있는 사진 비활성화
         postImage.map { imageData ->
-            imageService.deleteImage(imageData.imageId)
+            imageService.disabledImage(imageData.imageId)
         }
 
         // 게시글 비활성화
