@@ -2,10 +2,8 @@ package newjeans.bunnies.newjeansbunnies.domain.image.service
 
 import com.amazonaws.HttpMethod
 import com.amazonaws.services.s3.Headers
-import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest
-import com.amazonaws.services.s3.model.InitiateMultipartUploadRequest
-import com.amazonaws.services.s3.model.InitiateMultipartUploadResult
-import com.amazonaws.services.s3.model.ObjectMetadata
+import com.amazonaws.services.s3.model.*
+import jakarta.transaction.Transactional
 import newjeans.bunnies.newjeansbunnies.domain.image.Constant.preSignedUrlExpirationTime
 import newjeans.bunnies.newjeansbunnies.domain.image.controller.dto.request.PreSignedUploadInitiateRequest
 import newjeans.bunnies.newjeansbunnies.domain.image.controller.dto.request.PreSignedUrlCreateRequest
@@ -42,7 +40,7 @@ class AwsUploadService(
     }
 
     // PreSignedUrl 생성
-    fun createPreSignedUrl(request: List<PreSignedUrlCreateRequest>,  postId: String): List<CreatePreSignedUrlResponse> {
+    fun createPreSignedUrl(request: List<PreSignedUrlCreateRequest>, postId: String): List<CreatePreSignedUrlResponse> {
 
         val generatePreSignedUrlRequests: MutableList<GeneratePresignedUrlRequest> = mutableListOf()
 
@@ -64,8 +62,7 @@ class AwsUploadService(
             generatePreSignedUrlRequests.add(generatePreSignedUrlRequest)
         }
 
-        for(index in request.indices)
-        request.map {
+        for (index in request.indices) request.map {
             // 사진 생성
             imageService.createImage(
                 imageId = it.fileName, postId = postId
@@ -75,19 +72,21 @@ class AwsUploadService(
 
         return generatePreSignedUrlRequests.mapIndexed { index, item ->
             CreatePreSignedUrlResponse(
-                awsS3Config.amazonS3Client().generatePresignedUrl(item).toString(),
-                request[index].fileName,
-                postId
+                awsS3Config.amazonS3Client().generatePresignedUrl(item).toString(), request[index].fileName, postId, request[index].fileSize, request[index].fileType
             )
         }
     }
 
 
     // 업로드 한 파일 확정
-    fun completeUpload(imageId: String): StatusResponseDto {
+    fun completeUpload(postId: String): StatusResponseDto {
+        val images = imageService.getImageByPostId(postId)
         val createDate = LocalDateTime.now().toString()
-        val imageURL = "https://$bucket.s3.$location.amazonaws.com/image/$imageId"
-        imageService.activationImage(imageId, imageURL, createDate)
+        images.map {
+            val imageURL = "https://$bucket.s3.$location.amazonaws.com/image/${it.imageId}"
+            imageService.activationImage(it.imageId, imageURL, createDate)
+        }
+
         return StatusResponseDto(200, "사진이 활성됨")
     }
 
@@ -98,13 +97,18 @@ class AwsUploadService(
 //        return StatusResponseDto(status = 204, message = "이미지가 삭제됨")
 //    }
 
+    @Transactional
     // 비활성화되어 있는 사진 삭제 하기
     fun deleteMultipartUpload(imageId: String): StatusResponseDto {
 
         // 사진 아이디를 사용해 사진 삭제
         imageService.deleteImage(imageId)
 
+        // aws s3 객체 삭제
+        awsS3Config.amazonS3Client().deleteObject(DeleteObjectRequest(bucket, "image/$imageId"))
+
         return StatusResponseDto(204, "사진이 삭제됨")
     }
+
 
 }
