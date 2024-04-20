@@ -47,7 +47,6 @@ class ImageService(
 
 
     // 사진 비활성화
-    @Transactional
     fun disabledImage(imageId: String): StatusResponseDto {
 
         // 활성화되어 있는 사진 인지 확인
@@ -93,6 +92,8 @@ class ImageService(
         return StatusResponseDto(204, "사진이 삭제되었습니다.")
     }
 
+
+
     // 사진 리스트로 가져오기
     fun getListImage(date: String): List<ImageResponseDto> {
 
@@ -102,7 +103,7 @@ class ImageService(
         // TODO("활성화 되어 있는 이미지만 가져오기")
 
         // 이미지 가져오기
-        val imageListData = imageRepository.findByCreateDateBeforeOrderByCreateDateDesc(
+        val imageListData = imageRepository.findImagesBeforeCreateDateWithStateTrue(
             date, PageRequest.of(
                 0, pageSize, Sort.by(
                     Sort.Direction.DESC, "createDate"

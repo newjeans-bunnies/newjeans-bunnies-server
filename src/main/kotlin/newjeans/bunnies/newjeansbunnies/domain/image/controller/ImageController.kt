@@ -45,8 +45,7 @@ class ImageController(
     // PreSignedURL 발급
     @PostMapping("/presigned-url")
     fun issuePreSignedUrl(
-        @RequestBody request: List<PreSignedUrlCreateRequest>,
-        @RequestParam("post-id") postId: String
+        @RequestBody request: List<PreSignedUrlCreateRequest>, @RequestParam("post-id") postId: String
     ): List<CreatePreSignedUrlResponse> {
         return awsUploadService.createPreSignedUrl(request, postId)
     }
@@ -54,9 +53,9 @@ class ImageController(
     // Multipart 업로드 완료
     @PostMapping("/complete-upload")
     fun completeUpload(
-        @RequestParam("image-id") imageId: String
+        @RequestParam("post-id") postId: String
     ): StatusResponseDto {
-        return awsUploadService.completeUpload(imageId)
+        return awsUploadService.completeUpload(postId)
     }
 
     // S3에 업로드된 사진 삭제
