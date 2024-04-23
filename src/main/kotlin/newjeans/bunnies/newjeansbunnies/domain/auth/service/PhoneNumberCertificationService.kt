@@ -24,7 +24,7 @@ class PhoneNumberCertificationService(
 ) {
     private val log: Logger = LoggerFactory.getLogger(PhoneNumberCertificationService::class.java)
 
-    suspend fun verify(certificationVerifyRequestDto: CertificationVerifyRequestDto): StatusResponseDto {
+    fun verify(certificationVerifyRequestDto: CertificationVerifyRequestDto): StatusResponseDto {
         checkValidCertificationNumber(certificationVerifyRequestDto)
 
         deleteValues(certificationVerifyRequestDto.phoneNumber)
@@ -32,8 +32,7 @@ class PhoneNumberCertificationService(
         return StatusResponseDto(200, "success")
     }
 
-    suspend fun certification(phoneNumber: String): StatusResponseDto {
-
+     fun certification(phoneNumber: String): StatusResponseDto {
         checkValidPhoneNumber(phoneNumber)
 
         val randomNumber = createRandomNumber()
@@ -46,7 +45,7 @@ class PhoneNumberCertificationService(
         return StatusResponseDto(200, "success")
     }
 
-    private suspend fun checkValidPhoneNumber(phoneNumber: String){
+    private fun checkValidPhoneNumber(phoneNumber: String){
         if (userRepository.findByPhoneNumber(phoneNumber).isPresent)
             throw ExistPhoneNumberException
     }
@@ -60,22 +59,22 @@ class PhoneNumberCertificationService(
         return randomNumber
     }
 
-    private suspend fun checkValidCertificationNumber(certificationVerifyRequestDto: CertificationVerifyRequestDto) {
+    private fun checkValidCertificationNumber(certificationVerifyRequestDto: CertificationVerifyRequestDto) {
         if (getValues(certificationVerifyRequestDto.phoneNumber) != certificationVerifyRequestDto.certificationNumber)
             throw FailedAuthenticationException
     }
 
-    private suspend fun setValues(phoneNumber: String, randomNumber: String) {
+    private fun setValues(phoneNumber: String, randomNumber: String) {
         val values = redisConfig.redisTemplate().opsForValue()
         values.set(phoneNumber, randomNumber, Duration.ofMinutes(5))
     }
 
-    private suspend fun getValues(phoneNumber: String): String? {
+    private fun getValues(phoneNumber: String): String? {
         val value = redisConfig.redisTemplate().opsForValue()
         return value.get(phoneNumber)
     }
 
-    private suspend fun deleteValues(phoneNumber: String) {
+    private fun deleteValues(phoneNumber: String) {
         redisConfig.redisTemplate().opsForValue().operations.delete(phoneNumber)
     }
 }

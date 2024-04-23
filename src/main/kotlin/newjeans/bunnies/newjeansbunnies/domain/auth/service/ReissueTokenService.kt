@@ -27,7 +27,7 @@ class ReissueTokenService(
     private val jwtParser: JwtParser,
     private val refreshTokenRepository: RefreshTokenRepository,
 ) {
-    suspend fun execute(refreshToken: String, accessToken: String): TokenDto {
+     fun execute(refreshToken: String, accessToken: String): TokenDto {
 
         val refreshTokenClaims = jwtParser.getClaims(refreshToken)
         checkValidAccessToken(accessToken, refreshTokenClaims)
@@ -37,18 +37,18 @@ class ReissueTokenService(
         return jwtProvider.receiveToken(data.uuid, data.authority)
     }
 
-    private suspend fun checkValidAccessToken(accessToken: String, refreshTokenClaims: Jws<Claims>) {
+    private fun checkValidAccessToken(accessToken: String, refreshTokenClaims: Jws<Claims>) {
         if (refreshTokenClaims.header[Header.JWT_TYPE] != JwtProvider.REFRESH || getClaims(accessToken))
             throw InvalidTokenException
     }
 
-    private suspend fun checkValidRefreshToken(refreshToken: String): RefreshTokenEntity {
+    private fun checkValidRefreshToken(refreshToken: String): RefreshTokenEntity {
         return refreshTokenRepository.findByToken(refreshToken).orElseThrow {
             throw UnexpectedTokenException
         }
     }
 
-    private suspend fun getClaims(token: String): Boolean {
+    private fun getClaims(token: String): Boolean {
         return try {
             val key: Key = Keys.hmacShaKeyFor(jwtProperties.key.toByteArray(StandardCharsets.UTF_8))
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token)

@@ -49,13 +49,13 @@ class AuthController(
         @RequestHeader("access-token") accessToken: String,
     ): TokenDto {
         if (refreshToken.isBlank()) throw RefreshTokenNotForundException
-        return runBlocking(Dispatchers.IO) { reissueTokenService.execute(refreshToken, accessToken) }
+        return reissueTokenService.execute(refreshToken, accessToken)
     }
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/phonenumber/verify")
     fun verify(@RequestBody @Valid certificationVerifyRequestDto: CertificationVerifyRequestDto): StatusResponseDto {
-        return runBlocking(Dispatchers.IO) { phoneNumberCertificationService.verify(certificationVerifyRequestDto) }
+        return phoneNumberCertificationService.verify(certificationVerifyRequestDto)
     }
 
     @PostMapping("/phonenumber")
@@ -64,7 +64,7 @@ class AuthController(
             regexp = "^(010)([0-9]{4})([0-9]{4})$", message = "전화번호를 적어주세요 ex) 010-1234-5678"
         ) phoneNumber: String
     ): StatusResponseDto {
-        return runBlocking(Dispatchers.IO) { phoneNumberCertificationService.certification(phoneNumber) }
+        return phoneNumberCertificationService.certification(phoneNumber)
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

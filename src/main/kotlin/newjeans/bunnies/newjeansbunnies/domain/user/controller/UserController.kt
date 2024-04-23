@@ -12,8 +12,6 @@ import newjeans.bunnies.newjeansbunnies.domain.user.service.UserDataDetailsServi
 import newjeans.bunnies.newjeansbunnies.domain.user.service.UserService
 import newjeans.bunnies.newjeansbunnies.domain.user.service.UserUpdateService
 import newjeans.bunnies.newjeansbunnies.global.response.StatusResponseDto
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 
@@ -25,8 +23,6 @@ class UserController(
     private val userUpdateService: UserUpdateService,
     private val userService: UserService
 ) {
-
-    private val log: Logger = LoggerFactory.getLogger(UserController::class.java)
 
     @GetMapping("/get-detail")
     fun getUserDetails(
