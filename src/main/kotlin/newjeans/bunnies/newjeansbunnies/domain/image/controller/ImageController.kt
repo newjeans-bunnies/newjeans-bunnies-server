@@ -1,7 +1,6 @@
 package newjeans.bunnies.newjeansbunnies.domain.image.controller
 
-import newjeans.bunnies.newjeansbunnies.domain.image.controller.dto.request.PreSignedUrlCreateRequest
-import newjeans.bunnies.newjeansbunnies.domain.image.controller.dto.response.CreatePreSignedUrlResponse
+import newjeans.bunnies.newjeansbunnies.domain.image.controller.dto.request.CreateImageRequestDto
 import newjeans.bunnies.newjeansbunnies.domain.image.controller.dto.response.ImageResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.image.service.AwsUploadService
 import newjeans.bunnies.newjeansbunnies.domain.image.service.ImageService
@@ -34,23 +33,14 @@ class ImageController(
         return imageService.disabledImage(imageId)
     }
 
-    //Multipart 업로드 시작
-//    @PostMapping("/initiate-upload")
-//    fun initiateUpload(
-//        @RequestBody request: PreSignedUploadInitiateRequest
-//    ): InitiateMultipartUploadResult {
-//        return awsUploadService.initiateUpload(request)
-//    }
 
-    // PreSignedURL 발급
-    @PostMapping("/presigned-url")
-    fun issuePreSignedUrl(
-        @RequestBody request: List<PreSignedUrlCreateRequest>, @RequestParam("post-id") postId: String
-    ): List<CreatePreSignedUrlResponse> {
-        return awsUploadService.createPreSignedUrl(request, postId)
+    @PostMapping
+    fun createImage(
+        @RequestBody createImageRequestDto: CreateImageRequestDto
+    ) {
+        imageService.createImage(createImageRequestDto)
     }
 
-    // Multipart 업로드 완료
     @PostMapping("/complete-upload")
     fun completeUpload(
         @RequestParam("post-id") postId: String
@@ -66,5 +56,4 @@ class ImageController(
     ): StatusResponseDto {
         return awsUploadService.deleteMultipartUpload(imageId)
     }
-
 }
