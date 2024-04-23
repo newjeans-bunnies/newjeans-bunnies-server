@@ -16,7 +16,6 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
-import java.util.*
 
 @Service
 @Configuration
@@ -28,10 +27,9 @@ class PostService(
 ) {
     // 게시글 생성
     fun createPost(postRequestDto: PostRequestDto): CreatePostResponseDto {
-        val postId = UUID.randomUUID().toString()
         val postCreateDate = LocalDateTime.now().toString()
         val post = PostEntity(
-            uuid = postId,
+            uuid = postRequestDto.postId,
             createDate = postCreateDate,
             good = 0,
             state = true,
@@ -39,7 +37,7 @@ class PostService(
             userId = postRequestDto.userId
         )
         postRepository.save(post)
-        return CreatePostResponseDto(postId, postCreateDate)
+        return CreatePostResponseDto(postRequestDto.postId, postCreateDate)
     }
 
     // 게시글 가져오기

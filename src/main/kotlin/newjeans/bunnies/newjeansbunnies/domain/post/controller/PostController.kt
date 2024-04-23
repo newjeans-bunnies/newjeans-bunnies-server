@@ -31,7 +31,7 @@ class PostController(
 
     @GetMapping
     fun getPost(
-        @RequestParam date: String,
+        @RequestParam(value = "date") date: String,
         @RequestParam(value = "userid") userID: String
     ): List<PostDto> {
         return postService.getPost(date, userID)

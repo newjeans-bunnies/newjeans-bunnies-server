@@ -2,6 +2,7 @@ package newjeans.bunnies.newjeansbunnies.domain.image.service
 
 import jakarta.transaction.Transactional
 import newjeans.bunnies.newjeansbunnies.domain.image.ImageEntity
+import newjeans.bunnies.newjeansbunnies.domain.image.controller.dto.request.CreateImageRequestDto
 import newjeans.bunnies.newjeansbunnies.domain.image.controller.dto.response.ImageResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.image.error.exception.ActivatedImageException
 import newjeans.bunnies.newjeansbunnies.domain.image.error.exception.DisabledImageException
@@ -27,20 +28,23 @@ class ImageService(
     }
 
     // 사진 생성
-    fun createImage(imageId: String, postId: String) {
+    fun createImage(createImageRequestDto: CreateImageRequestDto) {
         imageRepository.save(
             ImageEntity(
-                imageId = imageId, postId = postId
+                imageId = createImageRequestDto.imageId,
+                postId = createImageRequestDto.postId,
+                createDate = createImageRequestDto.createDate,
+                imageKey = "image/${createImageRequestDto.imageId}"
             )
         )
     }
 
     // 이미지 활성화
-    fun activationImage(imageId: String, imageURL: String, createDate: String) {
+    fun activationImage(imageId: String) {
         val image = getImage(imageId)
         imageRepository.save(
             ImageEntity(
-                imageId = imageId, imageURL = imageURL, createDate = createDate, postId = image.postId, state = true
+                imageId = imageId, imageKey = image.imageKey, createDate = image.createDate, postId = image.postId, state = true
             )
         )
     }
@@ -60,7 +64,7 @@ class ImageService(
             ImageEntity(
                 imageId = image.imageId,
                 createDate = image.createDate,
-                imageURL = image.imageURL,
+                imageKey = image.imageKey,
                 postId = image.postId,
                 state = false
             )
@@ -83,7 +87,7 @@ class ImageService(
             ImageEntity(
                 imageId = image.imageId,
                 createDate = image.createDate,
-                imageURL = image.imageURL,
+                imageKey = image.imageKey,
                 postId = image.postId,
                 state = false
             )
@@ -92,15 +96,11 @@ class ImageService(
         return StatusResponseDto(204, "사진이 삭제되었습니다.")
     }
 
-
-
     // 사진 리스트로 가져오기
     fun getListImage(date: String): List<ImageResponseDto> {
 
         // 가져올 이미지 개수
         val pageSize = 30
-
-        // TODO("활성화 되어 있는 이미지만 가져오기")
 
         // 이미지 가져오기
         val imageListData = imageRepository.findImagesBeforeCreateDateWithStateTrue(
@@ -116,7 +116,7 @@ class ImageService(
         // 이미지 반환
         return imageListData.map {
             ImageResponseDto(
-                createDate = it.createDate?:"", uuid = it.imageId, imageURL = it.imageURL ?: ""
+                createDate = it.createDate, uuid = it.imageId, imageURL = it.imageKey
             )
         }
     }
