@@ -30,39 +30,18 @@ class SecurityConfig(
         http.csrf { csrf -> csrf.disable() }
             .authorizeHttpRequests { authorize ->
                 //auth
-                authorize.requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
-                authorize.requestMatchers(HttpMethod.POST, "/api/auth/signup").permitAll()
-                authorize.requestMatchers(HttpMethod.PATCH, "/api/auth/refresh").permitAll()
-                authorize.requestMatchers(HttpMethod.DELETE,"/api/auth").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
-                authorize.requestMatchers(HttpMethod.POST, "/api/auth/phonenumber/verify").permitAll()
-                authorize.requestMatchers(HttpMethod.POST, "/api/auth/phonenumber").permitAll()
+                authorize.requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll() // 로그인
+                authorize.requestMatchers(HttpMethod.POST, "/api/auth/signup").permitAll() // 회원가입
+                authorize.requestMatchers(HttpMethod.PATCH, "/api/auth/refresh").permitAll() // 토큰 재발급
+                authorize.requestMatchers(HttpMethod.DELETE,"/api/auth").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name) //유저 삭제
+                authorize.requestMatchers(HttpMethod.POST, "/api/auth/phonenumber/verify").permitAll() // 전화번호 인증
+                authorize.requestMatchers(HttpMethod.POST, "/api/auth/phonenumber").permitAll() // 전화번호 인증
 
                 //post
                 authorize.requestMatchers(HttpMethod.POST, "/api/post/good").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
-                authorize.requestMatchers(HttpMethod.GET, "/api/post/image").permitAll()
+                authorize.requestMatchers(HttpMethod.GET, "/api/post").permitAll()
                 authorize.requestMatchers(HttpMethod.POST, "/api/post").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
-                authorize.requestMatchers(HttpMethod.GET, "/api/post/detail/**").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
-                authorize.requestMatchers(HttpMethod.GET, "/api/post/user/detail/**").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
-                authorize.requestMatchers(HttpMethod.GET, "/api/post/basic-info/**").permitAll()
-                authorize.requestMatchers(HttpMethod.GET, "/api/post/user/basic-info/**").permitAll()
                 authorize.requestMatchers(HttpMethod.DELETE, "/api/post").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
-
-/*                //parentsComment
-                authorize.requestMatchers(HttpMethod.POST,"/api/comment/parents/send").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
-                authorize.requestMatchers(HttpMethod.GET,"/api/comment/parents/detail").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
-                authorize.requestMatchers(HttpMethod.GET,"/api/comment/parents/basic-info").permitAll()
-                authorize.requestMatchers(HttpMethod.DELETE,"/api/comment/parents").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
-
-
-                //childrenComment
-                authorize.requestMatchers(HttpMethod.POST,"/api/comment/children/send").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
-                authorize.requestMatchers(HttpMethod.GET,"/api/comment/children/detail").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
-                authorize.requestMatchers(HttpMethod.GET,"/api/comment/children/basic-info").permitAll()
-                authorize.requestMatchers(HttpMethod.DELETE,"/api/comment/children").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)*/
-
-                //image
-                authorize.requestMatchers("/api/aws/image/post").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
-                authorize.requestMatchers("/api/aws/image/user").permitAll()
 
                 //good
                 authorize.requestMatchers("/api/post/good").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
@@ -79,8 +58,11 @@ class SecurityConfig(
                 authorize.requestMatchers(HttpMethod.GET,"/api/user/image/*").permitAll()
 
                 //image
-                authorize.requestMatchers(HttpMethod.POST, "api/image/**").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
-                authorize.requestMatchers(HttpMethod.GET, "api/image/**").permitAll()
+                authorize.requestMatchers(HttpMethod.POST, "api/image").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
+                authorize.requestMatchers(HttpMethod.POST, "api/image/complete-upload").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
+                authorize.requestMatchers(HttpMethod.POST, "api/image/abort-upload").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
+                authorize.requestMatchers(HttpMethod.DELETE, "api/image").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
+                authorize.requestMatchers(HttpMethod.GET, "api/image").permitAll()
 
                 //report
                 authorize.requestMatchers(HttpMethod.POST,"/api/report/**").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
