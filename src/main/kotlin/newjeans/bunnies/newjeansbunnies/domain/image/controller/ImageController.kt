@@ -28,7 +28,7 @@ class ImageController(
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping
     fun deleteImage(
-        @RequestParam imageId: String
+        @RequestParam(value = "image-id") imageId: String
     ): StatusResponseDto {
         return imageService.disabledImage(imageId)
     }

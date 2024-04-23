@@ -1,11 +1,11 @@
 package newjeans.bunnies.newjeansbunnies.domain.auth.service
 
 import newjeans.bunnies.newjeansbunnies.domain.auth.controller.dto.request.CertificationVerifyRequestDto
-import newjeans.bunnies.newjeansbunnies.domain.auth.controller.dto.response.CertificationVerifyResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.auth.error.exception.ExistPhoneNumberException
 import newjeans.bunnies.newjeansbunnies.domain.auth.error.exception.FailedAuthenticationException
 import newjeans.bunnies.newjeansbunnies.domain.user.repository.UserRepository
 import newjeans.bunnies.newjeansbunnies.global.config.RedisConfig
+import newjeans.bunnies.newjeansbunnies.global.response.StatusResponseDto
 import newjeans.bunnies.newjeansbunnies.global.utils.SmsUtil
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -24,15 +24,15 @@ class PhoneNumberCertificationService(
 ) {
     private val log: Logger = LoggerFactory.getLogger(PhoneNumberCertificationService::class.java)
 
-    suspend fun verify(certificationVerifyRequestDto: CertificationVerifyRequestDto): CertificationVerifyResponseDto {
+    suspend fun verify(certificationVerifyRequestDto: CertificationVerifyRequestDto): StatusResponseDto {
         checkValidCertificationNumber(certificationVerifyRequestDto)
 
         deleteValues(certificationVerifyRequestDto.phoneNumber)
 
-        return CertificationVerifyResponseDto(200, "success")
+        return StatusResponseDto(200, "success")
     }
 
-    suspend fun certification(phoneNumber: String): CertificationVerifyResponseDto {
+    suspend fun certification(phoneNumber: String): StatusResponseDto {
 
         checkValidPhoneNumber(phoneNumber)
 
@@ -43,7 +43,7 @@ class PhoneNumberCertificationService(
         log.info("[인증번호: $randomNumber] NewJeans-Bunnies 인증번호입니다.")
 //        smsUtil.sendOne(phoneNumber, "[인증번호: $randomNumber] NewJeans-Bunnies 인증번호입니다.")
 
-        return CertificationVerifyResponseDto(200, "success")
+        return StatusResponseDto(200, "success")
     }
 
     private suspend fun checkValidPhoneNumber(phoneNumber: String){

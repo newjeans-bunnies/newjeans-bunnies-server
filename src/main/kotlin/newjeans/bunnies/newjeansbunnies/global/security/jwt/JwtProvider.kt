@@ -34,14 +34,14 @@ class JwtProvider(
 
     private val key: Key = Keys.hmacShaKeyFor(jwtProperties.key.toByteArray(StandardCharsets.UTF_8))
 
-    suspend fun receiveToken(uuid: String, authority: Authority) = TokenDto(
+     fun receiveToken(uuid: String, authority: Authority) = TokenDto(
         accessToken = generateJwtAccessToken(uuid, authority.name),
         expiredAt = LocalDateTime.now().plusSeconds(jwtProperties.accessExp),
         refreshToken = generateJwtRefreshToken(uuid, authority),
         authority = authority.name
     )
 
-    private suspend fun generateJwtAccessToken(uuid: String, authority: String): String {
+    private fun generateJwtAccessToken(uuid: String, authority: String): String {
         return Jwts.builder()
             .signWith(key, SignatureAlgorithm.HS256)
             .setHeaderParam(Header.JWT_TYPE, ACCESS)
@@ -52,7 +52,7 @@ class JwtProvider(
             .compact()
     }
 
-    private suspend fun generateJwtRefreshToken(uuid: String, authority: Authority): String {
+    private fun generateJwtRefreshToken(uuid: String, authority: Authority): String {
 
         val token = Jwts.builder()
             .signWith(key, SignatureAlgorithm.HS256)

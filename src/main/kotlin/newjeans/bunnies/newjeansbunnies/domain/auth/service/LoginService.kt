@@ -18,7 +18,7 @@ class LoginService(
     private val passwordEncoder: BCryptPasswordEncoder,
     private val jwtProvider: JwtProvider
 ) {
-    suspend fun execute(data: LoginRequestDto): TokenDto {
+    fun execute(data: LoginRequestDto): TokenDto {
 
         val userData = getExistUserId(data.userId)
         checkExistUserId(userData.userId, data.userId)
@@ -28,18 +28,17 @@ class LoginService(
         return jwtProvider.receiveToken(userData.uuid, userData.authority)
     }
 
-    private suspend fun getExistUserId(userId: String): UserEntity {
+    private fun getExistUserId(userId: String): UserEntity {
         return userRepository.findByUserId(userId).orElseThrow {
             throw NotExistUserIdException
         }
     }
 
-    private suspend fun matchesPassword(password: String, sparePassword: String) {
+    private fun matchesPassword(password: String, sparePassword: String) {
         if (!passwordEncoder.matches(password, sparePassword)) throw InvalidPasswordException
     }
 
-    private suspend fun checkExistUserId(userId: String, spareUserId: String) {
-        if (userId != spareUserId)
-            throw NotExistUserIdException
+    private fun checkExistUserId(userId: String, spareUserId: String) {
+        if (userId != spareUserId) throw NotExistUserIdException
     }
 }

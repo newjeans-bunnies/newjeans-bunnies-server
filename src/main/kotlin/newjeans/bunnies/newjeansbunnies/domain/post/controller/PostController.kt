@@ -32,9 +32,9 @@ class PostController(
     @GetMapping
     fun getPost(
         @RequestParam(value = "date") date: String,
-        @RequestParam(value = "userid") userID: String
+        @RequestParam(value = "user-id") userId: String
     ): List<PostDto> {
-        return postService.getPost(date, userID)
+        return postService.getPost(date, userId)
     }
 
     @PostMapping("/good")

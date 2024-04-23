@@ -9,7 +9,6 @@ import newjeans.bunnies.newjeansbunnies.domain.auth.controller.dto.TokenDto
 import newjeans.bunnies.newjeansbunnies.domain.auth.controller.dto.request.CertificationVerifyRequestDto
 import newjeans.bunnies.newjeansbunnies.domain.auth.controller.dto.request.LoginRequestDto
 import newjeans.bunnies.newjeansbunnies.domain.auth.controller.dto.request.SignupRequestDto
-import newjeans.bunnies.newjeansbunnies.domain.auth.controller.dto.response.CertificationVerifyResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.auth.controller.dto.response.SignupResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.auth.service.*
 import newjeans.bunnies.newjeansbunnies.domain.user.error.exception.BlankUserIdException
@@ -32,15 +31,16 @@ class AuthController(
     private val phoneNumberCertificationService: PhoneNumberCertificationService,
     private val authService: AuthService
 ) {
+
+    @PostMapping("/login")
+    fun login(@RequestBody @Valid loginRequestDto: LoginRequestDto): TokenDto {
+        return loginService.execute(loginRequestDto)
+    }
+
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/signup")
     fun signup(@RequestBody @Valid signupRequestDto: SignupRequestDto): SignupResponseDto {
         return runBlocking(Dispatchers.IO) { signupService.execute(signupRequestDto) }
-    }
-
-    @PostMapping("/login")
-    fun login(@RequestBody @Valid loginRequestDto: LoginRequestDto): TokenDto {
-        return runBlocking(Dispatchers.IO) { loginService.execute(loginRequestDto) }
     }
 
     @PatchMapping("/refresh")
@@ -54,7 +54,7 @@ class AuthController(
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/phonenumber/verify")
-    fun verify(@RequestBody @Valid certificationVerifyRequestDto: CertificationVerifyRequestDto): CertificationVerifyResponseDto {
+    fun verify(@RequestBody @Valid certificationVerifyRequestDto: CertificationVerifyRequestDto): StatusResponseDto {
         return runBlocking(Dispatchers.IO) { phoneNumberCertificationService.verify(certificationVerifyRequestDto) }
     }
 
@@ -63,18 +63,17 @@ class AuthController(
         @RequestParam("phonenumber") @Pattern(
             regexp = "^(010)([0-9]{4})([0-9]{4})$", message = "전화번호를 적어주세요 ex) 010-1234-5678"
         ) phoneNumber: String
-    ): CertificationVerifyResponseDto {
+    ): StatusResponseDto {
         return runBlocking(Dispatchers.IO) { phoneNumberCertificationService.certification(phoneNumber) }
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping
     fun deleteUser(
-        @RequestParam("userid") userId: String
+        @RequestParam("user-id") userId: String
     ): StatusResponseDto {
 
-        if (userId.isBlank())
-            throw BlankUserIdException
+        if (userId.isBlank()) throw BlankUserIdException
 
         return authService.userDelete(userId)
     }
