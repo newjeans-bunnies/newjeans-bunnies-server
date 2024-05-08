@@ -29,7 +29,7 @@ class SignupService(
 
     private val countries = countryList.split(",").toSet()
 
-    suspend fun execute(data: SignupRequestDto): SignupResponseDto {
+    fun execute(data: SignupRequestDto): SignupResponseDto {
 
         checkValidUserId(data.userId)
 
@@ -59,19 +59,19 @@ class SignupService(
         )
     }
 
-    private suspend fun checkValidPhoneNumber(phoneNumber: String) {
+    private fun checkValidPhoneNumber(phoneNumber: String) {
         val existingUser = userRepository.findByPhoneNumber(phoneNumber)
         if (existingUser.isPresent) {
             throw ExistPhoneNumberException // 이미 존재하는 전화번호 예외 처리
         }
     }
 
-    private suspend fun checkValidUserId(userId: String) {
+    private fun checkValidUserId(userId: String) {
         if (userRepository.findByUserId(userId).isPresent && userId == userRepository.findByUserId(userId).get().userId)
             throw ExistIdException // 이미 존재하는 아이디
     }
 
-    private suspend fun checkValidCountry(country: String) {
+    private fun checkValidCountry(country: String) {
         if (country !in countries)
             throw CountryNotFoundException // 지원 하지 않거나 존재하지 않는 나라
     }
