@@ -60,7 +60,7 @@ class UserUpdateService(
             throw CountryNotFoundException //지원 하지 않거나 존재하지 않는 나라
 
         if (userUpdateRequestDto.language !in countries)
-            throw LanguageNotFoundException //지원 하지 않거나 존재하지 않는 나라
+            throw LanguageNotFoundException //지원 하지 않거나 존재하지 않는 언어
 
         if (multipartFiles != null) {
             val extension: String =
