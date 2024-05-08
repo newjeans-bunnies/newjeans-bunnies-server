@@ -3,8 +3,6 @@ package newjeans.bunnies.newjeansbunnies.domain.auth.controller
 
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Pattern
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
 import newjeans.bunnies.newjeansbunnies.domain.auth.controller.dto.TokenDto
 import newjeans.bunnies.newjeansbunnies.domain.auth.controller.dto.request.CertificationVerifyRequestDto
 import newjeans.bunnies.newjeansbunnies.domain.auth.controller.dto.request.LoginRequestDto
@@ -40,7 +38,7 @@ class AuthController(
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/signup")
     fun signup(@RequestBody @Valid signupRequestDto: SignupRequestDto): SignupResponseDto {
-        return runBlocking(Dispatchers.IO) { signupService.execute(signupRequestDto) }
+        return signupService.execute(signupRequestDto)
     }
 
     @PatchMapping("/refresh")
