@@ -49,24 +49,18 @@ class SecurityConfig(
                 authorize.requestMatchers("/api/comment/parents/good").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
 
                 //user
-                authorize.requestMatchers(HttpMethod.GET,"/api/user/get-detail").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
-                authorize.requestMatchers(HttpMethod.GET,"api/user/get-basic/**").permitAll()
+                authorize.requestMatchers(HttpMethod.GET,"/api/user").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
+                authorize.requestMatchers(HttpMethod.GET,"/api/user/**").permitAll()
                 authorize.requestMatchers(HttpMethod.PATCH,"/api/user/update").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
-                authorize.requestMatchers(HttpMethod.GET,"/api/user/check/userid").permitAll()
-                authorize.requestMatchers(HttpMethod.GET,"/api/user/check/phonenumber").permitAll()
-                authorize.requestMatchers(HttpMethod.GET,"/api/user/support").permitAll()
-                authorize.requestMatchers(HttpMethod.GET,"/api/user/image/*").permitAll()
 
                 //image
                 authorize.requestMatchers(HttpMethod.POST, "api/image").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
-                authorize.requestMatchers(HttpMethod.POST, "api/image/complete-upload").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
                 authorize.requestMatchers(HttpMethod.POST, "api/image/abort-upload").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
                 authorize.requestMatchers(HttpMethod.DELETE, "api/image").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
-                authorize.requestMatchers(HttpMethod.GET, "api/image").permitAll()
+                authorize.requestMatchers(HttpMethod.GET, "api/image").permitAll() // 사진 리스트 가져오기
 
                 //report
                 authorize.requestMatchers(HttpMethod.POST,"/api/report/**").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
-
             }
             .exceptionHandling { exceptionHandling ->
                 exceptionHandling
