@@ -50,6 +50,8 @@ dependencies {
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
+    implementation ("com.github.vladimir-bukhtoyarov:bucket4j-core:7.0.0")
+
     implementation("aws.sdk.kotlin:s3:1.0.0")
 
     implementation("net.nurigo:sdk:4.3.0")
