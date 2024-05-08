@@ -3,6 +3,7 @@ package newjeans.bunnies.newjeansbunnies.domain.post.repository
 
 import newjeans.bunnies.newjeansbunnies.domain.post.PostEntity
 import org.springframework.data.domain.Pageable
+import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
 import java.util.*
@@ -12,7 +13,11 @@ interface PostRepository: CrudRepository<PostEntity, String> {
 
     fun findByUuid(uuid: String): Optional<PostEntity>
 
-    fun findByCreateDateBeforeOrderByCreateDateDesc(createDate: String, pageable: Pageable): Optional<List<PostEntity>>
+//    fun findByCreateDateBeforeOrderByCreateDateDesc(createDate: String, pageable: Pageable): Optional<List<PostEntity>>
+
+    @Query("SELECT post FROM PostEntity post WHERE post.state = true")
+    fun findSliceBy(pageable: Pageable): Optional<List<PostEntity>>
+
 
     fun findTop10ByUserIdAndCreateDateBefore(userId: String, createDate: String): Optional<List<PostEntity>>
 

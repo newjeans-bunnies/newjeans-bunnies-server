@@ -1,6 +1,5 @@
 package newjeans.bunnies.newjeansbunnies.domain.post.controller
 
-
 import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.request.PostRequestDto
 import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.response.CreatePostResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.response.PostDto
@@ -12,7 +11,6 @@ import newjeans.bunnies.newjeansbunnies.global.response.StatusResponseDto
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
-
 
 @RestController
 @RequestMapping("/api/post")
@@ -31,10 +29,11 @@ class PostController(
 
     @GetMapping
     fun getPost(
-        @RequestParam(value = "date") date: String,
-        @RequestParam(value = "user-id") userId: String
+        @RequestParam("user-id") userId: String,
+        @RequestParam size: Int,
+        @RequestParam page: Int,
     ): List<PostDto> {
-        return postService.getPost(date, userId)
+        return postService.getPost(size, page, userId)
     }
 
     @PostMapping("/good")

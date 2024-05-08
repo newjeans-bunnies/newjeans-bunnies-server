@@ -1,6 +1,7 @@
 package newjeans.bunnies.newjeansbunnies.domain.post.service
 
 import jakarta.transaction.Transactional
+import newjeans.bunnies.newjeansbunnies.domain.image.service.AwsUploadService
 import newjeans.bunnies.newjeansbunnies.domain.image.service.ImageService
 import newjeans.bunnies.newjeansbunnies.domain.post.PostEntity
 import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.request.PostRequestDto
@@ -23,11 +24,13 @@ class PostService(
     private val postRepository: PostRepository,
     private val userService: UserService,
     private val postGoodService: PostGoodService,
-    private val imageService: ImageService
+    private val imageService: ImageService,
+    private val awsUploadService: AwsUploadService
 ) {
     // 게시글 생성
     fun createPost(postRequestDto: PostRequestDto): CreatePostResponseDto {
         val postCreateDate = LocalDateTime.now().toString()
+        awsUploadService.completeUpload(postRequestDto.postId)
         val post = PostEntity(
             uuid = postRequestDto.postId,
             createDate = postCreateDate,
@@ -41,11 +44,16 @@ class PostService(
     }
 
     // 게시글 가져오기
-    fun getPost(date: String, userId: String): List<PostDto> {
+    fun getPost(pageSize: Int, page: Int, userId: String): List<PostDto> {
         userService.checkExistUserId(userId)
-        val listPost = postRepository.findByCreateDateBeforeOrderByCreateDateDesc(
-            date, PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "createDate"))
-        ).orElseThrow {
+
+        val pageRequest = PageRequest.of(
+            page, pageSize, Sort.by(
+                Sort.Direction.DESC, "createDate"
+            )
+        )
+
+        val listPost = postRepository.findSliceBy(pageRequest).orElseThrow {
             throw NotExistPostIdException
         }
 
@@ -56,7 +64,11 @@ class PostService(
                 body = it.body,
                 createDate = it.createDate,
                 good = it.good,
-                goodState = postGoodService.getPostGoodState(it.uuid, userId)
+                goodState = postGoodService.getPostGoodState(it.uuid, userId),
+                image = imageService.getImageByPostId(it.uuid).map {
+                    it.imageKey
+                },
+                userImage = userService.getUserImage(it.userId).imageURL
             )
         }
     }
