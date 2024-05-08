@@ -22,10 +22,10 @@ class CustomAuthenticationEntryPoint(
         authException: AuthenticationException
     ) {
         response.contentType = MediaType.APPLICATION_JSON_VALUE
-        response.status = HttpServletResponse.SC_FORBIDDEN
+        response.status = HttpServletResponse.SC_NOT_FOUND
         val body = mapOf<String, Any?>(
             "timestamp" to OffsetDateTime.now(),
-            "status" to HttpServletResponse.SC_FORBIDDEN,
+            "status" to HttpServletResponse.SC_NOT_FOUND,
             "error" to HttpStatus.FORBIDDEN.reasonPhrase,
             "message" to authException.message,
             "path" to request.servletPath
