@@ -47,10 +47,12 @@ class WebConfig(
         registry.addMapping("/api/user/**")
             .allowedOriginPatterns(*allowedOrigins)
             .allowedMethods("GET","PATCH","DELETE")
+            .allowedHeaders("*")
 
         //report
         registry.addMapping("/api/report/**")
             .allowedOriginPatterns(*allowedOrigins)
             .allowedMethods("POST")
+            .allowedHeaders("*")
     }
 }
