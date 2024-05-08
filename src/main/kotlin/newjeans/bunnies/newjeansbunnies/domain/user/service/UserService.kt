@@ -5,11 +5,14 @@ import newjeans.bunnies.newjeansbunnies.domain.auth.error.exception.ExistPhoneNu
 import newjeans.bunnies.newjeansbunnies.domain.auth.error.exception.NotExistUserIdException
 import newjeans.bunnies.newjeansbunnies.domain.user.UserEntity
 import newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.response.UserDataBasicInfoResponseDto
+import newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.response.UserDataDetailsResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.response.UserImageResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.response.UserSupportResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.user.error.exception.RuleViolationUserIdException
 import newjeans.bunnies.newjeansbunnies.domain.user.repository.UserRepository
+import newjeans.bunnies.newjeansbunnies.global.error.exception.InvalidTokenException
 import newjeans.bunnies.newjeansbunnies.global.response.StatusResponseDto
+import newjeans.bunnies.newjeansbunnies.global.security.jwt.JwtParser
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Service
@@ -19,8 +22,13 @@ import org.springframework.stereotype.Service
 class UserService(
     private val userRepository: UserRepository,
     @Value("\${support.country}") private val country: String,
-    @Value("\${support.fileFormat}") private val fileFormat: String
+    @Value("\${support.fileFormat}") private val fileFormat: String,
+    private val jwtParser: JwtParser
 ) {
+
+    companion object {
+        private const val PREFIX = "Bearer "
+    }
 
     // 도움 정보
     private val countries = country.split(",").toList()
@@ -44,8 +52,6 @@ class UserService(
         return user
     }
 
-
-
     // 사용자 사진 가져오기
     fun getUserImage(userId: String): UserImageResponseDto {
         val imageURL = userRepository.findByUserId(userId).orElseThrow {
@@ -56,13 +62,12 @@ class UserService(
     }
 
 
-
     // 사용중인 유저 아이디인지 확인
     fun userId(userId: String): StatusResponseDto {
         if (userRepository.findByUserId(userId).isPresent && userId == userRepository.findByUserId(userId).get().userId)
             throw ExistIdException
 
-        if(!idPattern(userId))
+        if (!idPattern(userId))
             throw RuleViolationUserIdException
 
         return StatusResponseDto(
@@ -87,18 +92,38 @@ class UserService(
         )
     }
 
-    // 간단한 유저 정보 가져오기
-    fun getUserBasicInfoData(id: String): UserDataBasicInfoResponseDto {
+    // 유저 정보 가져오기
+    fun getUserData(id: String): UserDataBasicInfoResponseDto {
         val userData = userRepository.findByUserId(id).orElseThrow {
             throw NotExistUserIdException
         }
 
         return UserDataBasicInfoResponseDto(
-            id = userData.userId,
+            userId = userData.userId,
             country = userData.country,
             imageUrl = userData.imageUrl
         )
+    }
 
+    fun getMyData(token: String): UserDataDetailsResponseDto {
+        if (!token.startsWith(PREFIX)) {
+            throw InvalidTokenException
+        }
+
+        val id = jwtParser.getClaims(token.removePrefix(PREFIX)).body.id
+
+        val userData = userRepository.findById(id).orElseThrow {
+            throw NotExistUserIdException
+        }
+
+        return UserDataDetailsResponseDto(
+            userId = userData.userId,
+            country = userData.country,
+            imageUrl = userData.imageUrl,
+            birth = userData.birth,
+            language = userData.language,
+            phoneNumber = userData.phoneNumber
+        )
     }
 
     // 도움 정보 가져오기
