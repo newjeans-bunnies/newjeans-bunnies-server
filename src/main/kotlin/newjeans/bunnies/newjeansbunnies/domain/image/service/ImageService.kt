@@ -6,6 +6,7 @@ import newjeans.bunnies.newjeansbunnies.domain.image.controller.dto.request.Crea
 import newjeans.bunnies.newjeansbunnies.domain.image.controller.dto.response.ImageResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.image.error.exception.ActivatedImageException
 import newjeans.bunnies.newjeansbunnies.domain.image.error.exception.DisabledImageException
+import newjeans.bunnies.newjeansbunnies.domain.image.error.exception.NotExistImageException
 import newjeans.bunnies.newjeansbunnies.domain.image.repository.ImageRepository
 import newjeans.bunnies.newjeansbunnies.domain.post.error.exception.NotExistPostIdException
 import newjeans.bunnies.newjeansbunnies.global.response.StatusResponseDto
@@ -28,15 +29,18 @@ class ImageService(
     }
 
     // 사진 생성
-    fun createImage(createImageRequestDto: CreateImageRequestDto) {
-        imageRepository.save(
-            ImageEntity(
-                imageId = createImageRequestDto.imageId,
-                postId = createImageRequestDto.postId,
-                createDate = createImageRequestDto.createDate,
-                imageKey = "image/${createImageRequestDto.imageId}"
+    fun createImage(createImageRequestDto: List<CreateImageRequestDto>, userId: String, postId: String) {
+        createImageRequestDto.map {
+            imageRepository.save(
+                ImageEntity(
+                    imageId = it.imageId,
+                    postId = postId,
+                    createDate = it.createDate,
+                    imageKey = "image/${it.imageId}",
+                    userId = userId
+                )
             )
-        )
+        }
     }
 
     // 이미지 활성화
@@ -44,7 +48,12 @@ class ImageService(
         val image = getImage(imageId)
         imageRepository.save(
             ImageEntity(
-                imageId = imageId, imageKey = image.imageKey, createDate = image.createDate, postId = image.postId, state = true
+                imageId = imageId,
+                imageKey = image.imageKey,
+                createDate = image.createDate,
+                postId = image.postId,
+                state = true,
+                userId = image.userId
             )
         )
     }
@@ -66,11 +75,12 @@ class ImageService(
                 createDate = image.createDate,
                 imageKey = image.imageKey,
                 postId = image.postId,
-                state = false
+                state = false,
+                userId = image.userId
             )
         )
 
-        return StatusResponseDto(200, "사진이 비활성화되었습니다.")
+        return StatusResponseDto(204, "사진이 비활성화되었습니다.")
     }
 
     @Transactional
@@ -89,7 +99,8 @@ class ImageService(
                 createDate = image.createDate,
                 imageKey = image.imageKey,
                 postId = image.postId,
-                state = false
+                state = false,
+                userId = image.userId
             )
         )
 
@@ -97,26 +108,23 @@ class ImageService(
     }
 
     // 사진 리스트로 가져오기
-    fun getListImage(date: String): List<ImageResponseDto> {
-
-        // 가져올 이미지 개수
-        val pageSize = 30
+    fun getListImage(pageSize: Int, page: Int): List<ImageResponseDto> {
 
         // 이미지 가져오기
-        val imageListData = imageRepository.findImagesBeforeCreateDateWithStateTrue(
-            date, PageRequest.of(
-                0, pageSize, Sort.by(
-                    Sort.Direction.DESC, "createDate"
-                )
+        val pageRequest = PageRequest.of(
+            page, pageSize, Sort.by(
+                Sort.Direction.DESC, "createDate"
             )
-        ).orElseThrow {
-            throw NotExistPostIdException
+        )
+
+        val imageListData = imageRepository.findSliceBy(pageRequest).orElseThrow {
+            throw NotExistImageException
         }
 
         // 이미지 반환
         return imageListData.map {
             ImageResponseDto(
-                createDate = it.createDate, uuid = it.imageId, imageURL = it.imageKey
+                createDate = it.createDate, imageUrl = it.imageKey, userId = it.userId
             )
         }
     }

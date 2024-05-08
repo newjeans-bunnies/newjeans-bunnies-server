@@ -17,5 +17,7 @@ data class ImageEntity(
     @Column(nullable = false)
     val postId: String,
     @Column(nullable = false)
-    var state: Boolean = false
+    var state: Boolean = false,
+    @Column(nullable = false)
+    val userId: String
 )

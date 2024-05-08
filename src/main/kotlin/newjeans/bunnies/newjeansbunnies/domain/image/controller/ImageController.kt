@@ -19,9 +19,10 @@ class ImageController(
     //사진 리스트로 가져오기
     @GetMapping
     fun getImages(
-        @RequestParam date: String
+        @RequestParam size: Int,
+        @RequestParam page: Int,
     ): List<ImageResponseDto> {
-        return imageService.getListImage(date)
+        return imageService.getListImage(size, page)
     }
 
     // 사진 삭제
@@ -33,19 +34,13 @@ class ImageController(
         return imageService.disabledImage(imageId)
     }
 
-
     @PostMapping
     fun createImage(
-        @RequestBody createImageRequestDto: CreateImageRequestDto
+        @RequestBody createImageRequestDto: List<CreateImageRequestDto>,
+        @RequestParam("user-id") userId: String,
+        @RequestParam("post-id") postId: String,
     ) {
-        imageService.createImage(createImageRequestDto)
-    }
-
-    @PostMapping("/complete-upload")
-    fun completeUpload(
-        @RequestParam("post-id") postId: String
-    ): StatusResponseDto {
-        return awsUploadService.completeUpload(postId)
+        imageService.createImage(createImageRequestDto, userId, postId)
     }
 
     // S3에 업로드된 사진 삭제

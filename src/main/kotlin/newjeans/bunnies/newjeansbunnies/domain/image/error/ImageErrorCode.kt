@@ -8,8 +8,8 @@ enum class ImageErrorCode(
     private val status: Int,
     private val message: String
 ) : CustomErrorProperty {
-    DISABLED_IMAGE(200, "비활성화된 게시글입니다"),
-    ACTIVATED_IMAGE(200, "활성화된 게시글입니다"),
+    DISABLED_IMAGE(200, "비활성화된 사진입니다"),
+    ACTIVATED_IMAGE(200, "활성화된 사진입니다"),
     NOT_EXIST_IMAGE(404, "존재하지 않는 사진입니다."),
     NOT_EXIST_ZONE_ID(404, "존재하지 않는 타임존");
 
