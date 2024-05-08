@@ -2,6 +2,7 @@ package newjeans.bunnies.newjeansbunnies.domain.image.service
 
 import com.amazonaws.services.s3.model.DeleteObjectRequest
 import jakarta.transaction.Transactional
+import newjeans.bunnies.newjeansbunnies.domain.image.error.exception.ActivatedImageException
 import newjeans.bunnies.newjeansbunnies.global.config.AwsS3Config
 import newjeans.bunnies.newjeansbunnies.global.response.StatusResponseDto
 import org.springframework.beans.factory.annotation.Value
@@ -33,6 +34,9 @@ class AwsUploadService(
     fun deleteMultipartUpload(imageId: String): StatusResponseDto {
 
         val image = imageService.getImage(imageId)
+
+        if(!image.state)
+            throw ActivatedImageException
 
         // 사진 아이디를 사용해 사진 삭제
         imageService.deleteImage(imageId)
