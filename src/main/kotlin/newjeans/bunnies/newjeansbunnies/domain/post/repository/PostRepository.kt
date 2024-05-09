@@ -13,18 +13,7 @@ interface PostRepository: CrudRepository<PostEntity, String> {
 
     fun findByUuid(uuid: String): Optional<PostEntity>
 
-//    fun findByCreateDateBeforeOrderByCreateDateDesc(createDate: String, pageable: Pageable): Optional<List<PostEntity>>
-
     @Query("SELECT post FROM PostEntity post WHERE post.state = true")
     fun findSliceBy(pageable: Pageable): Optional<List<PostEntity>>
-
-
-    fun findTop10ByUserIdAndCreateDateBefore(userId: String, createDate: String): Optional<List<PostEntity>>
-
-    fun findByUserId(userId: String): Optional<List<PostEntity>>
-
-    fun existsByUuid(postId: String): Boolean
-
-    fun deleteByUserId(userId: String)
 
 }

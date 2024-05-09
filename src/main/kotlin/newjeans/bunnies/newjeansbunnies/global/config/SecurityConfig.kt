@@ -29,6 +29,7 @@ class SecurityConfig(
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http.csrf { csrf -> csrf.disable() }
             .authorizeHttpRequests { authorize ->
+
                 //preflight
                 authorize.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
@@ -47,9 +48,7 @@ class SecurityConfig(
                 authorize.requestMatchers(HttpMethod.DELETE, "/api/post").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
 
                 //good
-                authorize.requestMatchers("/api/post/good").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
-                authorize.requestMatchers("/api/comment/children/good").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
-                authorize.requestMatchers("/api/comment/parents/good").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
+                authorize.requestMatchers(HttpMethod.POST,"/api/post/good").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
 
                 //user
                 authorize.requestMatchers(HttpMethod.GET,"/api/user").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
@@ -64,6 +63,12 @@ class SecurityConfig(
 
                 //report
                 authorize.requestMatchers(HttpMethod.POST,"/api/report/**").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
+
+                //comment
+                authorize.requestMatchers(HttpMethod.GET, "/api/comment").permitAll()
+                authorize.requestMatchers(HttpMethod.POST, "/api/comment").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
+                authorize.requestMatchers(HttpMethod.DELETE, "/api/comment").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
+                authorize.requestMatchers(HttpMethod.PATCH, "/api/comment").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
             }
             .exceptionHandling { exceptionHandling ->
                 exceptionHandling

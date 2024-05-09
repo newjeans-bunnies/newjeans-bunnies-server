@@ -1,6 +1,7 @@
 package newjeans.bunnies.newjeansbunnies.domain.post.service
 
 import jakarta.transaction.Transactional
+import newjeans.bunnies.newjeansbunnies.domain.auth.error.exception.NotExistUserIdException
 import newjeans.bunnies.newjeansbunnies.domain.image.service.AwsUploadService
 import newjeans.bunnies.newjeansbunnies.domain.image.service.ImageService
 import newjeans.bunnies.newjeansbunnies.domain.post.PostEntity
@@ -8,6 +9,7 @@ import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.request.PostR
 import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.response.CreatePostResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.response.PostDto
 import newjeans.bunnies.newjeansbunnies.domain.post.error.exception.DisabledPostException
+import newjeans.bunnies.newjeansbunnies.domain.post.error.exception.InactivePostException
 import newjeans.bunnies.newjeansbunnies.domain.post.error.exception.NotExistPostIdException
 import newjeans.bunnies.newjeansbunnies.domain.post.repository.PostRepository
 import newjeans.bunnies.newjeansbunnies.domain.user.service.UserService
@@ -77,8 +79,7 @@ class PostService(
     @Transactional
     fun deletePost(postId: String): StatusResponseDto {
 
-        if(!checkDeletePost(postId))
-            throw DisabledPostException
+        if (!checkDeletePost(postId)) throw DisabledPostException
 
         // 예전 게시글 정보
         val oldPost = postRepository.findByUuid(postId).orElseThrow {
@@ -111,6 +112,26 @@ class PostService(
         return postRepository.findByUuid(postId).orElseThrow {
             throw NotExistPostIdException
         }.state
+    }
+
+
+    fun checkExistPostId(postId: String): PostEntity {
+        val post = postRepository.findById(postId).orElseThrow {
+            throw NotExistUserIdException
+        }
+
+        return post
+    }
+
+    fun checkActivationPost(postId: String): PostEntity {
+        val post = postRepository.findById(postId).orElseThrow {
+            throw NotExistPostIdException
+        }
+
+        if (!post.state)
+            throw InactivePostException
+
+        return post
     }
 
 }
