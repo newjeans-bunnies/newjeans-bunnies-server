@@ -29,6 +29,9 @@ class SecurityConfig(
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http.csrf { csrf -> csrf.disable() }
             .authorizeHttpRequests { authorize ->
+                //preflight
+                authorize.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
                 //auth
                 authorize.requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll() // 로그인
                 authorize.requestMatchers(HttpMethod.POST, "/api/auth/signup").permitAll() // 회원가입
