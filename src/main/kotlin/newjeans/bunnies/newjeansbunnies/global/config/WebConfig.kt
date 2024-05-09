@@ -13,45 +13,44 @@ class WebConfig(
     @Value("\${cors.originPatterns}")
     private val corsOriginPatterns: String
 ) : WebMvcConfigurer {
-
-    val allowedOrigins = corsOriginPatterns.split(",").toTypedArray()
+    val allowedOrigins = corsOriginPatterns
 
     override fun addCorsMappings(registry: CorsRegistry) {
         super.addCorsMappings(registry)
 
         //auth
         registry.addMapping("/api/auth/**")
-            .allowedOriginPatterns(*allowedOrigins)
+            .allowedOrigins(allowedOrigins)
             .allowedMethods("POST","PATCH")
             .allowedHeaders("*")
 
         //comment
         registry.addMapping("/api/comment/**")
-            .allowedOriginPatterns(*allowedOrigins)
+            .allowedOrigins(allowedOrigins)
             .allowedMethods("POST","DELETE")
             .allowedHeaders("*")
 
         //image
-        registry.addMapping("/api/aws/image/**")
-            .allowedOriginPatterns(*allowedOrigins)
+        registry.addMapping("/api/image/**")
+            .allowedOrigins(allowedOrigins)
             .allowedMethods("GET")
             .allowedHeaders("*")
 
         //post
         registry.addMapping("/api/post/**")
-            .allowedOriginPatterns(*allowedOrigins)
+            .allowedOrigins(allowedOrigins)
             .allowedMethods("GET","POST","DELETE")
             .allowedHeaders("*")
 
         //user
         registry.addMapping("/api/user/**")
-            .allowedOriginPatterns(*allowedOrigins)
+            .allowedOrigins(allowedOrigins)
             .allowedMethods("GET","PATCH","DELETE")
             .allowedHeaders("*")
 
         //report
         registry.addMapping("/api/report/**")
-            .allowedOriginPatterns(*allowedOrigins)
+            .allowedOrigins(allowedOrigins)
             .allowedMethods("POST")
             .allowedHeaders("*")
     }
