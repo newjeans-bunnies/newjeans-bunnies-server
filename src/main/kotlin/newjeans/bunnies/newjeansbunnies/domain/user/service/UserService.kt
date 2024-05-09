@@ -8,6 +8,7 @@ import newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.response.User
 import newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.response.UserDataDetailsResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.response.UserImageResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.response.UserSupportResponseDto
+import newjeans.bunnies.newjeansbunnies.domain.user.error.exception.InactiveUserException
 import newjeans.bunnies.newjeansbunnies.domain.user.error.exception.RuleViolationUserIdException
 import newjeans.bunnies.newjeansbunnies.domain.user.repository.UserRepository
 import newjeans.bunnies.newjeansbunnies.global.error.exception.InvalidTokenException
@@ -48,6 +49,17 @@ class UserService(
         // DB에서 대소문자 구분을 못해서 이쪽에서 구분
         if (userId != user.userId)
             throw NotExistUserIdException
+
+        return user
+    }
+
+    fun checkActivationUser(userId: String): UserEntity {
+        val user = userRepository.findByUserId(userId).orElseThrow {
+            throw NotExistUserIdException
+        }
+
+        if(!user.state)
+            throw InactiveUserException
 
         return user
     }
