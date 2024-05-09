@@ -22,7 +22,7 @@ class CommentController(
 
     @GetMapping
     fun getComment(
-        @RequestParam page: Int, @RequestParam size: Int, @RequestParam postId: String
+        @RequestParam page: Int, @RequestParam size: Int, @RequestParam("post-id") postId: String
     ): List<CommentResponseDto> {
         return commentService.getComment(postId, page, size)
     }
@@ -35,7 +35,7 @@ class CommentController(
     }
 
     @DeleteMapping
-    fun deleteComment(@RequestParam commentId: String): StatusResponseDto {
+    fun deleteComment(@RequestParam("comment-id") commentId: String): StatusResponseDto {
         return commentService.deleteComment(commentId)
     }
 }
