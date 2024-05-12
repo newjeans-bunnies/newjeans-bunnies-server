@@ -76,6 +76,11 @@ class CommentService(
             )
         )
 
+        // 게시글 확인
+        postService.checkExistPostId(postId)
+        // 게시글 활성화 확인
+        postService.checkActivationPost(postId)
+
         val commentList = commentRepository.findSliceBy(pageRequest, postId).orElseThrow {
             throw NotFoundCommentException
         }
@@ -94,7 +99,7 @@ class CommentService(
         }
     }
 
-    fun fixComment(commentId: String, fixCommentRequestDto: FixCommentRequestDto): CommentResponseDto {
+    fun fixComment(commentId: String, fixCommentRequestDto: FixCommentRequestDto): FixCommentResponseDto {
 
         val comment = commentRepository.findById(commentId).orElseThrow {
             throw NotFoundCommentException

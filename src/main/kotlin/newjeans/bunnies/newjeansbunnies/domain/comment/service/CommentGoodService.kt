@@ -8,4 +8,9 @@ import org.springframework.stereotype.Service
 @Component
 class CommentGoodService(
     private val commentGoodRepository: CommentGoodRepository
-)
+) {
+    fun getCommentGoodState(userId: String, commentId: String): Boolean{
+        return commentGoodRepository.existsByUserIdAndCommentId(userId, commentId)
+    }
+
+}
