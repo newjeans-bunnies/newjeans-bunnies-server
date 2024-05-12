@@ -42,6 +42,7 @@ class GlobalExceptionHandler {
     @ExceptionHandler(CustomException::class)
     protected fun handleBindException(ex: CustomException): ResponseEntity<ErrorResponse> {
         val httpStatus = when (ex.errorProperty.status()) {
+            204 -> HttpStatus.NO_CONTENT
             400 -> HttpStatus.BAD_REQUEST
             401 -> HttpStatus.UNAUTHORIZED
             403 -> HttpStatus.FORBIDDEN
