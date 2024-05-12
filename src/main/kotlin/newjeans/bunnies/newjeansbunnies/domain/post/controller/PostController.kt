@@ -9,6 +9,7 @@ import newjeans.bunnies.newjeansbunnies.domain.post.service.PostService
 import newjeans.bunnies.newjeansbunnies.domain.post.service.UserPostService
 import newjeans.bunnies.newjeansbunnies.global.response.StatusResponseDto
 import org.springframework.context.annotation.Configuration
+import org.springframework.data.domain.Slice
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 
@@ -32,7 +33,7 @@ class PostController(
         @RequestParam("user-id") userId: String,
         @RequestParam size: Int,
         @RequestParam page: Int,
-    ): List<PostDto> {
+    ): Slice<PostDto> {
         return postService.getPost(size, page, userId)
     }
 

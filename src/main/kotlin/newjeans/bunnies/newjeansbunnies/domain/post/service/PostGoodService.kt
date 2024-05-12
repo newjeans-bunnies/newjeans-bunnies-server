@@ -69,7 +69,7 @@ class PostGoodService(
         )
     }
 
-    fun getPostGoodState(postId: String, userId: String): Boolean{
+    fun getPostGoodState(postId: String, userId: String): Boolean {
         return postGoodRepository.existsByUserIdAndPostId(userId, postId)
     }
 
