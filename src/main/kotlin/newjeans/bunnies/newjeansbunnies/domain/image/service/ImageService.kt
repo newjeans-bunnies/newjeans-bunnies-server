@@ -12,6 +12,7 @@ import newjeans.bunnies.newjeansbunnies.domain.post.error.exception.NotExistPost
 import newjeans.bunnies.newjeansbunnies.global.response.StatusResponseDto
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Slice
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 
@@ -108,7 +109,7 @@ class ImageService(
     }
 
     // 사진 리스트로 가져오기
-    fun getListImage(pageSize: Int, page: Int): List<ImageResponseDto> {
+    fun getListImage(pageSize: Int, page: Int): Slice<ImageResponseDto> {
 
         // 이미지 가져오기
         val pageRequest = PageRequest.of(

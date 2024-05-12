@@ -6,6 +6,7 @@ import newjeans.bunnies.newjeansbunnies.domain.image.service.AwsUploadService
 import newjeans.bunnies.newjeansbunnies.domain.image.service.ImageService
 import newjeans.bunnies.newjeansbunnies.global.response.StatusResponseDto
 import org.springframework.context.annotation.Configuration
+import org.springframework.data.domain.Slice
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 
@@ -21,7 +22,7 @@ class ImageController(
     fun getImages(
         @RequestParam size: Int,
         @RequestParam page: Int,
-    ): List<ImageResponseDto> {
+    ): Slice<ImageResponseDto> {
         return imageService.getListImage(size, page)
     }
 

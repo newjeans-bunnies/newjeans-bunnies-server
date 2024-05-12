@@ -16,6 +16,7 @@ import newjeans.bunnies.newjeansbunnies.domain.user.service.UserService
 import newjeans.bunnies.newjeansbunnies.global.response.StatusResponseDto
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Slice
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
@@ -46,7 +47,7 @@ class PostService(
     }
 
     // 게시글 가져오기
-    fun getPost(pageSize: Int, page: Int, userId: String): List<PostDto> {
+    fun getPost(pageSize: Int, page: Int, userId: String): Slice<PostDto> {
         userService.checkExistUserId(userId)
 
         val pageRequest = PageRequest.of(
