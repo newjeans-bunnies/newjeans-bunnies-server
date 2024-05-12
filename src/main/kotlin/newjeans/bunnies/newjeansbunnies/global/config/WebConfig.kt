@@ -25,7 +25,7 @@ class WebConfig(
         //comment
         registry.addMapping("/api/comment/**")
             .allowedOrigins(allowedOrigins)
-            .allowedMethods("POST","DELETE")
+            .allowedMethods("POST","DELETE", "GET", "PATCH")
             .allowedHeaders("*")
             .allowCredentials(true)
 
