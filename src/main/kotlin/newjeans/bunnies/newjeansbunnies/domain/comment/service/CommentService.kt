@@ -4,12 +4,14 @@ import newjeans.bunnies.newjeansbunnies.domain.comment.CommentEntity
 import newjeans.bunnies.newjeansbunnies.domain.comment.controller.dto.request.CommentRequestDto
 import newjeans.bunnies.newjeansbunnies.domain.comment.controller.dto.request.FixCommentRequestDto
 import newjeans.bunnies.newjeansbunnies.domain.comment.controller.dto.response.CommentResponseDto
+import newjeans.bunnies.newjeansbunnies.domain.comment.controller.dto.response.FixCommentResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.comment.error.exception.NotFoundCommentException
 import newjeans.bunnies.newjeansbunnies.domain.comment.repository.CommentRepository
 import newjeans.bunnies.newjeansbunnies.domain.post.service.PostService
 import newjeans.bunnies.newjeansbunnies.domain.user.service.UserService
 import newjeans.bunnies.newjeansbunnies.global.response.StatusResponseDto
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Slice
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Component
 import org.springframework.stereotype.Service
@@ -21,7 +23,8 @@ import java.util.*
 class CommentService(
     private val commentRepository: CommentRepository,
     private val userService: UserService,
-    private val postService: PostService
+    private val postService: PostService,
+    private val commentGoodService: CommentGoodService,
 ) {
 
     // 댓글 생성
@@ -43,26 +46,29 @@ class CommentService(
             userId = commentRequestDto.userId,
             createDate = LocalDateTime.now().toString(),
             body = commentRequestDto.body,
-            good = 0,
+            goodCounts = 0L,
             state = true
         )
+
         // 댓글 저장
         commentRepository.save(comment)
 
         // 유저 사진 Url
-        val userImageUrl = userService.getUserImage(comment.userId)
+        val userImageUrl = userService.getUserImage(comment.userId).imageURL
 
         return CommentResponseDto(
             body = comment.body,
             createDate = comment.createDate,
             postId = comment.postId,
             userId = comment.userId,
-            userImageUrl = userImageUrl.imageURL
+            userImageUrl = userImageUrl,
+            goodCounts = comment.goodCounts,
+            goodState = false
         )
     }
 
     // 댓글
-    fun getComment(postId: String, pageSize: Int, page: Int): List<CommentResponseDto> {
+    fun getComment(postId: String, pageSize: Int, page: Int): Slice<CommentResponseDto> {
 
         val pageRequest = PageRequest.of(
             page, pageSize, Sort.by(
@@ -75,13 +81,15 @@ class CommentService(
         }
 
         return commentList.map {
-            val userImageUrl = userService.getUserImage(it.userId)
+            val userImageUrl = userService.getUserImage(it.userId).imageURL
             CommentResponseDto(
                 userId = it.userId,
                 body = it.body,
                 postId = it.postId,
                 createDate = it.createDate,
-                userImageUrl = userImageUrl.toString()
+                userImageUrl = userImageUrl,
+                goodCounts = it.goodCounts,
+                goodState = commentGoodService.getCommentGoodState(userId = it.userId, commentId = it.uuid)
             )
         }
     }
@@ -95,14 +103,11 @@ class CommentService(
         comment.state = fixCommentRequestDto.state
         comment.body = fixCommentRequestDto.body
 
-        val userImageUrl = userService.getUserImage(comment.userId)
-
-        return CommentResponseDto(
+        return FixCommentResponseDto(
             body = comment.body,
-            createDate = comment.createDate,
             postId = comment.postId,
             userId = comment.userId,
-            userImageUrl = userImageUrl.imageURL
+            state = comment.state
         )
     }
 

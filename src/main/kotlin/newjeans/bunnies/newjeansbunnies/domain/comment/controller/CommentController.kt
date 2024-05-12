@@ -3,9 +3,11 @@ package newjeans.bunnies.newjeansbunnies.domain.comment.controller
 import newjeans.bunnies.newjeansbunnies.domain.comment.controller.dto.request.CommentRequestDto
 import newjeans.bunnies.newjeansbunnies.domain.comment.controller.dto.request.FixCommentRequestDto
 import newjeans.bunnies.newjeansbunnies.domain.comment.controller.dto.response.CommentResponseDto
+import newjeans.bunnies.newjeansbunnies.domain.comment.controller.dto.response.FixCommentResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.comment.service.CommentService
 import newjeans.bunnies.newjeansbunnies.global.response.StatusResponseDto
 import org.springframework.context.annotation.Configuration
+import org.springframework.data.domain.Slice
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -22,15 +24,15 @@ class CommentController(
 
     @GetMapping
     fun getComment(
-        @RequestParam page: Int, @RequestParam size: Int, @RequestParam postId: String
-    ): List<CommentResponseDto> {
-        return commentService.getComment(postId, page, size)
+        @RequestParam page: Int, @RequestParam size: Int, @RequestParam("post-id") postId: String
+    ): Slice<CommentResponseDto> {
+        return commentService.getComment(postId, size, page)
     }
 
     @PatchMapping
     fun fixComment(
         @RequestBody fixCommentRequestDto: FixCommentRequestDto, @RequestParam("comment-id") commentId: String
-    ): CommentResponseDto {
+    ): FixCommentResponseDto {
         return commentService.fixComment(commentId, fixCommentRequestDto)
     }
 

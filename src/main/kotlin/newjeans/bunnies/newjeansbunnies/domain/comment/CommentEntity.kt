@@ -20,7 +20,7 @@ data class CommentEntity(
     @Column(nullable = false)
     val createDate: String,
     @Column(nullable = false)
-    val good: Long,
+    val goodCounts: Long,
     @Column(nullable = false)
     var state: Boolean
 )
