@@ -14,6 +14,7 @@ import newjeans.bunnies.newjeansbunnies.domain.post.error.exception.NotExistPost
 import newjeans.bunnies.newjeansbunnies.domain.post.repository.PostRepository
 import newjeans.bunnies.newjeansbunnies.domain.user.service.UserService
 import newjeans.bunnies.newjeansbunnies.global.response.StatusResponseDto
+import newjeans.bunnies.newjeansbunnies.global.security.jwt.JwtParser
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Slice
@@ -28,7 +29,8 @@ class PostService(
     private val userService: UserService,
     private val postGoodService: PostGoodService,
     private val imageService: ImageService,
-    private val awsUploadService: AwsUploadService
+    private val awsUploadService: AwsUploadService,
+    private val jwtParser: JwtParser
 ) {
     // 게시글 생성
     fun createPost(postRequestDto: PostRequestDto): CreatePostResponseDto {
@@ -47,8 +49,12 @@ class PostService(
     }
 
     // 게시글 가져오기
-    fun getPost(pageSize: Int, page: Int, userId: String): Slice<PostDto> {
-        userService.checkExistUserId(userId)
+    fun getPost(pageSize: Int, page: Int, accessToken: String): Slice<PostDto> {
+        var userId: String? = null
+
+        if (accessToken.isNotBlank()) {
+            userId = userService.getUserId(jwtParser.getClaims(accessToken).body["jti"].toString())
+        }
 
         val pageRequest = PageRequest.of(
             page, pageSize, Sort.by(
@@ -61,13 +67,19 @@ class PostService(
         }
 
         return listPost.map {
+            var goodState: Boolean? = null
+
+            if (!userId.isNullOrBlank()) {
+                goodState = postGoodService.getPostGoodState(it.uuid, userId)
+            }
+
             PostDto(
                 uuid = it.uuid,
                 userId = it.userId,
                 body = it.body,
                 createDate = it.createDate,
                 good = it.good,
-                goodState = postGoodService.getPostGoodState(it.uuid, userId),
+                goodState = goodState,
                 image = imageService.getImageByPostId(it.uuid).map {
                     it.imageKey
                 },
@@ -129,8 +141,7 @@ class PostService(
             throw NotExistPostIdException
         }
 
-        if (!post.state)
-            throw InactivePostException
+        if (!post.state) throw InactivePostException
 
         return post
     }

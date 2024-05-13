@@ -30,11 +30,11 @@ class PostController(
 
     @GetMapping
     fun getPost(
-        @RequestParam("user-id") userId: String,
         @RequestParam size: Int,
         @RequestParam page: Int,
+        @RequestHeader("Authorization", required = false, defaultValue = "") accessToken: String
     ): Slice<PostDto> {
-        return postService.getPost(size, page, userId)
+        return postService.getPost(size, page, accessToken)
     }
 
     @PostMapping("/good")

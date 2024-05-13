@@ -58,7 +58,7 @@ class UserService(
             throw NotExistUserIdException
         }
 
-        if(!user.state)
+        if (!user.state)
             throw InactiveUserException
 
         return user
@@ -143,6 +143,12 @@ class UserService(
         return UserSupportResponseDto(
             countries, fileFormats
         )
+    }
+
+    fun getUserId(id: String): String {
+         return userRepository.findById(id).orElseThrow {
+            throw NotExistUserIdException
+        }.userId
     }
 
 }
