@@ -25,35 +25,35 @@ class WebConfig(
         //comment
         registry.addMapping("/api/comment/**")
             .allowedOrigins(allowedOrigins)
-            .allowedMethods("POST","DELETE", "GET", "PATCH")
+            .allowedMethods("POST","DELETE", "GET", "PATCH","OPTIONS")
             .allowedHeaders("*")
             .allowCredentials(true)
 
         //image
         registry.addMapping("/api/image/**")
             .allowedOrigins(allowedOrigins)
-            .allowedMethods("GET")
+            .allowedMethods("GET", "POST","OPTIONS")
             .allowedHeaders("*")
             .allowCredentials(true)
 
         //post
         registry.addMapping("/api/post/**")
             .allowedOrigins(allowedOrigins)
-            .allowedMethods("GET","POST","DELETE")
+            .allowedMethods("GET","POST","DELETE","OPTIONS")
             .allowedHeaders("*")
             .allowCredentials(true)
 
         //user
         registry.addMapping("/api/user/**")
             .allowedOrigins(allowedOrigins)
-            .allowedMethods("GET","PATCH","DELETE")
+            .allowedMethods("GET","PATCH","DELETE","OPTIONS")
             .allowedHeaders("*")
             .allowCredentials(true)
 
         //report
         registry.addMapping("/api/report/**")
             .allowedOrigins(allowedOrigins)
-            .allowedMethods("POST")
+            .allowedMethods("POST","OPTIONS")
             .allowedHeaders("*")
             .allowCredentials(true)
     }
