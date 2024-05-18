@@ -3,6 +3,7 @@ package newjeans.bunnies.newjeansbunnies.domain.comment.controller
 import newjeans.bunnies.newjeansbunnies.domain.comment.controller.dto.request.CommentRequestDto
 import newjeans.bunnies.newjeansbunnies.domain.comment.controller.dto.request.FixCommentRequestDto
 import newjeans.bunnies.newjeansbunnies.domain.comment.controller.dto.response.CommentResponseDto
+import newjeans.bunnies.newjeansbunnies.domain.comment.controller.dto.response.CreateCommentResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.comment.controller.dto.response.FixCommentResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.comment.service.CommentService
 import newjeans.bunnies.newjeansbunnies.global.response.StatusResponseDto
@@ -18,26 +19,33 @@ class CommentController(
 ) {
 
     @PostMapping
-    fun createComment(@RequestBody commentRequestDto: CommentRequestDto): CommentResponseDto {
+    fun createComment(@RequestBody commentRequestDto: CommentRequestDto): CreateCommentResponseDto {
         return commentService.createComment(commentRequestDto)
     }
 
     @GetMapping
     fun getComment(
-        @RequestParam page: Int, @RequestParam size: Int, @RequestParam("post-id") postId: String
+        @RequestParam page: Int,
+        @RequestParam size: Int,
+        @RequestParam("post-id") postId: String,
+        @RequestHeader("Authorization", required = false, defaultValue = "") accessToken: String
     ): Slice<CommentResponseDto> {
-        return commentService.getComment(postId, size, page)
+        return commentService.getComment(postId, size, page, accessToken)
     }
 
     @PatchMapping
     fun fixComment(
-        @RequestBody fixCommentRequestDto: FixCommentRequestDto, @RequestParam("comment-id") commentId: String
+        @RequestBody fixCommentRequestDto: FixCommentRequestDto,
+        @RequestParam("comment-id") commentId: String,
+        @RequestHeader("Authorization") accessToken: String
     ): FixCommentResponseDto {
-        return commentService.fixComment(commentId, fixCommentRequestDto)
+        return commentService.fixComment(commentId, fixCommentRequestDto, accessToken)
     }
 
     @DeleteMapping
-    fun deleteComment(@RequestParam commentId: String): StatusResponseDto {
-        return commentService.deleteComment(commentId)
+    fun deleteComment(
+        @RequestParam commentId: String, @RequestHeader("Authorization") accessToken: String
+    ): StatusResponseDto {
+        return commentService.deleteComment(commentId, accessToken)
     }
 }

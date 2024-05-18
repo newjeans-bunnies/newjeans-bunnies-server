@@ -4,6 +4,7 @@ import newjeans.bunnies.newjeansbunnies.domain.comment.CommentEntity
 import newjeans.bunnies.newjeansbunnies.domain.comment.controller.dto.request.CommentRequestDto
 import newjeans.bunnies.newjeansbunnies.domain.comment.controller.dto.request.FixCommentRequestDto
 import newjeans.bunnies.newjeansbunnies.domain.comment.controller.dto.response.CommentResponseDto
+import newjeans.bunnies.newjeansbunnies.domain.comment.controller.dto.response.CreateCommentResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.comment.controller.dto.response.FixCommentResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.comment.error.exception.NotFoundCommentException
 import newjeans.bunnies.newjeansbunnies.domain.comment.repository.CommentRepository
@@ -13,6 +14,7 @@ import newjeans.bunnies.newjeansbunnies.global.response.StatusResponseDto
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Slice
 import org.springframework.data.domain.Sort
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Component
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
@@ -28,7 +30,8 @@ class CommentService(
 ) {
 
     // 댓글 생성
-    fun createComment(commentRequestDto: CommentRequestDto): CommentResponseDto {
+    fun createComment(commentRequestDto: CommentRequestDto): CreateCommentResponseDto {
+
         // 유저 확인
         userService.checkExistUserId(commentRequestDto.userId)
         // 유저 활성화 확인
@@ -53,22 +56,19 @@ class CommentService(
         // 댓글 저장
         commentRepository.save(comment)
 
-        // 유저 사진 Url
-        val userImageUrl = userService.getUserImage(comment.userId).imageURL
-
-        return CommentResponseDto(
-            body = comment.body,
-            createDate = comment.createDate,
-            postId = comment.postId,
-            userId = comment.userId,
-            userImageUrl = userImageUrl,
-            goodCounts = comment.goodCounts,
-            goodState = false
+        return CreateCommentResponseDto(
+            body = comment.body, createDate = comment.createDate, postId = comment.postId, userId = comment.userId
         )
     }
 
-    // 댓글
-    fun getComment(postId: String, pageSize: Int, page: Int): Slice<CommentResponseDto> {
+    // 댓글 가져오기
+    fun getComment(postId: String, pageSize: Int, page: Int, accessToken: String): Slice<CommentResponseDto> {
+
+        var userId: String? = null
+
+        if (accessToken.isNotBlank()) {
+            userId = userService.getMyData(accessToken).userId
+        }
 
         val pageRequest = PageRequest.of(
             page, pageSize, Sort.by(
@@ -78,6 +78,7 @@ class CommentService(
 
         // 게시글 확인
         postService.checkExistPostId(postId)
+
         // 게시글 활성화 확인
         postService.checkActivationPost(postId)
 
@@ -86,7 +87,14 @@ class CommentService(
         }
 
         return commentList.map {
+
+            var goodState: Boolean? = null
+            if (!userId.isNullOrBlank()) {
+                goodState = commentGoodService.getCommentGoodState(userId = userId, commentId = it.uuid)
+            }
+
             val userImageUrl = userService.getUserImage(it.userId).imageURL
+
             CommentResponseDto(
                 userId = it.userId,
                 body = it.body,
@@ -94,33 +102,49 @@ class CommentService(
                 createDate = it.createDate,
                 userImageUrl = userImageUrl,
                 goodCounts = it.goodCounts,
-                goodState = commentGoodService.getCommentGoodState(userId = it.userId, commentId = it.uuid)
+                goodState = goodState
             )
         }
     }
 
-    fun fixComment(commentId: String, fixCommentRequestDto: FixCommentRequestDto): FixCommentResponseDto {
+    fun fixComment(commentId: String, fixCommentRequestDto: FixCommentRequestDto, accessToken: String): FixCommentResponseDto {
 
-        val comment = commentRepository.findById(commentId).orElseThrow {
-            throw NotFoundCommentException
+        var userId: String? = null
+
+        if (accessToken.isNotBlank()) {
+            userId = userService.getMyData(accessToken).userId
         }
+
+        val comment = commentRepository.findByIdOrNull(commentId) ?: throw NotFoundCommentException
+
+        if(comment.userId != userId)
+            throw NotFoundCommentException
 
         comment.state = fixCommentRequestDto.state
         comment.body = fixCommentRequestDto.body
 
+        commentRepository.save(comment)
+
         return FixCommentResponseDto(
-            body = comment.body,
-            postId = comment.postId,
-            userId = comment.userId,
-            state = comment.state
+            body = comment.body, postId = comment.postId, userId = comment.userId, state = comment.state
         )
     }
 
 
-    fun deleteComment(commentId: String): StatusResponseDto {
+    fun deleteComment(commentId: String, accessToken: String): StatusResponseDto {
+        var userId: String? = null
+
+        if (accessToken.isNotBlank()) {
+            userId = userService.getMyData(accessToken).userId
+        }
+
         val comment = commentRepository.findById(commentId).orElseThrow {
             throw NotFoundCommentException
         }
+
+        if(comment.userId != userId)
+            throw NotFoundCommentException
+
         comment.state = false
 
         commentRepository.save(comment)
