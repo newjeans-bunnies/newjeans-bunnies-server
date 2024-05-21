@@ -22,5 +22,5 @@ data class PostEntity(
     @Column(nullable = false)
     val good: Long,
     @Column(nullable = false)
-    val state: Boolean
+    var state: Boolean
 )

@@ -101,14 +101,7 @@ class PostService(
 
         val postImage = imageService.getImageByPostId(postId)
 
-        val newPost = PostEntity(
-            uuid = oldPost.uuid,
-            createDate = oldPost.createDate,
-            good = oldPost.good,
-            body = oldPost.body,
-            userId = oldPost.userId,
-            state = false
-        )
+        oldPost.state = false
 
         // 게시글 안에 있는 사진 비활성화
         postImage.map { imageData ->
@@ -116,7 +109,7 @@ class PostService(
         }
 
         // 게시글 비활성화
-        postRepository.save(newPost)
+        postRepository.save(oldPost)
 
         return StatusResponseDto(204, "게시글이 삭제됨")
     }
