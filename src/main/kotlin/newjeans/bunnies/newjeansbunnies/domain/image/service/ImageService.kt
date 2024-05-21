@@ -1,10 +1,12 @@
 package newjeans.bunnies.newjeansbunnies.domain.image.service
 
 import jakarta.transaction.Transactional
+import newjeans.bunnies.newjeansbunnies.domain.image.Constant.MAX_POST_IMAGE
 import newjeans.bunnies.newjeansbunnies.domain.image.ImageEntity
 import newjeans.bunnies.newjeansbunnies.domain.image.controller.dto.request.CreateImageRequestDto
 import newjeans.bunnies.newjeansbunnies.domain.image.controller.dto.response.ImageResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.image.error.exception.ActivatedImageException
+import newjeans.bunnies.newjeansbunnies.domain.image.error.exception.CapacityExceededImageException
 import newjeans.bunnies.newjeansbunnies.domain.image.error.exception.DisabledImageException
 import newjeans.bunnies.newjeansbunnies.domain.image.error.exception.NotExistImageException
 import newjeans.bunnies.newjeansbunnies.domain.image.repository.ImageRepository
@@ -30,7 +32,12 @@ class ImageService(
     }
 
     // 사진 생성
-    fun createImage(createImageRequestDto: List<CreateImageRequestDto>, userId: String, postId: String) {
+    fun createImage(createImageRequestDto: List<CreateImageRequestDto>, userId: String, postId: String): StatusResponseDto {
+
+        if (createImageRequestDto.size > MAX_POST_IMAGE) {
+            throw CapacityExceededImageException
+        }
+
         createImageRequestDto.map {
             imageRepository.save(
                 ImageEntity(
@@ -42,6 +49,8 @@ class ImageService(
                 )
             )
         }
+
+        return StatusResponseDto(201, "사진이 생성됨")
     }
 
     // 이미지 활성화
