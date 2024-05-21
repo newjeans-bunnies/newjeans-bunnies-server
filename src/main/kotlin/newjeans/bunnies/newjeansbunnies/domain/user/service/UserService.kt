@@ -105,8 +105,8 @@ class UserService(
     }
 
     // 유저 정보 가져오기
-    fun getUserData(id: String): UserDataBasicInfoResponseDto {
-        val userData = userRepository.findByUserId(id).orElseThrow {
+    fun getUserData(userId: String): UserDataBasicInfoResponseDto {
+        val userData = userRepository.findByUserId(userId).orElseThrow {
             throw NotExistUserIdException
         }
 

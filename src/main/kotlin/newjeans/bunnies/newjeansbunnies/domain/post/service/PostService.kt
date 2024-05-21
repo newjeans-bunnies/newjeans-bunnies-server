@@ -53,7 +53,7 @@ class PostService(
         var userId: String? = null
 
         if (accessToken.isNotBlank()) {
-            userId = userService.getUserId(jwtParser.getClaims(accessToken).body["jti"].toString())
+            userId = userService.getMyData(accessToken).userId
         }
 
         val pageRequest = PageRequest.of(
