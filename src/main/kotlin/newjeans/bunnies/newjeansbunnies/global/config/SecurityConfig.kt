@@ -44,6 +44,7 @@ class SecurityConfig(
                 //post
                 authorize.requestMatchers(HttpMethod.POST, "/api/post/good").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
                 authorize.requestMatchers(HttpMethod.GET, "/api/post").permitAll()
+                authorize.requestMatchers(HttpMethod.PATCH, "/api/post").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
                 authorize.requestMatchers(HttpMethod.POST, "/api/post").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
                 authorize.requestMatchers(HttpMethod.DELETE, "/api/post").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
 
@@ -57,6 +58,7 @@ class SecurityConfig(
 
                 //image
                 authorize.requestMatchers(HttpMethod.POST, "api/image").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
+                authorize.requestMatchers(HttpMethod.PATCH, "api/image").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
                 authorize.requestMatchers(HttpMethod.POST, "api/image/abort-upload").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
                 authorize.requestMatchers(HttpMethod.DELETE, "api/image").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
                 authorize.requestMatchers(HttpMethod.GET, "api/image").permitAll() // 사진 리스트 가져오기
@@ -66,9 +68,15 @@ class SecurityConfig(
 
                 //comment
                 authorize.requestMatchers(HttpMethod.GET, "/api/comment").permitAll()
+                authorize.requestMatchers(HttpMethod.PATCH, "/api/comment").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
                 authorize.requestMatchers(HttpMethod.POST, "/api/comment").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
                 authorize.requestMatchers(HttpMethod.DELETE, "/api/comment").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
                 authorize.requestMatchers(HttpMethod.PATCH, "/api/comment").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
+
+                //media
+                authorize.requestMatchers(HttpMethod.GET, "/api/media").permitAll()
+
+
             }
             .exceptionHandling { exceptionHandling ->
                 exceptionHandling
