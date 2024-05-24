@@ -1,4 +1,3 @@
-
 plugins {
     id("org.springframework.boot") version "3.1.5"
     id("io.spring.dependency-management") version "1.1.3"
@@ -17,8 +16,8 @@ version = "0.0.1-SNAPSHOT"
 java {
     sourceCompatibility = JavaVersion.VERSION_17
 }
-tasks.getByName<Jar>("jar"){
-    enabled=false
+tasks.getByName<Jar>("jar") {
+    enabled = false
 }
 
 repositories {
@@ -50,7 +49,12 @@ dependencies {
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
-    implementation ("com.github.vladimir-bukhtoyarov:bucket4j-core:7.0.0")
+    implementation("com.github.vladimir-bukhtoyarov:bucket4j-core:7.0.0")
+
+    implementation("com.google.api-client:google-api-client:1.33.0")
+    implementation("com.google.oauth-client:google-oauth-client-jetty:1.23.0")
+    implementation("com.google.apis:google-api-services-youtube:v3-rev20230816-2.0.0")
+    implementation("com.google.http-client:google-http-client-jackson2:1.39.2")
 
     implementation("aws.sdk.kotlin:s3:1.0.0")
 
