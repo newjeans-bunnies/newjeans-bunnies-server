@@ -25,9 +25,8 @@ class JwtParser(
     private val userDetailsService: CustomUserDetailsService,
     private val managerDetailsService: CustomManagerDetailsService
 ) {
-
     fun getAuthentication(token: String): Authentication {
-        val claims = getClaims(token)
+        val claims = getClaims(token, "access")
 
         if (claims.header[Header.JWT_TYPE] != JwtProvider.ACCESS) throw InvalidTokenException
         val userDetails = getDetails(claims.body)
@@ -35,9 +34,13 @@ class JwtParser(
         return UsernamePasswordAuthenticationToken(userDetails, "", userDetails.authorities)
     }
 
-    fun getClaims(token: String): Jws<Claims> {
+    fun getClaims(token: String, tokenType: String): Jws<Claims> {
         return try {
-            val key: Key = Keys.hmacShaKeyFor(jwtProperties.key.toByteArray(StandardCharsets.UTF_8))
+            val key: Key = when (tokenType) {
+                "access" -> Keys.hmacShaKeyFor(jwtProperties.accessSecretKey.toByteArray(StandardCharsets.UTF_8))
+                "refresh" -> Keys.hmacShaKeyFor(jwtProperties.refreshSecretKey.toByteArray(StandardCharsets.UTF_8))
+                else -> throw InternalServerErrorException
+            }
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token)
         } catch (e: Exception) {
             when (e) {

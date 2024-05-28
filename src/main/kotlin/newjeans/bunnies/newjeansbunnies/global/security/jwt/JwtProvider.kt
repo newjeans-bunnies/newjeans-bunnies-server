@@ -32,9 +32,10 @@ class JwtProvider(
         const val AUTHORITY = "authority"
     }
 
-    private val key: Key = Keys.hmacShaKeyFor(jwtProperties.key.toByteArray(StandardCharsets.UTF_8))
+    private val accessKey: Key = Keys.hmacShaKeyFor(jwtProperties.accessSecretKey.toByteArray(StandardCharsets.UTF_8))
+    private val refreshKey: Key = Keys.hmacShaKeyFor(jwtProperties.refreshSecretKey.toByteArray(StandardCharsets.UTF_8))
 
-     fun receiveToken(uuid: String, authority: Authority) = TokenDto(
+    fun receiveToken(uuid: String, authority: Authority) = TokenDto(
         accessToken = generateJwtAccessToken(uuid, authority.name),
         expiredAt = LocalDateTime.now().plusSeconds(jwtProperties.accessExp),
         refreshToken = generateJwtRefreshToken(uuid, authority),
@@ -43,7 +44,7 @@ class JwtProvider(
 
     private fun generateJwtAccessToken(uuid: String, authority: String): String {
         return Jwts.builder()
-            .signWith(key, SignatureAlgorithm.HS256)
+            .signWith(accessKey, SignatureAlgorithm.HS256)
             .setHeaderParam(Header.JWT_TYPE, ACCESS)
             .setId(uuid)
             .claim(AUTHORITY, authority)
@@ -55,7 +56,7 @@ class JwtProvider(
     private fun generateJwtRefreshToken(uuid: String, authority: Authority): String {
 
         val token = Jwts.builder()
-            .signWith(key, SignatureAlgorithm.HS256)
+            .signWith(refreshKey, SignatureAlgorithm.HS256)
             .setHeaderParam(Header.JWT_TYPE, REFRESH)
             .setIssuedAt(Date())
             .setExpiration(Date(System.currentTimeMillis() + jwtProperties.refreshExp * 1000))
@@ -63,7 +64,7 @@ class JwtProvider(
 
         val refreshToken = RefreshTokenEntity(
             token = token,
-            uuid = uuid,
+            id = uuid,
             authority = authority,
             expirationTime = jwtProperties.refreshExp / 1000
         )
