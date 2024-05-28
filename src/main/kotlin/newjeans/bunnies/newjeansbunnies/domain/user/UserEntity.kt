@@ -11,7 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder
 data class UserEntity(
     @Id
     @Column(unique = true, nullable = false)
-    val uuid: String,
+    val id: String,
     @Column(unique = true, nullable = false)
     val userId: String,
     @Column(nullable = false)
@@ -30,7 +30,7 @@ data class UserEntity(
     @Column(nullable = false)
     val birth: String,
     @Column(nullable = false)
-    val state: Boolean = true
+    var state: Boolean = true
 ) {
     fun hashPassword(passwordEncoder: PasswordEncoder) {
         this.password = passwordEncoder.encode(this.password)

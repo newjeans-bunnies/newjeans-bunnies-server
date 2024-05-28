@@ -10,6 +10,8 @@ import newjeans.bunnies.newjeansbunnies.domain.user.error.exception.BlankUserIdE
 import newjeans.bunnies.newjeansbunnies.domain.user.service.UserService
 import newjeans.bunnies.newjeansbunnies.domain.user.service.UserUpdateService
 import newjeans.bunnies.newjeansbunnies.global.response.StatusResponseDto
+import newjeans.bunnies.newjeansbunnies.global.security.principle.CustomUserDetails
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 
@@ -20,9 +22,9 @@ class UserController(
 ) {
     @GetMapping
     fun getMyData(
-        @RequestHeader("Authorization") token: String
+        @AuthenticationPrincipal auth: CustomUserDetails?,
     ): UserDataDetailsResponseDto {
-        return userService.getMyData(token)
+        return userService.getMyData(auth?.username)
     }
 
     @GetMapping("/{userId}")

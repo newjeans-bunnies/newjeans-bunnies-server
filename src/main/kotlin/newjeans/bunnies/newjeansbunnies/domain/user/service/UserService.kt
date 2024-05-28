@@ -11,7 +11,6 @@ import newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.response.User
 import newjeans.bunnies.newjeansbunnies.domain.user.error.exception.InactiveUserException
 import newjeans.bunnies.newjeansbunnies.domain.user.error.exception.RuleViolationUserIdException
 import newjeans.bunnies.newjeansbunnies.domain.user.repository.UserRepository
-import newjeans.bunnies.newjeansbunnies.global.error.exception.InvalidTokenException
 import newjeans.bunnies.newjeansbunnies.global.response.StatusResponseDto
 import newjeans.bunnies.newjeansbunnies.global.security.jwt.JwtParser
 import org.springframework.beans.factory.annotation.Value
@@ -41,14 +40,12 @@ class UserService(
 
     // 유효한 유저아이디 확인
     fun checkExistUserId(userId: String): UserEntity {
-        val user = userRepository.findByUserId(userId)
-            .orElseThrow {
+        val user = userRepository.findByUserId(userId).orElseThrow {
                 throw NotExistUserIdException
             }
 
         // DB에서 대소문자 구분을 못해서 이쪽에서 구분
-        if (userId != user.userId)
-            throw NotExistUserIdException
+        if (userId != user.userId) throw NotExistUserIdException
 
         return user
     }
@@ -58,8 +55,7 @@ class UserService(
             throw NotExistUserIdException
         }
 
-        if (!user.state)
-            throw InactiveUserException
+        if (!user.state) throw InactiveUserException
 
         return user
     }
@@ -76,15 +72,14 @@ class UserService(
 
     // 사용중인 유저 아이디인지 확인
     fun userId(userId: String): StatusResponseDto {
-        if (userRepository.findByUserId(userId).isPresent && userId == userRepository.findByUserId(userId).get().userId)
-            throw ExistIdException
+        if (userRepository.findByUserId(userId).isPresent && userId == userRepository.findByUserId(userId)
+                .get().userId
+        ) throw ExistIdException
 
-        if (!idPattern(userId))
-            throw RuleViolationUserIdException
+        if (!idPattern(userId)) throw RuleViolationUserIdException
 
         return StatusResponseDto(
-            status = 200,
-            message = "Ok"
+            status = 200, message = "Ok"
         )
     }
 
@@ -95,12 +90,10 @@ class UserService(
 
     // 사용중인 전화번호인지 확인
     fun phoneNumber(phoneNumber: String): StatusResponseDto {
-        if (userRepository.findByPhoneNumber(phoneNumber).isPresent)
-            throw ExistPhoneNumberException
+        if (userRepository.findByPhoneNumber(phoneNumber).isPresent) throw ExistPhoneNumberException
 
         return StatusResponseDto(
-            status = 200,
-            message = "Ok"
+            status = 200, message = "Ok"
         )
     }
 
@@ -111,20 +104,13 @@ class UserService(
         }
 
         return UserDataBasicInfoResponseDto(
-            userId = userData.userId,
-            country = userData.country,
-            imageUrl = userData.imageUrl
+            userId = userData.userId, country = userData.country, imageUrl = userData.imageUrl
         )
     }
 
-    fun getMyData(token: String): UserDataDetailsResponseDto {
-        if (!token.startsWith(PREFIX)) {
-            throw InvalidTokenException
-        }
+    fun getMyData(authorizedUser: String?): UserDataDetailsResponseDto {
 
-        val id = jwtParser.getClaims(token.removePrefix(PREFIX)).body.id
-
-        val userData = userRepository.findById(id).orElseThrow {
+        val userData = userRepository.findByUserId(authorizedUser).orElseThrow {
             throw NotExistUserIdException
         }
 
@@ -143,12 +129,6 @@ class UserService(
         return UserSupportResponseDto(
             countries, fileFormats
         )
-    }
-
-    fun getUserId(id: String): String {
-         return userRepository.findById(id).orElseThrow {
-            throw NotExistUserIdException
-        }.userId
     }
 
 }

@@ -24,7 +24,6 @@ import org.springframework.stereotype.Service
 import org.springframework.util.StringUtils
 import org.springframework.web.multipart.MultipartFile
 
-
 @Service
 @Configuration
 class UserUpdateService(
@@ -66,10 +65,10 @@ class UserUpdateService(
             val extension: String =
                 StringUtils.getFilenameExtension(multipartFiles.originalFilename) ?: throw BlankFileNameException
             checkFileExtension.execute(extension)
-            userImageURL = uploadMultipleFiles(multipartFiles, userData.uuid).await()
+            userImageURL = uploadMultipleFiles(multipartFiles, userData.id).await()
             userRepository.save(
                 UserEntity(
-                    uuid = userData.uuid,
+                    id = userData.id,
                     userId = userUpdateRequestDto.userId,
                     password = userData.password,
                     phoneNumber = userData.phoneNumber,
@@ -84,7 +83,7 @@ class UserUpdateService(
             userImageURL = "https://newjeans-bunnies-image.s3.ap-northeast-2.amazonaws.com/user-image/UserImage.jpg"
             userRepository.save(
                 UserEntity(
-                    uuid = userData.uuid,
+                    id = userData.id,
                     userId = userUpdateRequestDto.userId,
                     password = userData.password,
                     phoneNumber = userData.phoneNumber,
