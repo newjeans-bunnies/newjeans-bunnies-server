@@ -7,34 +7,41 @@ import newjeans.bunnies.newjeansbunnies.domain.post.repository.PostRepository
 import newjeans.bunnies.newjeansbunnies.domain.report.PostReportEntity
 import newjeans.bunnies.newjeansbunnies.domain.report.controller.dto.request.ReportPostRequestDto
 import newjeans.bunnies.newjeansbunnies.domain.report.repository.PostReportRepository
+import newjeans.bunnies.newjeansbunnies.domain.user.error.exception.NotExistUserIdException
 import newjeans.bunnies.newjeansbunnies.domain.user.repository.UserRepository
+import newjeans.bunnies.newjeansbunnies.global.error.exception.InvalidRoleException
 import org.springframework.context.annotation.Configuration
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.util.*
 
 
 @Service
 @Configuration
-class PostReportService(
+class ReportService(
     private val postReportRepository: PostReportRepository,
     private val postRepository: PostRepository,
     private val userRepository: UserRepository
 ) {
-    fun execute(reportPostRequestDto: ReportPostRequestDto) {
-        userRepository.findByUserIdAndPhoneNumber(reportPostRequestDto.id, reportPostRequestDto.phoneNumber).orElseThrow {
-            throw NotExitstIdAndPhoneNumberException
-        }
+    fun postReport(reportPostRequestDto: ReportPostRequestDto, authorizedUser: String?) {
 
-        postRepository.findByUuid(reportPostRequestDto.postId).orElseThrow {
-            throw NotExistPostIdException
-        }
+        if (reportPostRequestDto.userId != authorizedUser) throw InvalidRoleException
+
+        if(!userRepository.existsById(reportPostRequestDto.userId)) throw NotExistUserIdException
+
+        userRepository.findByUserIdAndPhoneNumber(reportPostRequestDto.userId, reportPostRequestDto.phoneNumber)
+            .orElseThrow {
+                throw NotExitstIdAndPhoneNumberException
+            }
+
+        postRepository.findByIdOrNull(reportPostRequestDto.postId) ?: throw NotExistPostIdException
 
         postReportRepository.save(
             PostReportEntity(
-                uuid = UUID.randomUUID().toString(),
-                userId = reportPostRequestDto.id,
-                phoneNumber = reportPostRequestDto.phoneNumber,
-                postId = reportPostRequestDto.postId
+                id = UUID.randomUUID().toString(),
+                userId = reportPostRequestDto.userId,
+                postId = reportPostRequestDto.postId,
+                body = reportPostRequestDto.body
             )
         )
     }
