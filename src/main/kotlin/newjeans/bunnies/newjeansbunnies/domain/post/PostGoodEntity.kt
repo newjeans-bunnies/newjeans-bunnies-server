@@ -12,5 +12,7 @@ data class PostGoodEntity(
     @Column(nullable = false)
     val userId: String,
     @Column(nullable = false)
-    val postId: String
+    val postId: String,
+    @Column(nullable = false)
+    var state: Boolean = true
 )

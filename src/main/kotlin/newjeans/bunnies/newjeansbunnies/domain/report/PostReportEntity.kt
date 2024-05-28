@@ -10,11 +10,12 @@ import jakarta.persistence.Table
 data class PostReportEntity(
     @Id
     @Column(nullable = false, unique = true)
-    val uuid: String,
+    val id: String,
     @Column(nullable = false)
     val userId: String,
     @Column(nullable = false)
-    val phoneNumber: String,
+    val postId: String,
     @Column(nullable = false)
-    val postId: String
+    val body: String
+
 )

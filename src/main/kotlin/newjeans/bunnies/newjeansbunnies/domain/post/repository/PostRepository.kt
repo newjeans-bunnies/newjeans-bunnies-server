@@ -12,9 +12,13 @@ import java.util.*
 @Repository
 interface PostRepository: CrudRepository<PostEntity, String> {
 
-    fun findByUuid(uuid: String): Optional<PostEntity>
-
     @Query("SELECT post FROM PostEntity post WHERE post.state = true")
     fun findSliceBy(pageable: Pageable): Optional<Slice<PostEntity>>
 
+
+
+    @Query("SELECT post FROM PostEntity post WHERE post.state = true AND post.userId = :userId")
+    fun findSliceBy(pageable: Pageable, userId: String): Optional<Slice<PostEntity>>
+
+    fun findByUserId(userId: String): Optional<List<PostEntity>>
 }

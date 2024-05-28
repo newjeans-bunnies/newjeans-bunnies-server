@@ -3,7 +3,7 @@ package newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.response
 
 
 data class PostDto(
-    val uuid: String,
+    val id: String,
     val userId: String,
     val userImage: String,
     val body: String,

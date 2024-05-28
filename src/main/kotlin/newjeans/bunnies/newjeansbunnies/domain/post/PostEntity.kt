@@ -12,15 +12,15 @@ import jakarta.persistence.Table
 data class PostEntity(
     @Id
     @Column(nullable = false, unique = true)
-    val uuid: String,
+    val id: String,
     @Column(nullable = false)
     val userId: String,
     @Column(nullable = false)
-    val body: String,
+    var body: String,
     @Column(nullable = false)
     val createDate: String,
     @Column(nullable = false)
-    val good: Long,
+    var goodCounts: Long,
     @Column(nullable = false)
     var state: Boolean
 )
