@@ -4,7 +4,6 @@ import newjeans.bunnies.newjeansbunnies.domain.auth.controller.dto.TokenDto
 import newjeans.bunnies.newjeansbunnies.domain.auth.controller.dto.request.LoginRequestDto
 import newjeans.bunnies.newjeansbunnies.domain.auth.error.exception.InvalidPasswordException
 import newjeans.bunnies.newjeansbunnies.domain.auth.error.exception.NotExistUserIdException
-import newjeans.bunnies.newjeansbunnies.domain.user.UserEntity
 import newjeans.bunnies.newjeansbunnies.domain.user.repository.UserRepository
 import newjeans.bunnies.newjeansbunnies.global.security.jwt.JwtProvider
 import org.springframework.context.annotation.Configuration
@@ -25,13 +24,11 @@ class LoginService(
 
         matchesPassword(data.password, userData.password)
 
-        return jwtProvider.receiveToken(userData.uuid, userData.authority)
+        return jwtProvider.receiveToken(userData.id, userData.authority)
     }
 
-    private fun getExistUserId(userId: String): UserEntity {
-        return userRepository.findByUserId(userId).orElseThrow {
-            throw NotExistUserIdException
-        }
+    private fun getExistUserId(userId: String) = userRepository.findByUserId(userId).orElseThrow {
+        throw NotExistUserIdException
     }
 
     private fun matchesPassword(password: String, sparePassword: String) {
