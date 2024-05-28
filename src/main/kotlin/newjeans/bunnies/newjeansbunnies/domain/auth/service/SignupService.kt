@@ -38,7 +38,7 @@ class SignupService(
         checkValidCountry(data.country)
 
         val userEntity = UserEntity(
-            uuid = UUID.randomUUID().toString(),
+            id = UUID.randomUUID().toString(),
             userId = data.userId,
             password = data.password,
             phoneNumber = data.phoneNumber,

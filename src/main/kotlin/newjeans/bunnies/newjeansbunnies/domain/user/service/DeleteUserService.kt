@@ -28,9 +28,9 @@ class DeleteUserService(
         //유저 지우기
         userRepository.deleteByUserId(userId)
         //유저
-        deleteUserImageService.execute(userData.uuid)
+        deleteUserImageService.execute(userData.id)
 
-        refreshTokenRepository.deleteById(userData.uuid)
+        refreshTokenRepository.deleteById(userData.id)
 
         return StatusResponseDto(
             status = 204,
