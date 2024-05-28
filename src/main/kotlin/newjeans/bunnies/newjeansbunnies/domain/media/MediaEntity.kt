@@ -6,14 +6,14 @@ import jakarta.persistence.Id
 import jakarta.persistence.Table
 
 @Entity
-@Table(name = "image")
+@Table(name = "media")
 data class MediaEntity(
     @Id
     val id: String,
     @Column(nullable = false)
     val createDate: String,
     @Column(nullable = false, unique = true)
-    val imageKey: String,
+    val mediaId: String,
     @Column(nullable = false)
     val postId: String,
     @Column(nullable = false)
