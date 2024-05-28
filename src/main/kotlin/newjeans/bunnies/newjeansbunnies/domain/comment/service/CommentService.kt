@@ -8,8 +8,11 @@ import newjeans.bunnies.newjeansbunnies.domain.comment.controller.dto.response.C
 import newjeans.bunnies.newjeansbunnies.domain.comment.controller.dto.response.FixCommentResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.comment.error.exception.NotFoundCommentException
 import newjeans.bunnies.newjeansbunnies.domain.comment.repository.CommentRepository
-import newjeans.bunnies.newjeansbunnies.domain.post.service.PostService
+import newjeans.bunnies.newjeansbunnies.domain.post.error.exception.InactivePostException
+import newjeans.bunnies.newjeansbunnies.domain.post.error.exception.NotExistPostIdException
+import newjeans.bunnies.newjeansbunnies.domain.post.repository.PostRepository
 import newjeans.bunnies.newjeansbunnies.domain.user.service.UserService
+import newjeans.bunnies.newjeansbunnies.global.error.exception.InvalidRoleException
 import newjeans.bunnies.newjeansbunnies.global.response.StatusResponseDto
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Slice
@@ -24,8 +27,8 @@ import java.util.*
 @Component
 class CommentService(
     private val commentRepository: CommentRepository,
+    private val postRepository: PostRepository,
     private val userService: UserService,
-    private val postService: PostService,
     private val commentGoodService: CommentGoodService,
 ) {
 
@@ -34,17 +37,19 @@ class CommentService(
 
         // 유저 확인
         userService.checkExistUserId(commentRequestDto.userId)
+
         // 유저 활성화 확인
         userService.checkActivationUser(commentRequestDto.userId)
 
         // 게시글 확인
-        postService.checkExistPostId(commentRequestDto.postId)
+        checkExistPostId(commentRequestDto.postId)
+
         // 게시글 활성화 확인
-        postService.checkActivationPost(commentRequestDto.postId)
+        checkActivationPost(commentRequestDto.postId)
 
         // 댓글 생성
         val comment = CommentEntity(
-            uuid = UUID.randomUUID().toString(),
+            id = UUID.randomUUID().toString(),
             postId = commentRequestDto.postId,
             userId = commentRequestDto.userId,
             createDate = LocalDateTime.now().toString(),
@@ -62,13 +67,7 @@ class CommentService(
     }
 
     // 댓글 가져오기
-    fun getComment(postId: String, pageSize: Int, page: Int, accessToken: String): Slice<CommentResponseDto> {
-
-        var userId: String? = null
-
-        if (accessToken.isNotBlank()) {
-            userId = userService.getMyData(accessToken).userId
-        }
+    fun getComment(postId: String, pageSize: Int, page: Int, authorizedUser: String?): Slice<CommentResponseDto> {
 
         val pageRequest = PageRequest.of(
             page, pageSize, Sort.by(
@@ -77,10 +76,10 @@ class CommentService(
         )
 
         // 게시글 확인
-        postService.checkExistPostId(postId)
+        checkExistPostId(postId)
 
         // 게시글 활성화 확인
-        postService.checkActivationPost(postId)
+        checkActivationPost(postId)
 
         val commentList = commentRepository.findSliceBy(pageRequest, postId).orElseThrow {
             throw NotFoundCommentException
@@ -89,8 +88,9 @@ class CommentService(
         return commentList.map {
 
             var goodState: Boolean? = null
-            if (!userId.isNullOrBlank()) {
-                goodState = commentGoodService.getCommentGoodState(userId = userId, commentId = it.uuid)
+
+            if (!authorizedUser.isNullOrBlank()) {
+                goodState = commentGoodService.getCommentGoodState(userId = authorizedUser, commentId = it.id)
             }
 
             val userImageUrl = userService.getUserImage(it.userId).imageURL
@@ -107,18 +107,14 @@ class CommentService(
         }
     }
 
-    fun fixComment(commentId: String, fixCommentRequestDto: FixCommentRequestDto, accessToken: String): FixCommentResponseDto {
-
-        var userId: String? = null
-
-        if (accessToken.isNotBlank()) {
-            userId = userService.getMyData(accessToken).userId
-        }
+    // 댓글 수정
+    fun fixComment(
+        commentId: String, fixCommentRequestDto: FixCommentRequestDto, authorizedUser: String?
+    ): FixCommentResponseDto {
 
         val comment = commentRepository.findByIdOrNull(commentId) ?: throw NotFoundCommentException
 
-        if(comment.userId != userId)
-            throw NotFoundCommentException
+        if (comment.userId != authorizedUser) throw InvalidRoleException
 
         comment.state = fixCommentRequestDto.state
         comment.body = fixCommentRequestDto.body
@@ -130,26 +126,46 @@ class CommentService(
         )
     }
 
+    // 댓글 비활성화
+    fun disabledComment(commentId: String, authorizedUser: String?): StatusResponseDto {
+        val comment = commentRepository.findByIdOrNull(commentId) ?: throw NotFoundCommentException
 
-    fun deleteComment(commentId: String, accessToken: String): StatusResponseDto {
-        var userId: String? = null
-
-        if (accessToken.isNotBlank()) {
-            userId = userService.getMyData(accessToken).userId
-        }
-
-        val comment = commentRepository.findById(commentId).orElseThrow {
-            throw NotFoundCommentException
-        }
-
-        if(comment.userId != userId)
-            throw NotFoundCommentException
+        if (comment.userId != authorizedUser) throw InvalidRoleException
 
         comment.state = false
+
+        commentGoodService.disabledGoodComment(commentId)
 
         commentRepository.save(comment)
 
         return StatusResponseDto(204, "댓글이 비활성화됨")
     }
 
+    // 댓글 활성화
+    fun enabledComment(commentId: String, authorizedUser: String?): StatusResponseDto {
+        val comment = commentRepository.findByIdOrNull(commentId) ?: throw NotFoundCommentException
+
+        if (comment.userId != authorizedUser) throw InvalidRoleException
+
+        comment.state = true
+
+        commentGoodService.enabledGoodComment(commentId)
+
+        commentRepository.save(comment)
+
+        return StatusResponseDto(204, "댓글이 활성화됨")
+    }
+
+    fun getCommentByPostId(postId: String): List<CommentEntity> {
+        return commentRepository.findByPostId(postId).orElseThrow { throw NotExistPostIdException }
+    }
+
+    fun checkExistPostId(postId: String) {
+        if (!postRepository.existsById(postId)) throw InactivePostException
+    }
+
+    fun checkActivationPost(postId: String) {
+        val post = postRepository.findByIdOrNull(postId) ?: throw NotExistPostIdException
+        if (!post.state) throw InactivePostException
+    }
 }

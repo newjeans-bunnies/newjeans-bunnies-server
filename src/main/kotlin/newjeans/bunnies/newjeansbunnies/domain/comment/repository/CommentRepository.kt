@@ -11,4 +11,7 @@ interface CommentRepository : CrudRepository<CommentEntity, String> {
 
     @Query("SELECT comment FROM CommentEntity comment WHERE comment.postId = :postId AND comment.state = true")
     fun findSliceBy(pageable: Pageable, postId: String): Optional<Slice<CommentEntity>>
+
+
+    fun findByPostId(postId: String): Optional<List<CommentEntity>>
 }

@@ -1,4 +1,4 @@
-package newjeans.bunnies.newjeansbunnies.domain.comment
+package newjeans.bunnies.newjeansbunnies.domain.report
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -6,21 +6,15 @@ import jakarta.persistence.Id
 import jakarta.persistence.Table
 
 @Entity
-@Table(name = "comment")
-data class CommentEntity(
+@Table(name = "comment_report")
+data class CommentReportEntity(
     @Id
     @Column(nullable = false, unique = true)
     val id: String,
     @Column(nullable = false)
     val userId: String,
     @Column(nullable = false)
-    val postId: String,
+    val commentId: String,
     @Column(nullable = false)
-    var body: String,
-    @Column(nullable = false)
-    val createDate: String,
-    @Column(nullable = false)
-    var goodCounts: Long,
-    @Column(nullable = false)
-    var state: Boolean
+    val body: String
 )

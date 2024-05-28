@@ -10,5 +10,7 @@ data class CommentGoodEntity(
     @Column(nullable = false)
     val userId: String,
     @Column(nullable = false)
-    val commentId: String
+    val commentId: String,
+    @Column(nullable = false)
+    var state: Boolean = true
 )
