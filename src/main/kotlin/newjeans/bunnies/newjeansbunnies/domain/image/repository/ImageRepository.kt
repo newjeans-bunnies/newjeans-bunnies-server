@@ -16,4 +16,7 @@ interface ImageRepository : JpaRepository<ImageEntity, String> {
     @Query("SELECT image FROM ImageEntity image WHERE image.state = true")
     fun findSliceBy(pageable: Pageable): Optional<Slice<ImageEntity>>
 
+    @Query("SELECT image FROM ImageEntity image WHERE image.state = true AND image.userId = :userId")
+    fun findSliceBy(pageable: Pageable, userId: String): Optional<Slice<ImageEntity>>
+
 }

@@ -9,7 +9,7 @@ import jakarta.persistence.Table
 @Table(name = "image")
 data class ImageEntity(
     @Id
-    val imageId: String,
+    val id: String,
     @Column(nullable = false)
     val createDate: String,
     @Column(nullable = false, unique = true)
