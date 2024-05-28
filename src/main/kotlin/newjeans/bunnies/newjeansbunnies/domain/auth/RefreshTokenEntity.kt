@@ -1,15 +1,13 @@
 package newjeans.bunnies.newjeansbunnies.domain.auth
 
-
 import jakarta.persistence.*
 import newjeans.bunnies.newjeansbunnies.domain.auth.type.Authority
-
 
 @Entity
 @Table(name = "refresh_token")
 data class RefreshTokenEntity(
     @Id
-    val uuid: String,
+    val id: String,
     @Column(nullable = false, unique = true)
     val token: String,
     @Column(nullable = false)
