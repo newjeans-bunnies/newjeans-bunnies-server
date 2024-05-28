@@ -9,11 +9,12 @@ import newjeans.bunnies.newjeansbunnies.domain.auth.controller.dto.request.Login
 import newjeans.bunnies.newjeansbunnies.domain.auth.controller.dto.request.SignupRequestDto
 import newjeans.bunnies.newjeansbunnies.domain.auth.controller.dto.response.SignupResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.auth.service.*
-import newjeans.bunnies.newjeansbunnies.domain.user.error.exception.BlankUserIdException
 import newjeans.bunnies.newjeansbunnies.global.error.exception.RefreshTokenNotForundException
 import newjeans.bunnies.newjeansbunnies.global.response.StatusResponseDto
+import newjeans.bunnies.newjeansbunnies.global.security.principle.CustomUserDetails
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpStatus
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 
@@ -68,12 +69,10 @@ class AuthController(
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping
     fun deleteUser(
-        @RequestParam("user-id") userId: String
+        @RequestParam("user-id") userId: String,
+        @AuthenticationPrincipal auth: CustomUserDetails?
     ): StatusResponseDto {
-
-        if (userId.isBlank()) throw BlankUserIdException
-
-        return authService.userDelete(userId)
+        return authService.userDelete(userId, auth?.username)
     }
 
 }
