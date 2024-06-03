@@ -1,8 +1,6 @@
 package newjeans.bunnies.newjeansbunnies.domain.image.controller
 
-import newjeans.bunnies.newjeansbunnies.domain.image.controller.dto.request.CreateImageRequestDto
 import newjeans.bunnies.newjeansbunnies.domain.image.controller.dto.response.ImageResponseDto
-import newjeans.bunnies.newjeansbunnies.domain.image.service.AwsUploadService
 import newjeans.bunnies.newjeansbunnies.domain.image.service.ImageService
 import newjeans.bunnies.newjeansbunnies.global.response.StatusResponseDto
 import newjeans.bunnies.newjeansbunnies.global.security.principle.CustomUserDetails
@@ -16,54 +14,31 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/image")
 @Configuration
 class ImageController(
-    private val imageService: ImageService, private val awsUploadService: AwsUploadService
+    private val imageService: ImageService
 ) {
 
     //사진 리스트로 가져오기
     @GetMapping
     fun getImages(
-        @RequestParam size: Int,
-        @RequestParam page: Int,
+        @RequestParam size: Int, @RequestParam page: Int
     ): Slice<ImageResponseDto> {
-        return imageService.getListImage(size, page)
+        return imageService.getImage(size, page)
     }
 
+    // 특정 사진 가져오기
     @GetMapping("/{userId}")
     fun getUserImage(
-        @RequestParam size: Int,
-        @RequestParam page: Int,
-        @PathVariable userId: String
+        @RequestParam size: Int, @RequestParam page: Int, @PathVariable userId: String
     ): Slice<ImageResponseDto> {
-        return imageService.getUserListImage(size, page, userId)
+        return imageService.getUserImage(size, page, userId)
     }
 
-    // 사진 삭제
+    // 사진 비활성화
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping
+    @PatchMapping
     fun deleteImage(
-        @RequestParam(value = "image-id") imageId: String,
-        @AuthenticationPrincipal auth: CustomUserDetails?
+        @RequestParam(value = "image-id") imageId: String, @AuthenticationPrincipal auth: CustomUserDetails?
     ): StatusResponseDto {
         return imageService.disabledImage(imageId, auth?.username)
-    }
-
-    @PostMapping
-    fun createImage(
-        @RequestBody createImageRequestDto: List<CreateImageRequestDto>,
-        @RequestParam("user-id") userId: String,
-        @RequestParam("post-id") postId: String,
-        @AuthenticationPrincipal auth: CustomUserDetails?,
-    ): StatusResponseDto {
-        return imageService.createImage(createImageRequestDto, userId, postId, auth?.username)
-    }
-
-    // S3에 업로드된 사진 삭제
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PostMapping("/abort-upload")
-    fun abortUpload(
-        @RequestParam("image-id") imageId: String,
-        @AuthenticationPrincipal auth: CustomUserDetails?,
-    ): StatusResponseDto {
-        return awsUploadService.deleteMultipartUpload(imageId, auth?.username)
     }
 }

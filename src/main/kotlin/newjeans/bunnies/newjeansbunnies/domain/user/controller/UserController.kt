@@ -1,10 +1,11 @@
 package newjeans.bunnies.newjeansbunnies.domain.user.controller
 
 import jakarta.validation.Valid
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
 import newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.request.UserUpdateRequestDto
-import newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.response.*
+import newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.response.UserDataBasicInfoResponseDto
+import newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.response.UserDataDetailsResponseDto
+import newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.response.UserSupportResponseDto
+import newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.response.UserUpdateResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.user.error.exception.BlankPhoneNumberException
 import newjeans.bunnies.newjeansbunnies.domain.user.error.exception.BlankUserIdException
 import newjeans.bunnies.newjeansbunnies.domain.user.service.UserService
@@ -20,7 +21,7 @@ import org.springframework.web.multipart.MultipartFile
 class UserController(
     private val userUpdateService: UserUpdateService, private val userService: UserService
 ) {
-    @GetMapping
+    @GetMapping("/me")
     fun getMyData(
         @AuthenticationPrincipal auth: CustomUserDetails?,
     ): UserDataDetailsResponseDto {
@@ -34,26 +35,16 @@ class UserController(
         return userService.getUserData(userId)
     }
 
-    @GetMapping("/image/{userId}")
-    fun getUserImage(
-        @PathVariable userId: String
-    ): UserImageResponseDto {
-        return userService.getUserImage(userId)
-    }
-
-    @PatchMapping
-    fun updateUser(
+    @PatchMapping("/fix")
+    suspend fun updateUser(
         @RequestParam("user-id") userId: String,
         @ModelAttribute @Valid userUpdateRequestDto: UserUpdateRequestDto,
         @RequestPart("uploadFile") multipartFiles: MultipartFile?,
     ): UserUpdateResponseDto {
-
         // userId Param이 비어있는지 확인
         if (userId.isBlank()) throw BlankUserIdException
 
-        return runBlocking(Dispatchers.IO) {
-            userUpdateService.execute(userId, userUpdateRequestDto, multipartFiles)
-        }
+        return userUpdateService.execute(userId, userUpdateRequestDto, multipartFiles)
     }
 
     @GetMapping("/check/userid")

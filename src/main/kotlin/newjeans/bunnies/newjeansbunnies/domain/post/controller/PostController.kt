@@ -60,7 +60,7 @@ class PostController(
         return postGoodService.postGood(postId, userId, auth?.username)
     }
 
-    @PatchMapping
+    @PatchMapping("/fix")
     fun fixPost(
         @RequestBody fixPostRequestDto: FixPostRequestDto,
         @RequestParam("post-id") postId: String,
@@ -70,7 +70,7 @@ class PostController(
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping
+    @PatchMapping("/delete")
     fun deletePost(
         @RequestParam("post-id") postId: String,
         @AuthenticationPrincipal auth: CustomUserDetails?,

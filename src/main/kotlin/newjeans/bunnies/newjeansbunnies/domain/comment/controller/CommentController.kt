@@ -35,8 +35,11 @@ class CommentController(
     }
 
     @PostMapping
-    fun createComment(@RequestBody commentRequestDto: CommentRequestDto): CreateCommentResponseDto {
-        return commentService.createComment(commentRequestDto)
+    fun createComment(
+        @RequestBody commentRequestDto: CommentRequestDto,
+        @AuthenticationPrincipal auth: CustomUserDetails?
+    ): CreateCommentResponseDto {
+        return commentService.createComment(commentRequestDto, auth?.username)
     }
 
     @GetMapping
@@ -44,12 +47,12 @@ class CommentController(
         @RequestParam page: Int,
         @RequestParam size: Int,
         @RequestParam("post-id") postId: String,
-        @AuthenticationPrincipal auth: CustomUserDetails?,
+        @AuthenticationPrincipal auth: CustomUserDetails?
     ): Slice<CommentResponseDto> {
         return commentService.getComment(postId, size, page, auth?.username)
     }
 
-    @PatchMapping
+    @PatchMapping("/fix")
     fun fixComment(
         @RequestBody fixCommentRequestDto: FixCommentRequestDto,
         @RequestParam("comment-id") commentId: String,
@@ -58,10 +61,10 @@ class CommentController(
         return commentService.fixComment(commentId, fixCommentRequestDto, auth?.username)
     }
 
-    @DeleteMapping
+    @PatchMapping("/delete")
     fun deleteComment(
         @RequestParam("comment-id") commentId: String,
-        @AuthenticationPrincipal auth: CustomUserDetails?,
+        @AuthenticationPrincipal auth: CustomUserDetails?
     ): StatusResponseDto {
         return commentService.disabledComment(commentId, auth?.username)
     }
