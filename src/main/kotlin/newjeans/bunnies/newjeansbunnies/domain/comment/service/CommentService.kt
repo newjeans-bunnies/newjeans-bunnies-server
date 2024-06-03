@@ -33,7 +33,9 @@ class CommentService(
 ) {
 
     // 댓글 생성
-    fun createComment(commentRequestDto: CommentRequestDto): CreateCommentResponseDto {
+    fun createComment(commentRequestDto: CommentRequestDto, authorizedUser: String?): CreateCommentResponseDto {
+
+        if(authorizedUser != commentRequestDto.userId) throw InvalidRoleException
 
         // 유저 확인
         userService.checkExistUserId(commentRequestDto.userId)
