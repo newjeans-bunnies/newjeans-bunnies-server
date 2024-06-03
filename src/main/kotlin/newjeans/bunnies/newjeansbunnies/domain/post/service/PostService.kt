@@ -1,7 +1,6 @@
 package newjeans.bunnies.newjeansbunnies.domain.post.service
 
 import newjeans.bunnies.newjeansbunnies.domain.comment.service.CommentService
-import newjeans.bunnies.newjeansbunnies.domain.image.service.AwsUploadService
 import newjeans.bunnies.newjeansbunnies.domain.image.service.ImageService
 import newjeans.bunnies.newjeansbunnies.domain.post.PostEntity
 import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.request.FixPostRequestDto
@@ -22,7 +21,6 @@ import org.springframework.data.domain.Slice
 import org.springframework.data.domain.Sort
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
-import java.time.LocalDateTime
 
 @Service
 @Configuration
@@ -31,7 +29,6 @@ class PostService(
     private val userService: UserService,
     private val postGoodService: PostGoodService,
     private val imageService: ImageService,
-    private val awsUploadService: AwsUploadService,
     private val commentService: CommentService,
 ) {
     // 게시글 생성
@@ -39,13 +36,10 @@ class PostService(
 
         if (postRequestDto.userId != authorizedUser) throw InvalidRoleException
 
-        val postCreateDate = LocalDateTime.now().toString()
-
-        awsUploadService.completeUpload(postRequestDto.postId, authorizedUser)
+        imageService.createImage(postRequestDto.imageId, authorizedUser, postRequestDto.postId)
 
         val post = PostEntity(
             id = postRequestDto.postId,
-            createDate = postCreateDate,
             goodCounts = 0,
             state = true,
             body = postRequestDto.body,
@@ -53,7 +47,8 @@ class PostService(
         )
 
         postRepository.save(post)
-        return CreatePostResponseDto(postRequestDto.postId, postCreateDate)
+
+        return CreatePostResponseDto(postRequestDto.postId, post.createdDate)
     }
 
     // 게시글 가져오기
@@ -61,7 +56,7 @@ class PostService(
 
         val pageRequest = PageRequest.of(
             page, pageSize, Sort.by(
-                Sort.Direction.DESC, "createDate"
+                Sort.Direction.DESC, "createdDate"
             )
         )
 
@@ -80,7 +75,7 @@ class PostService(
                 id = it.id,
                 userId = it.userId,
                 body = it.body,
-                createDate = it.createDate,
+                createDate = it.createdDate,
                 good = it.goodCounts,
                 goodState = goodState,
                 image = imageService.getImageByPostId(it.id).map {
@@ -115,7 +110,7 @@ class PostService(
                 id = it.id,
                 userId = it.userId,
                 body = it.body,
-                createDate = it.createDate,
+                createDate = it.createdDate,
                 good = it.goodCounts,
                 goodState = goodState,
                 image = imageService.getImageByPostId(it.id).map {
@@ -177,45 +172,7 @@ class PostService(
         return StatusResponseDto(204, "게시글이 삭제됨")
     }
 
-    // 게시글 활성화
-    fun enabledPost(postId: String, authorizedUser: String?): StatusResponseDto {
-
-        // 게시글 가져오기
-        val post = postRepository.findByIdOrNull(postId) ?: throw NotExistPostIdException
-
-        // 게시글 작성자 이름과 삭제할 유저 이름 비교후 다르면 예외처리
-        if (post.userId != authorizedUser) throw InvalidRoleException
-
-        // 게시글이 비활성화 되어있다면 예외처리
-        if (!post.state) throw InactivePostException
-
-        // 게시글에 있는 사진 들고오기
-        val postImage = imageService.getImageByPostId(postId)
-
-        // 게시글에 있는 댓글 들고오기
-        val postComment = commentService.getCommentByPostId(postId)
-
-        // 게시글 안에 있는 사진 활성화
-        postImage.map { imageData ->
-            imageService.enabledImage(imageData.id, authorizedUser)
-        }
-
-        // 게시글 안에 있는 댓글 활성화
-        postComment.map { commentData ->
-            commentService.enabledComment(commentData.id, authorizedUser)
-        }
-
-        // 게시글 활성화
-        post.state = true
-
-        // 활성화된 게시글 저장
-        postRepository.save(post)
-
-        return StatusResponseDto(204, "게시글이 활성화됨")
-    }
-
     fun getPostByUserId(userId: String): List<PostEntity> {
         return postRepository.findByUserId(userId).orElseThrow { throw NotExistUserIdException }
     }
-
 }

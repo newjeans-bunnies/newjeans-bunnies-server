@@ -1,5 +1,6 @@
 package newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.response
 
+import java.time.LocalDateTime
 
 
 data class PostDto(
@@ -8,7 +9,7 @@ data class PostDto(
     val userImage: String,
     val body: String,
     val image: List<String>,
-    val createDate: String,
+    val createDate: LocalDateTime,
     val good: Long,
     val goodState: Boolean?
 )
