@@ -11,6 +11,7 @@ import java.util.*
 @Repository
 interface ImageRepository : JpaRepository<ImageEntity, String> {
 
+    @Query("SELECT image FROM ImageEntity image WHERE image.state = true AND image.postId = :postId")
     fun findByPostId(postId: String): Optional<List<ImageEntity>>
 
     @Query("SELECT image FROM ImageEntity image WHERE image.state = true")
@@ -18,5 +19,5 @@ interface ImageRepository : JpaRepository<ImageEntity, String> {
 
     @Query("SELECT image FROM ImageEntity image WHERE image.state = true AND image.userId = :userId")
     fun findSliceBy(pageable: Pageable, userId: String): Optional<Slice<ImageEntity>>
-
+    
 }

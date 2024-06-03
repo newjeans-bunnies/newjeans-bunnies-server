@@ -14,5 +14,8 @@ data class PostRequestDto(
     val body: String,
     @field:NotBlank(message = "게시글 아이디는 필수 입력 값입니다.")
     @field:NotNull(message = "게시글 아이디는 필수 입력 값입니다.")
-    val postId: String
+    val postId: String,
+    @field:NotBlank(message = "게시글 아이디는 필수 입력 값입니다.")
+    @field:NotNull(message = "게시글 아이디는 필수 입력 값입니다.")
+    val imageId: List<String>,
 )
