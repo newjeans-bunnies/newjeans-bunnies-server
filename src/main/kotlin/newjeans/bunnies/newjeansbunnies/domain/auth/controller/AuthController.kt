@@ -3,12 +3,16 @@ package newjeans.bunnies.newjeansbunnies.domain.auth.controller
 
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Pattern
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import newjeans.bunnies.newjeansbunnies.domain.auth.controller.dto.TokenDto
 import newjeans.bunnies.newjeansbunnies.domain.auth.controller.dto.request.CertificationVerifyRequestDto
 import newjeans.bunnies.newjeansbunnies.domain.auth.controller.dto.request.LoginRequestDto
 import newjeans.bunnies.newjeansbunnies.domain.auth.controller.dto.request.SignupRequestDto
 import newjeans.bunnies.newjeansbunnies.domain.auth.controller.dto.response.SignupResponseDto
-import newjeans.bunnies.newjeansbunnies.domain.auth.service.*
+import newjeans.bunnies.newjeansbunnies.domain.auth.service.AuthService
+import newjeans.bunnies.newjeansbunnies.domain.auth.service.PhoneNumberCertificationService
+import newjeans.bunnies.newjeansbunnies.domain.auth.service.ReissueTokenService
 import newjeans.bunnies.newjeansbunnies.global.error.exception.RefreshTokenNotForundException
 import newjeans.bunnies.newjeansbunnies.global.response.StatusResponseDto
 import newjeans.bunnies.newjeansbunnies.global.security.principle.CustomUserDetails
@@ -24,8 +28,6 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/auth")
 @Validated
 class AuthController(
-    private val loginService: LoginService,
-    private val signupService: SignupService,
     private val reissueTokenService: ReissueTokenService,
     private val phoneNumberCertificationService: PhoneNumberCertificationService,
     private val authService: AuthService
@@ -33,13 +35,15 @@ class AuthController(
 
     @PostMapping("/login")
     fun login(@RequestBody @Valid loginRequestDto: LoginRequestDto): TokenDto {
-        return loginService.execute(loginRequestDto)
+        return authService.login(loginRequestDto)
     }
+
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/signup")
     fun signup(@RequestBody @Valid signupRequestDto: SignupRequestDto): SignupResponseDto {
-        return signupService.execute(signupRequestDto)
+        runBlocking { delay(5000) }
+        return authService.signup(signupRequestDto)
     }
 
     @PatchMapping("/refresh")
@@ -67,7 +71,7 @@ class AuthController(
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping
+    @PatchMapping("/delete")
     fun deleteUser(
         @RequestParam("user-id") userId: String,
         @AuthenticationPrincipal auth: CustomUserDetails?
