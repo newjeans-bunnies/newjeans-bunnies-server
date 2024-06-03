@@ -42,40 +42,36 @@ class SecurityConfig(
                 authorize.requestMatchers(HttpMethod.POST, "/api/auth/phonenumber").permitAll() // 전화번호 인증
 
                 //post
-                authorize.requestMatchers(HttpMethod.POST, "/api/post/good").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
-                authorize.requestMatchers(HttpMethod.GET, "/api/post").permitAll()
-                authorize.requestMatchers(HttpMethod.PATCH, "/api/post").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
-                authorize.requestMatchers(HttpMethod.POST, "/api/post").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
-                authorize.requestMatchers(HttpMethod.DELETE, "/api/post").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
-
-                //good
-                authorize.requestMatchers(HttpMethod.POST,"/api/post/good").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
+                authorize.requestMatchers(HttpMethod.POST, "/api/post/good").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name) // 게시글 좋아요
+                authorize.requestMatchers(HttpMethod.GET, "/api/post").permitAll() // 게시글 가져오기
+                authorize.requestMatchers(HttpMethod.GET, "/api/post/**").permitAll() // 특정 게시글 가져오기
+                authorize.requestMatchers(HttpMethod.PATCH, "/api/post/fix").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name) // 게시글 수정
+                authorize.requestMatchers(HttpMethod.PATCH, "/api/post/delete").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name) // 게시글 비활성화
+                authorize.requestMatchers(HttpMethod.POST, "/api/post").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name) // 게시글 만들기
 
                 //user
-                authorize.requestMatchers(HttpMethod.GET,"/api/user").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
+                authorize.requestMatchers(HttpMethod.GET,"/api/user/me").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name) // 내 정보 가져오기
                 authorize.requestMatchers(HttpMethod.GET,"/api/user/**").permitAll()
-                authorize.requestMatchers(HttpMethod.PATCH,"/api/user/update").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
+                authorize.requestMatchers(HttpMethod.PATCH,"/api/user/fix").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
 
                 //image
-                authorize.requestMatchers(HttpMethod.POST, "api/image").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
-                authorize.requestMatchers(HttpMethod.PATCH, "api/image").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
-                authorize.requestMatchers(HttpMethod.POST, "api/image/abort-upload").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
-                authorize.requestMatchers(HttpMethod.DELETE, "api/image").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
-                authorize.requestMatchers(HttpMethod.GET, "api/image").permitAll() // 사진 리스트 가져오기
+                authorize.requestMatchers(HttpMethod.POST, "/api/image").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name) // 사진 만들기
+                authorize.requestMatchers(HttpMethod.PATCH, "/api/image").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name) // 사진 비활성화
+                authorize.requestMatchers(HttpMethod.GET, "/api/image").permitAll() // 사진 가져오기
+                authorize.requestMatchers(HttpMethod.GET, "/api/image/**").permitAll() // 특정 사진 가져오기
 
                 //report
                 authorize.requestMatchers(HttpMethod.POST,"/api/report/**").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
 
                 //comment
                 authorize.requestMatchers(HttpMethod.GET, "/api/comment").permitAll()
-                authorize.requestMatchers(HttpMethod.PATCH, "/api/comment").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
+                authorize.requestMatchers(HttpMethod.PATCH, "/api/comment/delete").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
+                authorize.requestMatchers(HttpMethod.PATCH, "/api/comment/fix").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
                 authorize.requestMatchers(HttpMethod.POST, "/api/comment").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
-                authorize.requestMatchers(HttpMethod.DELETE, "/api/comment").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
-                authorize.requestMatchers(HttpMethod.PATCH, "/api/comment").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
+                authorize.requestMatchers(HttpMethod.POST, "/api/comment/good").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
 
                 //media
                 authorize.requestMatchers(HttpMethod.GET, "/api/media").permitAll()
-
 
             }
             .exceptionHandling { exceptionHandling ->
