@@ -10,6 +10,7 @@ import newjeans.bunnies.newjeansbunnies.domain.report.repository.PostReportRepos
 import newjeans.bunnies.newjeansbunnies.domain.user.error.exception.NotExistUserIdException
 import newjeans.bunnies.newjeansbunnies.domain.user.repository.UserRepository
 import newjeans.bunnies.newjeansbunnies.global.error.exception.InvalidRoleException
+import newjeans.bunnies.newjeansbunnies.global.response.StatusResponseDto
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -23,13 +24,13 @@ class ReportService(
     private val postRepository: PostRepository,
     private val userRepository: UserRepository
 ) {
-    fun postReport(reportPostRequestDto: ReportPostRequestDto, authorizedUser: String?) {
+    fun postReport(reportPostRequestDto: ReportPostRequestDto, authorizedUser: String?): StatusResponseDto {
 
         if (reportPostRequestDto.userId != authorizedUser) throw InvalidRoleException
 
         if(!userRepository.existsById(reportPostRequestDto.userId)) throw NotExistUserIdException
 
-        userRepository.findByUserIdAndPhoneNumber(reportPostRequestDto.userId, reportPostRequestDto.phoneNumber)
+        userRepository.findByNicknameAndPhoneNumber(reportPostRequestDto.userId, reportPostRequestDto.phoneNumber)
             .orElseThrow {
                 throw NotExitstIdAndPhoneNumberException
             }
@@ -39,10 +40,12 @@ class ReportService(
         postReportRepository.save(
             PostReportEntity(
                 id = UUID.randomUUID().toString(),
-                userId = reportPostRequestDto.userId,
+                nickname = reportPostRequestDto.userId,
                 postId = reportPostRequestDto.postId,
                 body = reportPostRequestDto.body
             )
         )
+
+        return StatusResponseDto(200, "OK")
     }
 }

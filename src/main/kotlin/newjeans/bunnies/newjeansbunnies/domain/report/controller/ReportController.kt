@@ -3,6 +3,7 @@ package newjeans.bunnies.newjeansbunnies.domain.report.controller
 
 import newjeans.bunnies.newjeansbunnies.domain.report.controller.dto.request.ReportPostRequestDto
 import newjeans.bunnies.newjeansbunnies.domain.report.service.ReportService
+import newjeans.bunnies.newjeansbunnies.global.response.StatusResponseDto
 import newjeans.bunnies.newjeansbunnies.global.security.principle.CustomUserDetails
 
 import org.springframework.context.annotation.Configuration
@@ -23,7 +24,7 @@ class ReportController(
     fun reportPost(
         @RequestBody reportPostRequestDto: ReportPostRequestDto,
         @AuthenticationPrincipal auth: CustomUserDetails?
-    ) {
-        reportService.postReport(reportPostRequestDto, auth?.username)
+    ): StatusResponseDto {
+        return reportService.postReport(reportPostRequestDto, auth?.username)
     }
 }
