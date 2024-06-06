@@ -35,7 +35,7 @@ class PostGoodService(
         val post = getValidPost(postId)
 
         // UserID 대소문자 구분
-        userService.checkExistUserId(userId)
+        userService.checkExistNickname(userId)
 
         if (getPostGoodState(postId, userId)) {
             postGoodRepository.deleteByUserIdAndPostId(postId = postId, userId = userId)

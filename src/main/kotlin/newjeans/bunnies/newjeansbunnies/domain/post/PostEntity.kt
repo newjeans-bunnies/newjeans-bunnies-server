@@ -25,4 +25,4 @@ data class PostEntity(
     @Column(nullable = false)
     var state: Boolean,
 
-)
+    )

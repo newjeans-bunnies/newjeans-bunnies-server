@@ -2,8 +2,6 @@ package newjeans.bunnies.newjeansbunnies.domain.post.controller
 
 import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.request.FixPostRequestDto
 import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.request.PostRequestDto
-import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.response.CreatePostResponseDto
-import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.response.FixPostResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.response.PostDto
 import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.response.PostGoodResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.post.service.PostGoodService
@@ -24,12 +22,12 @@ class PostController(
     private val postGoodService: PostGoodService,
     private val postService: PostService,
 ) {
-    @PostMapping
+    @PostMapping("/create")
     fun createPost(
         @RequestBody postRequestDto: PostRequestDto,
-        @AuthenticationPrincipal auth: CustomUserDetails?,
-    ): CreatePostResponseDto {
-        return postService.createPost(postRequestDto, auth?.username)
+        @AuthenticationPrincipal auth: CustomUserDetails,
+    ): StatusResponseDto {
+        return postService.createPost(postRequestDto, auth.username)
     }
 
     @GetMapping
@@ -64,18 +62,18 @@ class PostController(
     fun fixPost(
         @RequestBody fixPostRequestDto: FixPostRequestDto,
         @RequestParam("post-id") postId: String,
-        @AuthenticationPrincipal auth: CustomUserDetails?,
-    ): FixPostResponseDto {
-        return postService.fixPost(fixPostRequestDto, auth?.username, postId)
+        @AuthenticationPrincipal auth: CustomUserDetails,
+    ): StatusResponseDto {
+        return postService.fixPost(fixPostRequestDto, auth.username, postId)
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PatchMapping("/delete")
     fun deletePost(
         @RequestParam("post-id") postId: String,
-        @AuthenticationPrincipal auth: CustomUserDetails?,
+        @AuthenticationPrincipal auth: CustomUserDetails,
     ): StatusResponseDto {
-        return postService.disabledPost(postId, auth?.username)
+        return postService.disabledPost(postId, auth.username)
     }
 
 }

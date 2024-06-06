@@ -12,7 +12,7 @@ data class PostReportEntity(
     @Column(nullable = false, unique = true)
     val id: String,
     @Column(nullable = false)
-    val userId: String,
+    val nickname: String,
     @Column(nullable = false)
     val postId: String,
     @Column(nullable = false)

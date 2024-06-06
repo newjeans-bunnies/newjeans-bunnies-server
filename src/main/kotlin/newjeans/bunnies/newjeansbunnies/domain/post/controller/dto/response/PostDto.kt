@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 data class PostDto(
     val id: String,
     val userId: String,
-    val userImage: String,
+    val userImageUrl: String?,
     val body: String,
     val image: List<String>,
     val createDate: LocalDateTime,

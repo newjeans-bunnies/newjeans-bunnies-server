@@ -5,8 +5,6 @@ import newjeans.bunnies.newjeansbunnies.domain.image.service.ImageService
 import newjeans.bunnies.newjeansbunnies.domain.post.PostEntity
 import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.request.FixPostRequestDto
 import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.request.PostRequestDto
-import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.response.CreatePostResponseDto
-import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.response.FixPostResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.post.controller.dto.response.PostDto
 import newjeans.bunnies.newjeansbunnies.domain.post.error.exception.InactivePostException
 import newjeans.bunnies.newjeansbunnies.domain.post.error.exception.NotExistPostIdException
@@ -32,27 +30,21 @@ class PostService(
     private val commentService: CommentService,
 ) {
     // 게시글 생성
-    fun createPost(postRequestDto: PostRequestDto, authorizedUser: String?): CreatePostResponseDto {
+    fun createPost(postRequestDto: PostRequestDto, userId: String): StatusResponseDto {
 
-        if (postRequestDto.userId != authorizedUser) throw InvalidRoleException
-
-        imageService.createImage(postRequestDto.imageId, authorizedUser, postRequestDto.postId)
+        imageService.createImage(postRequestDto.imageId, userId, postRequestDto.postId)
 
         val post = PostEntity(
-            id = postRequestDto.postId,
-            goodCounts = 0,
-            state = true,
-            body = postRequestDto.body,
-            userId = postRequestDto.userId
+            id = postRequestDto.postId, goodCounts = 0, state = true, body = postRequestDto.body, userId = userId
         )
 
         postRepository.save(post)
 
-        return CreatePostResponseDto(postRequestDto.postId, post.createdDate)
+        return StatusResponseDto(200, "OK")
     }
 
     // 게시글 가져오기
-    fun getPost(pageSize: Int, page: Int, authorizedUser: String?): Slice<PostDto> {
+    fun getPost(pageSize: Int, page: Int, userId: String?): Slice<PostDto> {
 
         val pageRequest = PageRequest.of(
             page, pageSize, Sort.by(
@@ -64,26 +56,7 @@ class PostService(
             throw NotExistPostIdException
         }
 
-        return listPost.map {
-            var goodState: Boolean? = null
-
-            if (!authorizedUser.isNullOrBlank()) {
-                goodState = postGoodService.getPostGoodState(it.id, authorizedUser)
-            }
-
-            PostDto(
-                id = it.id,
-                userId = it.userId,
-                body = it.body,
-                createDate = it.createdDate,
-                good = it.goodCounts,
-                goodState = goodState,
-                image = imageService.getImageByPostId(it.id).map {
-                    it.imageKey
-                },
-                userImage = userService.getUserImage(it.userId).imageURL
-            )
-        }
+        return listPost.toPostDto(userId)
     }
 
     // 특정 유저 게시글 가져오기
@@ -99,50 +72,31 @@ class PostService(
             throw NotExistPostIdException
         }
 
-        return listPost.map {
-            var goodState: Boolean? = null
-
-            if (!authorizedUser.isNullOrBlank()) {
-                goodState = postGoodService.getPostGoodState(it.id, authorizedUser)
-            }
-
-            PostDto(
-                id = it.id,
-                userId = it.userId,
-                body = it.body,
-                createDate = it.createdDate,
-                good = it.goodCounts,
-                goodState = goodState,
-                image = imageService.getImageByPostId(it.id).map {
-                    it.imageKey
-                },
-                userImage = userService.getUserImage(it.userId).imageURL
-            )
-        }
+        return listPost.toPostDto(authorizedUser)
     }
 
     // 게시글 수정
-    fun fixPost(fixPostRequestDto: FixPostRequestDto, authorizedUser: String?, postId: String): FixPostResponseDto {
+    fun fixPost(fixPostRequestDto: FixPostRequestDto, userId: String, postId: String): StatusResponseDto {
 
         val post = postRepository.findByIdOrNull(postId) ?: throw NotExistPostIdException
 
-        if (post.userId != authorizedUser) throw InvalidRoleException
+        if (post.userId != userId) throw InvalidRoleException
 
         post.body = fixPostRequestDto.body
 
         postRepository.save(post)
 
-        return FixPostResponseDto(post.body)
+        return StatusResponseDto(200, "OK")
     }
 
     // 게시글 비활성화
-    fun disabledPost(postId: String, authorizedUser: String?): StatusResponseDto {
+    fun disabledPost(postId: String, userId: String): StatusResponseDto {
 
         // 게시글 가져오기
         val post = postRepository.findByIdOrNull(postId) ?: throw NotExistPostIdException
 
         // 게시글 작성자 이름과 삭제할 유저 이름 비교후 다르면 예외처리
-        if (post.userId != authorizedUser) throw InvalidRoleException
+        if (post.userId != userId) throw InvalidRoleException
 
         // 게시글이 비활성화 되어있다면 예외처리
         if (!post.state) throw InactivePostException
@@ -155,12 +109,12 @@ class PostService(
 
         // 게시글 안에 있는 사진 비활성화
         postImage.map { imageData ->
-            imageService.disabledImage(imageData.id, authorizedUser)
+            imageService.disabledImage(imageData.id, userId)
         }
 
         // 게시글 안에 있는 댓글 비활성화
         postComment.map { commentData ->
-            commentService.disabledComment(commentData.id, authorizedUser)
+            commentService.disabledComment(commentData.id, userId)
         }
 
         // 게시글 비활성화
@@ -170,6 +124,28 @@ class PostService(
         postRepository.save(post)
 
         return StatusResponseDto(204, "게시글이 삭제됨")
+    }
+
+    fun Slice<PostEntity>.toPostDto(userId: String?): Slice<PostDto> {
+        return this.map {
+            var goodState: Boolean? = null
+            if (!userId.isNullOrBlank()) {
+                goodState = postGoodService.getPostGoodState(it.id, userId)
+            }
+
+            PostDto(
+                id = it.id,
+                userId = it.userId,
+                body = it.body,
+                createDate = it.createdDate,
+                good = it.goodCounts,
+                goodState = goodState,
+                image = imageService.getImageByPostId(it.id).map {
+                    it.imageKey
+                },
+                userImageUrl = userService.getUserImage(it.userId).imageURL
+            )
+        }
     }
 
     fun getPostByUserId(userId: String): List<PostEntity> {
