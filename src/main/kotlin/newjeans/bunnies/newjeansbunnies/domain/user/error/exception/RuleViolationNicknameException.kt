@@ -5,6 +5,6 @@ import newjeans.bunnies.newjeansbunnies.domain.user.error.UserErrorCode
 import newjeans.bunnies.newjeansbunnies.global.error.custom.CustomException
 
 
-object RuleViolationUserIdException: CustomException(
-    UserErrorCode.RULE_VIOLATION_USER_ID
+object RuleViolationNicknameException: CustomException(
+    UserErrorCode.RULE_VIOLATION_NICKNAME
 )

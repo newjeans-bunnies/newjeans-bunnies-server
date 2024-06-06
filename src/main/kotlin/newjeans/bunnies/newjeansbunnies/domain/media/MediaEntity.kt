@@ -19,5 +19,5 @@ data class MediaEntity(
     @Column(nullable = false)
     var state: Boolean = false,
     @Column(nullable = false)
-    val userId: String
+    val nickname: String
 )
