@@ -8,8 +8,6 @@ import newjeans.bunnies.newjeansbunnies.domain.comment.error.exception.InactiveC
 import newjeans.bunnies.newjeansbunnies.domain.comment.error.exception.NotExistCommentIdException
 import newjeans.bunnies.newjeansbunnies.domain.comment.repository.CommentGoodRepository
 import newjeans.bunnies.newjeansbunnies.domain.comment.repository.CommentRepository
-import newjeans.bunnies.newjeansbunnies.domain.user.service.UserService
-import newjeans.bunnies.newjeansbunnies.global.error.exception.InvalidRoleException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Component
 import org.springframework.stereotype.Service
@@ -19,16 +17,13 @@ import org.springframework.stereotype.Service
 class CommentGoodService(
     private val commentGoodRepository: CommentGoodRepository,
     private val commentRepository: CommentRepository,
-    private val userService: UserService
 ) {
     fun getCommentGoodState(userId: String, commentId: String): Boolean {
         return commentGoodRepository.existsByUserIdAndCommentId(userId, commentId)
     }
 
     @Transactional
-    fun goodComment(commentId: String, authorizedUser: String?): CommentGoodResponseDto {
-        val userId = authorizedUser ?: throw InvalidRoleException
-        userService.checkExistUserId(userId)
+    fun goodComment(commentId: String, userId: String): CommentGoodResponseDto {
 
         val comment = getComment(commentId)
 

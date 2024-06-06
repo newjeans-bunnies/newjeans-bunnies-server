@@ -33,15 +33,13 @@ class CommentService(
 ) {
 
     // 댓글 생성
-    fun createComment(commentRequestDto: CommentRequestDto, authorizedUser: String?): CreateCommentResponseDto {
-
-        if(authorizedUser != commentRequestDto.userId) throw InvalidRoleException
+    fun createComment(commentRequestDto: CommentRequestDto, userId: String): CreateCommentResponseDto {
 
         // 유저 확인
-        userService.checkExistUserId(commentRequestDto.userId)
+        userService.checkExistNickname(userId)
 
         // 유저 활성화 확인
-        userService.checkActivationUser(commentRequestDto.userId)
+        userService.checkActivationUser(userId)
 
         // 게시글 확인
         checkExistPostId(commentRequestDto.postId)
@@ -53,7 +51,7 @@ class CommentService(
         val comment = CommentEntity(
             id = UUID.randomUUID().toString(),
             postId = commentRequestDto.postId,
-            userId = commentRequestDto.userId,
+            userId = userId,
             createDate = LocalDateTime.now().toString(),
             body = commentRequestDto.body,
             goodCounts = 0L,
@@ -69,7 +67,7 @@ class CommentService(
     }
 
     // 댓글 가져오기
-    fun getComment(postId: String, pageSize: Int, page: Int, authorizedUser: String?): Slice<CommentResponseDto> {
+    fun getComment(postId: String, pageSize: Int, page: Int, userId: String?): Slice<CommentResponseDto> {
 
         val pageRequest = PageRequest.of(
             page, pageSize, Sort.by(
@@ -91,14 +89,14 @@ class CommentService(
 
             var goodState: Boolean? = null
 
-            if (!authorizedUser.isNullOrBlank()) {
-                goodState = commentGoodService.getCommentGoodState(userId = authorizedUser, commentId = it.id)
+            if (!userId.isNullOrBlank()) {
+                goodState = commentGoodService.getCommentGoodState(userId = userId, commentId = it.id)
             }
 
             val userImageUrl = userService.getUserImage(it.userId).imageURL
 
             CommentResponseDto(
-                userId = it.userId,
+                nickname = it.userId,
                 body = it.body,
                 postId = it.postId,
                 createDate = it.createDate,
@@ -129,10 +127,10 @@ class CommentService(
     }
 
     // 댓글 비활성화
-    fun disabledComment(commentId: String, authorizedUser: String?): StatusResponseDto {
+    fun disabledComment(commentId: String, userId: String): StatusResponseDto {
         val comment = commentRepository.findByIdOrNull(commentId) ?: throw NotFoundCommentException
 
-        if (comment.userId != authorizedUser) throw InvalidRoleException
+        if (comment.userId != userId) throw InvalidRoleException
 
         comment.state = false
 
