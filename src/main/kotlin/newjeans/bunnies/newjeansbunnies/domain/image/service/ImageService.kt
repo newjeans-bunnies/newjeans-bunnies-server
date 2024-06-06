@@ -52,13 +52,13 @@ class ImageService(
     }
 
     // 사진 비활성화
-    fun disabledImage(imageId: String, authorizedUser: String?): StatusResponseDto {
+    fun disabledImage(imageId: String, userId: String): StatusResponseDto {
 
         // 게시글 가져오기
         val image = imageRepository.findByIdOrNull(imageId) ?: throw NotExistPostIdException
 
         // 이미지 만든 사람과 이미지 삭제하려는 사람 이름이 다르면 예외 처리
-        if (image.userId != authorizedUser) throw InvalidRoleException
+        if (image.userId != userId) throw InvalidRoleException
 
         // 사진 비활성화
         image.state = false

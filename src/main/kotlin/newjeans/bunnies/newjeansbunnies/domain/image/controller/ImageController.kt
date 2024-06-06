@@ -26,19 +26,19 @@ class ImageController(
     }
 
     // 특정 사진 가져오기
-    @GetMapping("/{userId}")
+    @GetMapping("/{nickname}")
     fun getUserImage(
-        @RequestParam size: Int, @RequestParam page: Int, @PathVariable userId: String
+        @RequestParam size: Int, @RequestParam page: Int, @PathVariable nickname: String
     ): Slice<ImageResponseDto> {
-        return imageService.getUserImage(size, page, userId)
+        return imageService.getUserImage(size, page, nickname)
     }
 
     // 사진 비활성화
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PatchMapping
     fun deleteImage(
-        @RequestParam(value = "image-id") imageId: String, @AuthenticationPrincipal auth: CustomUserDetails?
+        @RequestParam(value = "image-id") imageId: String, @AuthenticationPrincipal auth: CustomUserDetails
     ): StatusResponseDto {
-        return imageService.disabledImage(imageId, auth?.username)
+        return imageService.disabledImage(imageId, auth.username)
     }
 }
