@@ -10,11 +10,14 @@ import java.util.*
 @Repository
 interface UserRepository: CrudRepository<UserEntity, String> {
 
-    fun findByUserId(userId: String?): Optional<UserEntity>
+    fun findByNickname(userId: String?): Optional<UserEntity>
 
-    fun findByUserIdAndPhoneNumber(userId: String, phoneNumber: String): Optional<UserEntity>
+    fun findByNicknameAndPhoneNumber(userId: String, phoneNumber: String): Optional<UserEntity>
 
     fun findByPhoneNumber(phoneNumber: String): Optional<UserEntity>
 
-    fun deleteByUserId(userId: String)
+    fun existsByNickname(nickname: String): Boolean
+
+    fun existsByPhoneNumber(phoneNumber: String): Boolean
+
 }

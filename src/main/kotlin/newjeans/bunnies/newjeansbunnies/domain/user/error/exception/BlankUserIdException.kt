@@ -6,5 +6,5 @@ import newjeans.bunnies.newjeansbunnies.global.error.custom.CustomException
 
 
 object BlankUserIdException: CustomException(
-    UserErrorCode.BLANK_USER_ID
+    UserErrorCode.BLANK_NICKNAME
 )

@@ -6,5 +6,5 @@ import newjeans.bunnies.newjeansbunnies.global.error.custom.CustomException
 
 
 object NotExistUserIdException: CustomException(
-    UserErrorCode.RULE_VIOLATION_USER_ID
+    UserErrorCode.RULE_VIOLATION_NICKNAME
 )

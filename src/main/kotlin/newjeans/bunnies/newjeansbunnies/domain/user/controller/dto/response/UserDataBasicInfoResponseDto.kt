@@ -2,7 +2,7 @@ package newjeans.bunnies.newjeansbunnies.domain.user.controller.dto.response
 
 
 data class UserDataBasicInfoResponseDto(
-    val userId: String,
+    val nickname: String,
     val country: String,
-    val imageUrl: String
+    val imageUrl: String?
 )

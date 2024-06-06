@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Pattern
 
 data class UserUpdateRequestDto(
     @field:NotBlank(message = "아이디는 필수 입력 값입니다.")
-    val userId: String,
+    val nickname: String,
     @field:NotBlank(message = "나라는 필수 입력 값입니다.")
     val country: String,
     @field:NotBlank(message = "언어는 필수 입력 값입니다.")

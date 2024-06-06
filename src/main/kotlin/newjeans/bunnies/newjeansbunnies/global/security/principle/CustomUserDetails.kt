@@ -2,14 +2,15 @@ package newjeans.bunnies.newjeansbunnies.global.security.principle
 
 import newjeans.bunnies.newjeansbunnies.domain.auth.type.Authority
 import org.springframework.security.core.GrantedAuthority
-import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.core.userdetails.UserDetails
 
 class CustomUserDetails(
-    private val userId: String
-): UserDetails {
+    private val userId: String, private val authority: Authority, private val state: Boolean
+) : UserDetails {
+
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
-        return mutableListOf(SimpleGrantedAuthority(Authority.USER.name))
+        return mutableListOf(SimpleGrantedAuthority(authority.name))
     }
 
     override fun getPassword(): String? = null
@@ -22,5 +23,5 @@ class CustomUserDetails(
 
     override fun isCredentialsNonExpired(): Boolean = true
 
-    override fun isEnabled(): Boolean = true
+    override fun isEnabled(): Boolean = state
 }

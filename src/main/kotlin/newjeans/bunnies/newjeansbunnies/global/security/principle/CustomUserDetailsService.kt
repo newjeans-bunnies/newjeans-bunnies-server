@@ -13,9 +13,9 @@ import org.springframework.stereotype.Component
 class CustomUserDetailsService(
     private val userRepository: UserRepository
 ) : UserDetailsService {
-    override fun loadUserByUsername(username: String): UserDetails {
-        val user = userRepository.findByIdOrNull(username) ?: throw InvalidTokenException
-        return CustomUserDetails(user.userId)
+    override fun loadUserByUsername(userId: String): UserDetails {
+        val user = userRepository.findByIdOrNull(userId) ?: throw InvalidTokenException
+        return CustomUserDetails(user.id, user.authority, user.state)
     }
 
 }
