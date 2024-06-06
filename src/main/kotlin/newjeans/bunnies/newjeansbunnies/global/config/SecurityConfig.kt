@@ -36,39 +36,39 @@ class SecurityConfig(
                 //auth
                 authorize.requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll() // 로그인
                 authorize.requestMatchers(HttpMethod.POST, "/api/auth/signup").permitAll() // 회원가입
-                authorize.requestMatchers(HttpMethod.PATCH, "/api/auth/refresh").permitAll() // 토큰 재발급
-                authorize.requestMatchers(HttpMethod.DELETE,"/api/auth").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name) //유저 삭제
-                authorize.requestMatchers(HttpMethod.POST, "/api/auth/phonenumber/verify").permitAll() // 전화번호 인증
-                authorize.requestMatchers(HttpMethod.POST, "/api/auth/phonenumber").permitAll() // 전화번호 인증
+                authorize.requestMatchers(HttpMethod.PATCH, "/api/auth/refresh").permitAll() // 토큰 제발급
+                authorize.requestMatchers(HttpMethod.POST, "/api/auth/phonenumber/verify").permitAll() // 인증번호 인증
+                authorize.requestMatchers(HttpMethod.POST, "/api/auth/phonenumber").permitAll() // 인증번호 발송
+                authorize.requestMatchers(HttpMethod.PATCH, "/api/auth/delete").permitAll() // 계정 비활성화
 
                 //post
-                authorize.requestMatchers(HttpMethod.POST, "/api/post/good").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name) // 게시글 좋아요
+                authorize.requestMatchers(HttpMethod.POST, "/api/post/create").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name) // 게시글 생성
                 authorize.requestMatchers(HttpMethod.GET, "/api/post").permitAll() // 게시글 가져오기
-                authorize.requestMatchers(HttpMethod.GET, "/api/post/**").permitAll() // 특정 게시글 가져오기
+                authorize.requestMatchers(HttpMethod.GET, "/api/post/**").permitAll() // 게시글 가져오기
+                authorize.requestMatchers(HttpMethod.POST, "/api/post/good").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name) // 게시글 좋아요
                 authorize.requestMatchers(HttpMethod.PATCH, "/api/post/fix").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name) // 게시글 수정
                 authorize.requestMatchers(HttpMethod.PATCH, "/api/post/delete").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name) // 게시글 비활성화
-                authorize.requestMatchers(HttpMethod.POST, "/api/post").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name) // 게시글 만들기
 
                 //user
-                authorize.requestMatchers(HttpMethod.GET,"/api/user/me").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name) // 내 정보 가져오기
-                authorize.requestMatchers(HttpMethod.GET,"/api/user/**").permitAll()
-                authorize.requestMatchers(HttpMethod.PATCH,"/api/user/fix").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
+                authorize.requestMatchers(HttpMethod.GET, "/api/user/me").permitAll()
+                authorize.requestMatchers(HttpMethod.GET, "/api/user/**").permitAll()
+                authorize.requestMatchers(HttpMethod.PATCH, "/api/user/fix").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
+                authorize.requestMatchers(HttpMethod.GET, "/api/user/check/nickname").permitAll()
+                authorize.requestMatchers(HttpMethod.GET, "/api/user/check/phonenumber").permitAll()
+                authorize.requestMatchers(HttpMethod.GET, "/api/user/support").permitAll()
 
                 //image
-                authorize.requestMatchers(HttpMethod.POST, "/api/image").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name) // 사진 만들기
-                authorize.requestMatchers(HttpMethod.PATCH, "/api/image").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name) // 사진 비활성화
                 authorize.requestMatchers(HttpMethod.GET, "/api/image").permitAll() // 사진 가져오기
-                authorize.requestMatchers(HttpMethod.GET, "/api/image/**").permitAll() // 특정 사진 가져오기
+                authorize.requestMatchers(HttpMethod.GET, "/api/image/**").permitAll() // 사진 가져오기
+                authorize.requestMatchers(HttpMethod.PATCH, "/api/image").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name) // 사진 비활성화
 
                 //report
                 authorize.requestMatchers(HttpMethod.POST,"/api/report/**").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
 
                 //comment
-                authorize.requestMatchers(HttpMethod.GET, "/api/comment").permitAll()
-                authorize.requestMatchers(HttpMethod.PATCH, "/api/comment/delete").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
-                authorize.requestMatchers(HttpMethod.PATCH, "/api/comment/fix").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
-                authorize.requestMatchers(HttpMethod.POST, "/api/comment").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
-                authorize.requestMatchers(HttpMethod.POST, "/api/comment/good").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
+                authorize.requestMatchers(HttpMethod.POST, "api/comment/good").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
+                authorize.requestMatchers(HttpMethod.POST, "api/comment/create").hasAnyAuthority(Authority.USER.name, Authority.MANAGER.name)
+                authorize.requestMatchers(HttpMethod.GET, "api/comment").permitAll()
 
                 //media
                 authorize.requestMatchers(HttpMethod.GET, "/api/media").permitAll()
