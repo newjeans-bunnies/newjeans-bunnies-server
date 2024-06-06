@@ -6,6 +6,7 @@ import io.jsonwebtoken.security.Keys
 import newjeans.bunnies.newjeansbunnies.domain.auth.RefreshTokenEntity
 import newjeans.bunnies.newjeansbunnies.domain.auth.controller.dto.TokenDto
 import newjeans.bunnies.newjeansbunnies.domain.auth.repository.RefreshTokenRepository
+import newjeans.bunnies.newjeansbunnies.domain.auth.type.Token
 import newjeans.bunnies.newjeansbunnies.global.error.exception.InternalServerErrorException
 import newjeans.bunnies.newjeansbunnies.global.error.exception.InvalidTokenException
 import newjeans.bunnies.newjeansbunnies.global.error.exception.UnexpectedTokenException
@@ -29,7 +30,7 @@ class ReissueTokenService(
 ) {
     fun execute(refreshToken: String, accessToken: String): TokenDto {
 
-        val refreshTokenClaims = jwtParser.getClaims(refreshToken, "refresh")
+        val refreshTokenClaims = jwtParser.getClaims(refreshToken, Token.REFRESH)
         checkValidAccessToken(accessToken, refreshTokenClaims)
 
         val data = checkValidRefreshToken(refreshToken)
