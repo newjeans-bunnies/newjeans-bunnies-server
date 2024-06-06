@@ -3,19 +3,17 @@ package newjeans.bunnies.newjeansbunnies.domain.auth.service
 import newjeans.bunnies.newjeansbunnies.domain.auth.controller.dto.TokenDto
 import newjeans.bunnies.newjeansbunnies.domain.auth.controller.dto.request.LoginRequestDto
 import newjeans.bunnies.newjeansbunnies.domain.auth.controller.dto.request.SignupRequestDto
-import newjeans.bunnies.newjeansbunnies.domain.auth.controller.dto.response.SignupResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.auth.error.exception.*
 import newjeans.bunnies.newjeansbunnies.domain.auth.type.Authority
 import newjeans.bunnies.newjeansbunnies.domain.post.service.PostService
 import newjeans.bunnies.newjeansbunnies.domain.user.UserEntity
-import newjeans.bunnies.newjeansbunnies.domain.user.error.exception.BlankUserIdException
 import newjeans.bunnies.newjeansbunnies.domain.user.repository.UserRepository
-import newjeans.bunnies.newjeansbunnies.domain.user.service.UserService
-import newjeans.bunnies.newjeansbunnies.global.error.exception.InvalidRoleException
+import newjeans.bunnies.newjeansbunnies.global.error.exception.InternalServerErrorException
 import newjeans.bunnies.newjeansbunnies.global.response.StatusResponseDto
 import newjeans.bunnies.newjeansbunnies.global.security.jwt.JwtProvider
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Configuration
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import java.util.*
@@ -24,7 +22,6 @@ import java.util.*
 @Service
 class AuthService(
     private val userRepository: UserRepository,
-    private val userService: UserService,
     private val postService: PostService,
     private val passwordEncoder: BCryptPasswordEncoder,
     private val jwtProvider: JwtProvider,
@@ -35,17 +32,13 @@ class AuthService(
     private val countries = countryList.split(",").toSet()
 
     // 계정 비활성화
-    fun userDelete(userId: String, authorizedUser: String?): StatusResponseDto {
-        if (userId.isBlank()) throw BlankUserIdException
-
-        if (userId != authorizedUser) throw InvalidRoleException
-
-        val user = userService.checkExistUserId(userId)
+    fun userDelete(userId: String): StatusResponseDto {
+        val user = userRepository.findByIdOrNull(userId) ?: throw InternalServerErrorException
 
         val posts = postService.getPostByUserId(userId)
 
         posts.map { postData ->
-            postService.disabledPost(postData.id, authorizedUser)
+            postService.disabledPost(postData.id, userId)
         }
 
         user.state = false
@@ -58,8 +51,9 @@ class AuthService(
     // 로그인
     fun login(data: LoginRequestDto): TokenDto {
 
-        val userData = getExistUserId(data.userId)
-        checkExistUserId(userData.userId, data.userId)
+        val userData = userRepository.findByNickname(data.nickname).orElseThrow {
+            throw NotExistNicknameException
+        }
 
         matchesPassword(data.password, userData.password)
 
@@ -67,20 +61,22 @@ class AuthService(
     }
 
     // 회원가입
-    fun signup(data: SignupRequestDto): SignupResponseDto {
+    fun signup(data: SignupRequestDto): StatusResponseDto {
 
-        checkValidUserId(data.userId)
+        // 닉네임 중복 확인
+        checkValidNickname(data.nickname)
 
+        // 전화번호 중복 확인
         checkValidPhoneNumber(data.phoneNumber)
 
+        // 지원 나라 확인
         checkValidCountry(data.country)
 
         val userEntity = UserEntity(
             id = UUID.randomUUID().toString(),
-            userId = data.userId,
+            nickname = data.nickname,
             password = data.password,
             phoneNumber = data.phoneNumber,
-            imageUrl = "https://newjeans-bunnies-image.s3.ap-northeast-2.amazonaws.com/user-image/UserImage.jpg",
             country = data.country,
             language = data.country,
             authority = Authority.USER,
@@ -91,21 +87,19 @@ class AuthService(
 
         userRepository.save(userEntity)
 
-        return SignupResponseDto(
+        return StatusResponseDto(
             status = 201,
             message = "Created"
         )
     }
 
     private fun checkValidPhoneNumber(phoneNumber: String) {
-        val existingUser = userRepository.findByPhoneNumber(phoneNumber)
-        if (existingUser.isPresent) {
+        if (userRepository.existsByPhoneNumber(phoneNumber))
             throw ExistPhoneNumberException // 이미 존재하는 전화번호 예외 처리
-        }
     }
 
-    private fun checkValidUserId(userId: String) {
-        if (userRepository.findByUserId(userId).isPresent && userId == userRepository.findByUserId(userId).get().userId)
+    private fun checkValidNickname(nickname: String) {
+        if (userRepository.existsByNickname(nickname))
             throw ExistIdException // 이미 존재하는 아이디
     }
 
@@ -114,15 +108,8 @@ class AuthService(
             throw CountryNotFoundException // 지원 하지 않거나 존재하지 않는 나라
     }
 
-    private fun getExistUserId(userId: String) = userRepository.findByUserId(userId).orElseThrow {
-        throw NotExistUserIdException
-    }
-
     private fun matchesPassword(password: String, sparePassword: String) {
         if (!passwordEncoder.matches(password, sparePassword)) throw InvalidPasswordException
     }
 
-    private fun checkExistUserId(userId: String, spareUserId: String) {
-        if (userId != spareUserId) throw NotExistUserIdException
-    }
 }

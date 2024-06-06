@@ -1,15 +1,11 @@
 package newjeans.bunnies.newjeansbunnies.domain.auth.controller
 
-
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Pattern
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
 import newjeans.bunnies.newjeansbunnies.domain.auth.controller.dto.TokenDto
 import newjeans.bunnies.newjeansbunnies.domain.auth.controller.dto.request.CertificationVerifyRequestDto
 import newjeans.bunnies.newjeansbunnies.domain.auth.controller.dto.request.LoginRequestDto
 import newjeans.bunnies.newjeansbunnies.domain.auth.controller.dto.request.SignupRequestDto
-import newjeans.bunnies.newjeansbunnies.domain.auth.controller.dto.response.SignupResponseDto
 import newjeans.bunnies.newjeansbunnies.domain.auth.service.AuthService
 import newjeans.bunnies.newjeansbunnies.domain.auth.service.PhoneNumberCertificationService
 import newjeans.bunnies.newjeansbunnies.domain.auth.service.ReissueTokenService
@@ -21,7 +17,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
-
 
 @RestController
 @Configuration
@@ -38,11 +33,9 @@ class AuthController(
         return authService.login(loginRequestDto)
     }
 
-
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/signup")
-    fun signup(@RequestBody @Valid signupRequestDto: SignupRequestDto): SignupResponseDto {
-        runBlocking { delay(5000) }
+    fun signup(@RequestBody @Valid signupRequestDto: SignupRequestDto): StatusResponseDto {
         return authService.signup(signupRequestDto)
     }
 
@@ -55,12 +48,14 @@ class AuthController(
         return reissueTokenService.execute(refreshToken, accessToken)
     }
 
+    // 전화번호 인증
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/phonenumber/verify")
     fun verify(@RequestBody @Valid certificationVerifyRequestDto: CertificationVerifyRequestDto): StatusResponseDto {
         return phoneNumberCertificationService.verify(certificationVerifyRequestDto)
     }
 
+    // 인증번호 발송
     @PostMapping("/phonenumber")
     fun certification(
         @RequestParam("phonenumber") @Pattern(
@@ -73,10 +68,9 @@ class AuthController(
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PatchMapping("/delete")
     fun deleteUser(
-        @RequestParam("user-id") userId: String,
-        @AuthenticationPrincipal auth: CustomUserDetails?
+        @AuthenticationPrincipal auth: CustomUserDetails
     ): StatusResponseDto {
-        return authService.userDelete(userId, auth?.username)
+        return authService.userDelete(auth.username)
     }
 
 }
